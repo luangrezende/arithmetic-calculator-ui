@@ -35,19 +35,19 @@ const getTimeAgo = (minutes: number) =>
     new Date(new Date().getTime() - minutes * 60 * 1000).toLocaleString();
 
 const initialOperations = [
-    { id: 1, type: 'Square Root', cost: 5.0, result: 3, balance: 48.5, date: getTimeAgo(10) },
-    { id: 2, type: 'Division', cost: 15.0, result: 2, balance: 53.5, date: getTimeAgo(20) },
-    { id: 3, type: 'Multiplication', cost: 15.5, result: 45, balance: 68.5, date: getTimeAgo(30) },
-    { id: 4, type: 'Subtraction', cost: 5.25, result: 8, balance: 84.0, date: getTimeAgo(40) },
-    { id: 5, type: 'Addition', cost: 10.75, result: 15, balance: 89.25, date: getTimeAgo(50) },
-    { id: 6, type: 'Addition', cost: 10.75, result: 15, balance: 100.0, date: getTimeAgo(60) },
-    { id: 7, type: 'Addition', cost: 10.75, result: 15, balance: 110.75, date: getTimeAgo(70) },
+    { id: 1, type: 'Square Root', cost: 5.0, result: 3, credit: 48.5, date: getTimeAgo(10) },
+    { id: 2, type: 'Division', cost: 15.0, result: 2, credit: 53.5, date: getTimeAgo(20) },
+    { id: 3, type: 'Multiplication', cost: 15.5, result: 45, credit: 68.5, date: getTimeAgo(30) },
+    { id: 4, type: 'Subtraction', cost: 5.25, result: 8, credit: 84.0, date: getTimeAgo(40) },
+    { id: 5, type: 'Addition', cost: 10.75, result: 15, credit: 89.25, date: getTimeAgo(50) },
+    { id: 6, type: 'Addition', cost: 10.75, result: 15, credit: 100.0, date: getTimeAgo(60) },
+    { id: 7, type: 'Addition', cost: 10.75, result: 15, credit: 110.75, date: getTimeAgo(70) },
 ];
 
 export function OperationView() {
     const [openModal, setOpenModal] = useState(false);
     const [operations, setOperations] = useState(initialOperations);
-    const [balance, setBalance] = useState(48.5); // Saldo inicial
+    const [credit, setCredit] = useState(48.5); // Saldo inicial
     const [order, setOrder] = useState<'asc' | 'desc'>('desc'); // Estado de ordenação
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -56,15 +56,15 @@ export function OperationView() {
     const handleCloseModal = useCallback(() => setOpenModal(false), []);
 
     const handleNewOperation = (newOperation: any) => {
-        const newBalance = Math.max(balance + newOperation.cost, 0);
-        const operationWithBalance = {
+        const newCredit = Math.max(credit + newOperation.cost, 0);
+        const operationWithCredit = {
             ...newOperation,
             id: operations.length + 1,
-            balance: newBalance,
+            credit: newCredit,
             date: new Date().toLocaleString(),
         };
-        setOperations((prev) => [operationWithBalance, ...prev]);
-        setBalance(newBalance);
+        setOperations((prev) => [operationWithCredit, ...prev]);
+        setCredit(newCredit);
     };
 
     const handleSort = () => {
@@ -134,11 +134,11 @@ export function OperationView() {
                                     <TableCell>
                                         <span
                                             style={{
-                                                color: record.balance > 0 ? 'green' : 'red',
+                                                color: record.credit > 0 ? 'green' : 'red',
                                                 fontWeight: 'bold',
                                             }}
                                         >
-                                            ${record.balance.toFixed(2)}
+                                            ${record.credit.toFixed(2)}
                                         </span>
                                     </TableCell>
                                     <TableCell>{record.date}</TableCell>

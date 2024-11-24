@@ -13,11 +13,11 @@ const modalStyle = {
     borderRadius: 2,
 };
 
-export function AddBalanceModal({ open, onClose, onAddBalance }: any) {
+export function AddCreditModal({ open, onClose, onAddCredit }: any) {
     const [addAmount, setAddAmount] = useState('');
     const [validationError, setValidationError] = useState<string | null>(null);
 
-    const handleAddBalance = () => {
+    const handleAddCredit = () => {
         const amount = parseFloat(addAmount);
 
         // eslint-disable-next-line no-restricted-globals
@@ -30,7 +30,7 @@ export function AddBalanceModal({ open, onClose, onAddBalance }: any) {
             return;
         }
 
-        onAddBalance(amount);
+        onAddCredit(amount);
         setAddAmount('');
         setValidationError(null);
         onClose();
@@ -78,7 +78,6 @@ export function AddBalanceModal({ open, onClose, onAddBalance }: any) {
                         <TextField fullWidth type="text" label="CVV" value="123" disabled />
                     </Box>
 
-                    {/* Campo para adicionar valor */}
                     <TextField
                         fullWidth
                         type="number"
@@ -94,7 +93,7 @@ export function AddBalanceModal({ open, onClose, onAddBalance }: any) {
                         <Button onClick={onClose} variant="outlined">
                             Cancel
                         </Button>
-                        <Button onClick={handleAddBalance} variant="contained" color="primary">
+                        <Button onClick={handleAddCredit} variant="contained" color="primary">
                             Add
                         </Button>
                     </Box>

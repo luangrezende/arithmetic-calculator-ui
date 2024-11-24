@@ -2,7 +2,6 @@ import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
-import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
@@ -44,10 +43,8 @@ export function SignInView() {
 
             if (response.data.status === 200) {
                 const token = response.data.data.Token;
-                // Salvar o token em localStorage ou em um contexto global
                 localStorage.setItem('token', token);
 
-                // Redirecionar para a home
                 router.push('/');
             } else {
                 setError(response.data.data.error || 'An unexpected error occurred.');

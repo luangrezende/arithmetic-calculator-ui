@@ -17,7 +17,7 @@ export function NewOperationForm({ onClose }: { onClose: () => void }) {
     const [result, setResult] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [fieldError, setFieldError] = useState<{ value1?: string; value2?: string }>({});
-    const [balance, setBalance] = useState(100); // Saldo inicial do usuário
+    const [credit, setCredit] = useState(100); // Saldo inicial do usuário
 
     const validateFields = () => {
         const errors: { value1?: string; value2?: string } = {};
@@ -50,8 +50,8 @@ export function NewOperationForm({ onClose }: { onClose: () => void }) {
             const operationCost = operations.find((op) => op.value === operationType)?.cost || 0;
 
             // Verifica saldo antes de subtrair
-            if (balance < operationCost) {
-                setErrorMessage('Insufficient balance for this operation');
+            if (credit < operationCost) {
+                setErrorMessage('Insufficient credit for this operation');
                 return;
             }
 
@@ -72,7 +72,7 @@ export function NewOperationForm({ onClose }: { onClose: () => void }) {
             setResult(data.result);
 
             // Subtraindo o custo da operação do saldo
-            setBalance((prev) => Math.max(prev - operationCost, 0)); // Garante que o saldo não fique negativo
+            setCredit((prev) => Math.max(prev - operationCost, 0)); // Garante que o saldo não fique negativo
         } catch (error: any) {
             setErrorMessage(error.message || 'Failed to perform operation');
         }
@@ -91,8 +91,8 @@ export function NewOperationForm({ onClose }: { onClose: () => void }) {
         >
             {/* Exibição do saldo */}
             <Typography variant="h6">
-                Balance:{' '}
-                <span style={{ color: balance > 0 ? 'green' : 'red' }}>${balance.toFixed(2)}</span>
+                Credit:{' '}
+                <span style={{ color: credit > 0 ? 'green' : 'red' }}>${credit.toFixed(2)}</span>
             </Typography>
 
             <TextField

@@ -8,7 +8,7 @@ import { useTheme } from '@mui/material/styles';
 
 import { _notifications } from 'src/_mock';
 import { Iconify } from 'src/components/iconify';
-import { AddBalanceModal } from 'src/sections/balance/view/add-balance-modal';
+import { AddCreditModal } from 'src/sections/credit/view/add-credit-modal';
 import { Main } from './main';
 import { layoutClasses } from '../classes';
 import { NavMobile, NavDesktop } from './nav';
@@ -32,7 +32,7 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
     const theme = useTheme();
 
     const [navOpen, setNavOpen] = useState(false);
-    const [balance, setBalance] = useState(100); // Saldo inicial
+    const [credit, setCredit] = useState(100); // Saldo inicial
     const [openModal, setOpenModal] = useState(false);
 
     const layoutQuery: Breakpoint = 'lg';
@@ -40,8 +40,8 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
     const handleOpenModal = () => setOpenModal(true);
     const handleCloseModal = () => setOpenModal(false);
 
-    const handleAddBalance = (amount: number) => {
-        setBalance((prev) => prev + amount);
+    const handleAddCredit = (amount: number) => {
+        setCredit((prev) => prev + amount);
     };
 
     return (
@@ -89,7 +89,7 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
                                         px: 2,
                                         py: 1,
                                         borderRadius: 1,
-                                        bgcolor: balance > 0 ? 'success.light' : 'error.light',
+                                        bgcolor: credit > 0 ? 'success.light' : 'error.light',
                                         cursor: 'pointer',
                                     }}
                                     onClick={handleOpenModal}
@@ -98,10 +98,10 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
                                         variant="body1"
                                         fontWeight="bold"
                                         sx={{
-                                            color: balance > 0 ? 'green' : 'red',
+                                            color: credit > 0 ? 'green' : 'red',
                                         }}
                                     >
-                                        Balance: ${balance.toFixed(2)}
+                                        Credit: ${credit.toFixed(2)}
                                     </Typography>
                                 </Box>
 
@@ -158,10 +158,10 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
             <Main>{children}</Main>
 
             {/* Modal para adicionar saldo */}
-            <AddBalanceModal
+            <AddCreditModal
                 open={openModal}
                 onClose={handleCloseModal}
-                onAddBalance={handleAddBalance}
+                onAddCredit={handleAddCredit}
             />
         </LayoutSection>
     );

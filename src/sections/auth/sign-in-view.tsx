@@ -12,6 +12,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { useRouter } from 'src/routes/hooks';
 
 import { Iconify } from 'src/components/iconify';
+import axios from 'axios';
 
 // ----------------------------------------------------------------------
 
@@ -19,10 +20,44 @@ export function SignInView() {
     const router = useRouter();
 
     const [showPassword, setShowPassword] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const handleSignIn = useCallback(() => {
-        router.push('/');
-    }, [router]);
+    const handleSignIn = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await axios.post(
+                'https://hw830ty0zi.execute-api.us-east-1.amazonaws.com/develop/login',
+                {
+                    httpMethod: 'POST',
+                    path: '/login',
+                    body: JSON.stringify({
+                        username: email,
+                        password,
+                    }),
+                }
+            );
+
+            if (response.data.status === 200) {
+                const token = response.data.data.Token;
+                // Salvar o token em localStorage ou em um contexto global
+                localStorage.setItem('token', token);
+
+                // Redirecionar para a home
+                router.push('/');
+            } else {
+                setError(response.data.data.error || 'An unexpected error occurred.');
+            }
+        } catch (err) {
+            setError('Failed to connect to the server. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    }, [email, password, router]);
 
     const renderForm = (
         <Box display="flex" flexDirection="column" alignItems="flex-end">
@@ -30,7 +65,8 @@ export function SignInView() {
                 fullWidth
                 name="email"
                 label="Email address"
-                defaultValue="hello@gmail.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 InputLabelProps={{ shrink: true }}
                 sx={{ mb: 3 }}
             />
@@ -43,7 +79,8 @@ export function SignInView() {
                 fullWidth
                 name="password"
                 label="Password"
-                defaultValue="@demo1234"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 InputLabelProps={{ shrink: true }}
                 type={showPassword ? 'text' : 'password'}
                 InputProps={{
@@ -60,6 +97,12 @@ export function SignInView() {
                 sx={{ mb: 3 }}
             />
 
+            {error && (
+                <Typography color="error" variant="body2" sx={{ mb: 2 }}>
+                    {error}
+                </Typography>
+            )}
+
             <LoadingButton
                 fullWidth
                 size="large"
@@ -67,6 +110,7 @@ export function SignInView() {
                 color="inherit"
                 variant="contained"
                 onClick={handleSignIn}
+                loading={loading}
             >
                 Sign in
             </LoadingButton>

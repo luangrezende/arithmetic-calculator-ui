@@ -10,8 +10,10 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { useRouter } from 'src/routes/hooks';
+
 import { Iconify } from 'src/components/iconify';
-import { SignUpView, SignUpFormProps } from './sign-up-view';
+
+import { SignUpView } from './sign-up-view';
 
 export function SignInView() {
     const router = useRouter();
@@ -92,7 +94,7 @@ export function SignInView() {
                 'https://hw830ty0zi.execute-api.us-east-1.amazonaws.com/develop/register',
                 {
                     name,
-                    username: email, // API espera "username"
+                    username: email,
                     password,
                 }
             );

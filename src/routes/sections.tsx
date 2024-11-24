@@ -7,12 +7,14 @@ import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgr
 import { varAlpha } from 'src/theme/styles';
 import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
+
 import { PrivateRoute } from './components/private-route';
 
 // ----------------------------------------------------------------------
 
 export const HomePage = lazy(() => import('src/pages/home'));
 export const OperationPage = lazy(() => import('src/pages/operation'));
+export const SignUpPage = lazy(() => import('src/pages/sign-up'));
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
@@ -55,6 +57,14 @@ export function Router() {
             element: (
                 <AuthLayout>
                     <SignInPage />
+                </AuthLayout>
+            ),
+        },
+        {
+            path: 'sign-up', // Nova rota para o componente de cadastro
+            element: (
+                <AuthLayout>
+                    <SignUpPage />
                 </AuthLayout>
             ),
         },

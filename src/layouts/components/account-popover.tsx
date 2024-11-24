@@ -15,6 +15,7 @@ import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 import { useRouter, usePathname } from 'src/routes/hooks';
 
 import { _myAccount } from 'src/_mock';
+import { useAuth } from 'src/context/auth-context';
 
 // ----------------------------------------------------------------------
 
@@ -28,7 +29,8 @@ export type AccountPopoverProps = IconButtonProps & {
 };
 
 export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps) {
-    const router = useRouter();
+    const { logout } = useAuth(); // Obtém a função de logout do contexto
+    const router = useRouter(); // Hook para redirecionar
 
     const pathname = usePathname();
 
@@ -51,12 +53,12 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
     );
 
     const handleLogout = useCallback(() => {
-        // Remove o token do armazenamento local
-        localStorage.removeItem('token'); // ou sessionStorage.removeItem('token')
+        // Chama o logout do contexto para limpar o estado global
+        logout();
 
         // Redireciona o usuário para a página de login
         router.push('/sign-in');
-    }, [router]);
+    }, [logout, router]);
 
     return (
         <>

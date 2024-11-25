@@ -1,9 +1,11 @@
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 
 import { LoadingButton } from 'src/components/common/loading-button';
 
-import { SignUpField } from './field-field';
-import { SignUpTitle } from './sign-up-title';
+import { AuthTitle } from '../../auth/auth-title';
+import { ErrorMessage } from '../../common/error-message';
+import { InputFieldForm } from '../../common/input-field-form';
+import { AuthFormLayout } from '../../common/auth-form-layout';
 import { PasswordStrengthIndicator } from './password-strength-indicator';
 
 export interface SignUpFormProps {
@@ -40,51 +42,51 @@ export function SignUpForm({
 }: SignUpFormProps) {
     return (
         <Box>
-            <SignUpTitle onBackToSignIn={onBackToSignIn} />
+            <AuthTitle
+                title="Sign up"
+                subtitle="Already have an account?"
+                actionText="Sign in"
+                onAction={onBackToSignIn}
+            />
 
-            <Box
-                component="form"
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                maxWidth={400}
-                width="100%"
-            >
-                <SignUpField
+            <AuthFormLayout>
+                <InputFieldForm
                     name="name"
                     label="Full Name"
                     value={name}
-                    onChange={(value: any) => onFieldChange('name', value)}
+                    onChange={(value: string) => onFieldChange('name', value)}
                     error={fieldErrors.name}
                     helperText={fieldErrors.name ? 'Name is required.' : ''}
                 />
 
-                <SignUpField
+                <InputFieldForm
                     name="email"
                     label="Email Address"
+                    type="email"
                     value={email}
-                    onChange={(value: any) => onFieldChange('email', value)}
+                    onChange={(value: string) => onFieldChange('email', value)}
                     error={fieldErrors.email}
-                    helperText={fieldErrors.email ? 'Email is required.' : ''}
+                    helperText={fieldErrors.email ? 'Invalid email address.' : ''}
                 />
 
-                <SignUpField
+                <InputFieldForm
                     name="password"
                     label="Password"
+                    type="password"
                     value={password}
-                    onChange={(value: any) => onFieldChange('password', value)}
+                    onChange={(value: string) => onFieldChange('password', value)}
                     error={fieldErrors.password}
                     helperText={fieldErrors.password ? 'Password is required.' : ''}
-                    showToggle
                 />
 
                 {password && <PasswordStrengthIndicator {...passwordStrength} />}
 
-                <SignUpField
+                <InputFieldForm
                     name="confirmPassword"
                     label="Confirm Password"
+                    type="password"
                     value={confirmPassword}
-                    onChange={(value: any) => onFieldChange('confirmPassword', value)}
+                    onChange={(value: string) => onFieldChange('confirmPassword', value)}
                     error={fieldErrors.confirmPassword}
                     helperText={
                         fieldErrors.confirmPassword
@@ -93,14 +95,9 @@ export function SignUpForm({
                                 : 'Confirmation is required.'
                             : ''
                     }
-                    showToggle
                 />
 
-                {error && (
-                    <Typography color="error" variant="body2" sx={{ mb: 2 }}>
-                        {error}
-                    </Typography>
-                )}
+                {error && <ErrorMessage message={error} />}
 
                 <LoadingButton
                     fullWidth
@@ -113,7 +110,7 @@ export function SignUpForm({
                 >
                     Sign up
                 </LoadingButton>
-            </Box>
+            </AuthFormLayout>
         </Box>
     );
 }

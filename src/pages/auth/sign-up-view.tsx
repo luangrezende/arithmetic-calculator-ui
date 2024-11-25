@@ -36,8 +36,6 @@ export default function SignUpView() {
 
             setTimeout(() => navigate('/sign-in'), 2000);
         } catch (err) {
-            console.error('Error during registration:', err);
-
             if (axios.isAxiosError(err) && err.response?.data?.error) {
                 setError(err.response.data.error);
             } else {
@@ -64,6 +62,7 @@ export default function SignUpView() {
                 onSubmit={handleSubmit}
                 onBackToSignIn={() => navigate('/sign-in')}
             />
+
             <AlertSnackbar
                 open={snackbarOpen}
                 message="Account created successfully. Redirecting..."

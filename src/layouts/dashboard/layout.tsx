@@ -1,14 +1,18 @@
-import { useState } from 'react';
 import type { Theme, SxProps, Breakpoint } from '@mui/material/styles';
 
+import { useState } from 'react';
+
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
 import { useTheme } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
 
 import { _notifications } from 'src/_mock';
+
 import { Iconify } from 'src/components/iconify';
+
 import { AddCreditModal } from 'src/sections/credit/view/add-credit-modal';
+
 import { Main } from './main';
 import { layoutClasses } from '../classes';
 import { NavMobile, NavDesktop } from './nav';

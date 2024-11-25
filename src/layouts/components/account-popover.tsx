@@ -17,8 +17,6 @@ import { useRouter, usePathname } from 'src/routes/hooks';
 import { _myAccount } from 'src/_mock';
 import { useAuth } from 'src/context/auth-context';
 
-// ----------------------------------------------------------------------
-
 export type AccountPopoverProps = IconButtonProps & {
     data?: {
         label: string;
@@ -29,8 +27,8 @@ export type AccountPopoverProps = IconButtonProps & {
 };
 
 export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps) {
-    const { logout } = useAuth(); // Obtém a função de logout do contexto
-    const router = useRouter(); // Hook para redirecionar
+    const { logout } = useAuth();
+    const router = useRouter();
 
     const pathname = usePathname();
 
@@ -53,10 +51,8 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
     );
 
     const handleLogout = useCallback(() => {
-        // Chama o logout do contexto para limpar o estado global
         logout();
 
-        // Redireciona o usuário para a página de login
         router.push('/sign-in');
     }, [logout, router]);
 

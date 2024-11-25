@@ -1,14 +1,19 @@
 import { useState } from 'react';
 
-import { Box, Typography } from '@mui/material';
+import { AlertSnackbar } from 'src/components/common/alert-snackbar';
 
-import { ForgotPasswordInput } from './forgot-password-input';
+import { AuthTitle } from '../../auth/auth-title';
+import { ErrorMessage } from '../../common/error-message';
+import { AuthFormLayout } from '../../common/auth-form-layout';
+import { InputFieldForm } from '../../common/input-field-form';
 import { ForgotPasswordButtons } from './forgot-password-buttons';
-import { ForgotPasswordSnackbar } from './forgot-password-snackbar';
 
 export interface ForgotPasswordFormProps {
     onSubmit: (email: string) => void;
     onCancel: () => void;
+    onFieldChange: (field: 'email', value: string) => void;
+    onBackToSignIn: () => void;
+    email: string;
     loading: boolean;
     error: string | null;
 }
@@ -16,10 +21,12 @@ export interface ForgotPasswordFormProps {
 export function ForgotPasswordForm({
     onSubmit,
     onCancel,
+    onFieldChange,
+    onBackToSignIn,
+    email,
     loading,
     error,
 }: ForgotPasswordFormProps) {
-    const [email, setEmail] = useState('');
     const [fieldError, setFieldError] = useState(false);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
 
@@ -29,41 +36,44 @@ export function ForgotPasswordForm({
             return;
         }
         setFieldError(false);
-        setSnackbarOpen(false);
-        setTimeout(() => onCancel(), 1000);
+        setSnackbarOpen(true);
 
         try {
             onSubmit(email);
-            setSnackbarOpen(true);
         } catch (err) {
-            console.error('Error during password recovery request:', err);
             setFieldError(true);
         }
     };
 
     return (
-        <Box display="flex" flexDirection="column" alignItems="center" maxWidth={400} width="100%">
-            <Typography variant="h6" sx={{ mb: 2 }}>
-                Reset Password
-            </Typography>
-            <ForgotPasswordInput email={email} fieldError={fieldError} onEmailChange={setEmail} />
-            {error && (
-                <Box
-                    sx={{
-                        mb: 2,
-                        p: 1,
-                        color: 'error.main',
-                        backgroundColor: (theme) => theme.palette.error.light,
-                        borderRadius: 1,
-                        fontSize: '0.875rem',
-                        textAlign: 'center',
-                    }}
-                >
-                    {error}
-                </Box>
-            )}
+        <AuthFormLayout>
+            <AuthTitle
+                title="Forgot password"
+                subtitle="This is a dev env, this feature will not work."
+                actionText=""
+                onAction={onBackToSignIn}
+            />
+
+            <InputFieldForm
+                name="email"
+                label="Email Address"
+                type="email"
+                value={email}
+                onChange={(value: any) => onFieldChange('email', value)}
+                error={fieldError}
+                helperText={fieldError ? 'Email is required.' : ''}
+            />
+
+            {error && <ErrorMessage message={error} />}
+
             <ForgotPasswordButtons onCancel={onCancel} onSubmit={handleSubmit} loading={loading} />
-            <ForgotPasswordSnackbar open={snackbarOpen} onClose={() => setSnackbarOpen(false)} />
-        </Box>
+
+            <AlertSnackbar
+                open={snackbarOpen}
+                message="If an account is associated with this email, you will receive a password reset email shortly."
+                onClose={() => setSnackbarOpen(false)}
+                severity="success"
+            />
+        </AuthFormLayout>
     );
 }

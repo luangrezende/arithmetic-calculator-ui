@@ -1,66 +1,28 @@
 import { lazy, Suspense } from 'react';
-import { Helmet } from 'react-helmet-async';
 import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 
-import Box from '@mui/material/Box';
-import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
-
-import { CONFIG } from 'src/config-global';
-import { varAlpha } from 'src/theme/styles';
 import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
 
-import { PrivateRoute } from './components/private-route';
+import { FallbackLoader } from 'src/components/fallback/fallback-loader';
+import { PrivateRoute } from 'src/components/private-route/private-route';
 
-// ----------------------------------------------------------------------
+import { HelmetTitle } from './helmet-title';
 
-export const HomePage = lazy(() => import('src/pages/home'));
+export const HomePage = lazy(() => import('src/pages/home/dashboard-view'));
 export const OperationPage = lazy(() => import('src/pages/operation'));
 export const SignUpPage = lazy(() => import('src/pages/auth/sign-up-view'));
 export const SignInPage = lazy(() => import('src/pages/auth/sign-in-view'));
-export const ProductsPage = lazy(() => import('src/pages/products'));
+export const ForgotPasswordPage = lazy(() => import('src/pages/auth/forgot-password-view'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 
-// ----------------------------------------------------------------------
-
-const renderFallback = (
-    <Box display="flex" alignItems="center" justifyContent="center" flex="1 1 auto">
-        <LinearProgress
-            sx={{
-                width: 1,
-                maxWidth: 320,
-                bgcolor: (theme) => varAlpha(theme.vars.palette.text.primaryChannel, 0.16),
-                [`& .${linearProgressClasses.bar}`]: { bgcolor: 'text.primary' },
-            }}
-        />
-    </Box>
-);
-
 export function Router() {
-    return useRoutes([
-        {
-            element: (
-                <PrivateRoute>
-                    <DashboardLayout>
-                        <Suspense fallback={renderFallback}>
-                            <Outlet />
-                        </Suspense>
-                    </DashboardLayout>
-                </PrivateRoute>
-            ),
-            children: [
-                { element: <HomePage />, index: true },
-                { path: 'products', element: <ProductsPage /> },
-                { path: 'operation', element: <OperationPage /> },
-            ],
-        },
+    const publicRoutes = [
         {
             path: 'sign-in',
             element: (
                 <AuthLayout>
-                    <Helmet>
-                        <title>{`Sign in - ${CONFIG.appName}`}</title>
-                    </Helmet>
+                    <HelmetTitle title="Sign in" />
                     <SignInPage />
                 </AuthLayout>
             ),
@@ -69,20 +31,44 @@ export function Router() {
             path: 'sign-up',
             element: (
                 <AuthLayout>
-                    <Helmet>
-                        <title>{`Sign up - ${CONFIG.appName}`}</title>
-                    </Helmet>
+                    <HelmetTitle title="Sign up" />
                     <SignUpPage />
                 </AuthLayout>
             ),
         },
         {
-            path: '404',
-            element: <Page404 />,
+            path: 'forgot-password',
+            element: (
+                <AuthLayout>
+                    <HelmetTitle title="Forgot password" />
+                    <ForgotPasswordPage />
+                </AuthLayout>
+            ),
         },
+    ];
+
+    const privateRoutes = [
         {
-            path: '*',
-            element: <Navigate to="/404" replace />,
+            element: (
+                <PrivateRoute>
+                    <DashboardLayout>
+                        <Suspense fallback={<FallbackLoader />}>
+                            <Outlet />
+                        </Suspense>
+                    </DashboardLayout>
+                </PrivateRoute>
+            ),
+            children: [
+                { element: <HomePage />, index: true },
+                { path: 'operation', element: <OperationPage /> },
+            ],
         },
-    ]);
+    ];
+
+    const notFoundRoute = {
+        path: '*',
+        element: <Navigate to="/404" replace />,
+    };
+
+    return useRoutes([...privateRoutes, ...publicRoutes, notFoundRoute]);
 }

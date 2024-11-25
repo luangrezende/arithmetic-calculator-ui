@@ -6,8 +6,8 @@ import { SignInForm } from 'src/routes/components/forms/sign-in/sign-in-form';
 
 import { validateFieldsSignin } from 'src/utils/validation';
 
-import { loginUser } from 'src/services/api/auth';
 import { useAuth } from 'src/context/auth-context';
+import { loginUser, fetchUserData } from 'src/services/api/auth';
 
 import { AlertSnackbar } from 'src/components/common/alert-snackbar';
 
@@ -33,6 +33,8 @@ export default function SignInView() {
 
     const handleSubmit = async () => {
         const errors = validateFieldsSignin(form);
+        console.log(errors);
+
         if (Object.values(errors).some((hasError) => hasError)) {
             setFieldErrors(errors);
             return;
@@ -43,17 +45,15 @@ export default function SignInView() {
 
         try {
             const response = await loginUser(form.email, form.password);
-
+            console.log(response.data.token);
+            const userData = await fetchUserData(response.data.token);
             setSnackbarOpen(true);
             setLoginSuccess(true);
-
             setTimeout(() => {
-                login(response.data.token);
+                login(response.data.token, userData.data);
                 navigate('/');
             }, 1000);
         } catch (err) {
-            console.error('Error during login:', err);
-
             if (axios.isAxiosError(err) && err.response?.data?.error) {
                 setError(err.response.data.error);
             } else {
@@ -69,13 +69,14 @@ export default function SignInView() {
             <SignInForm
                 email={form.email}
                 password={form.password}
+                loginSuccess={loginSuccess}
                 fieldErrors={fieldErrors}
                 loading={loading}
                 error={error}
                 onFieldChange={handleFieldChange}
                 onSubmit={handleSubmit}
                 onSignUp={() => navigate('/sign-up')}
-                loginSuccess={loginSuccess}
+                onForgotPassword={() => navigate('/forgot-password')}
             />
 
             <AlertSnackbar

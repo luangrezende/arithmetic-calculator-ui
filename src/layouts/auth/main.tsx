@@ -6,8 +6,6 @@ import { useTheme } from '@mui/material/styles';
 
 import { layoutClasses } from 'src/layouts/classes';
 
-// ----------------------------------------------------------------------
-
 type MainProps = BoxProps & {
     layoutQuery: Breakpoint;
 };

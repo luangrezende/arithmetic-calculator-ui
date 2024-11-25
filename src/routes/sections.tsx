@@ -1,9 +1,11 @@
 import { lazy, Suspense } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 
+import { CONFIG } from 'src/config-global';
 import { varAlpha } from 'src/theme/styles';
 import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
@@ -14,8 +16,8 @@ import { PrivateRoute } from './components/private-route';
 
 export const HomePage = lazy(() => import('src/pages/home'));
 export const OperationPage = lazy(() => import('src/pages/operation'));
-export const SignUpPage = lazy(() => import('src/pages/sign-up'));
-export const SignInPage = lazy(() => import('src/pages/sign-in'));
+export const SignUpPage = lazy(() => import('src/pages/auth/sign-up-view'));
+export const SignInPage = lazy(() => import('src/pages/auth/sign-in-view'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 
@@ -56,14 +58,20 @@ export function Router() {
             path: 'sign-in',
             element: (
                 <AuthLayout>
+                    <Helmet>
+                        <title>{`Sign in - ${CONFIG.appName}`}</title>
+                    </Helmet>
                     <SignInPage />
                 </AuthLayout>
             ),
         },
         {
-            path: 'sign-up', // Nova rota para o componente de cadastro
+            path: 'sign-up',
             element: (
                 <AuthLayout>
+                    <Helmet>
+                        <title>{`Sign up - ${CONFIG.appName}`}</title>
+                    </Helmet>
                     <SignUpPage />
                 </AuthLayout>
             ),

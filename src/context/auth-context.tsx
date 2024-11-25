@@ -23,14 +23,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem('token');
     };
 
-    // Memoize o valor para evitar recriação desnecessária
     const contextValue = useMemo(
         () => ({
             token,
             login,
             logout,
         }),
-        [token] // Só recria o objeto quando `token` muda
+        [token]
     );
 
     return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;

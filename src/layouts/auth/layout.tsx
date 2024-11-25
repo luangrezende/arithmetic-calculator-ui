@@ -1,9 +1,6 @@
 import type { Theme, SxProps, Breakpoint } from '@mui/material/styles';
 
-import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
-
-import { RouterLink } from 'src/routes/components';
 
 import { stylesMode } from 'src/theme/styles';
 
@@ -12,8 +9,6 @@ import { Logo } from 'src/components/logo';
 import { Main } from './main';
 import { HeaderSection } from '../core/header-section';
 import { LayoutSection } from '../core/layout-section';
-
-// ----------------------------------------------------------------------
 
 export type AuthLayoutProps = {
     sx?: SxProps<Theme>;
@@ -28,9 +23,6 @@ export function AuthLayout({ sx, children, header }: AuthLayoutProps) {
 
     return (
         <LayoutSection
-            /** **************************************
-             * Header
-             *************************************** */
             headerSection={
                 <HeaderSection
                     layoutQuery={layoutQuery}
@@ -53,13 +45,7 @@ export function AuthLayout({ sx, children, header }: AuthLayoutProps) {
                     }}
                 />
             }
-            /** **************************************
-             * Footer
-             *************************************** */
             footerSection={null}
-            /** **************************************
-             * Style
-             *************************************** */
             cssVars={{ '--layout-auth-content-width': '420px' }}
             sx={{
                 '&::before': {

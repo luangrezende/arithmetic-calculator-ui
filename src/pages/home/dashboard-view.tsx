@@ -2,18 +2,16 @@ import { Helmet } from 'react-helmet-async';
 
 import { CONFIG } from 'src/config-global';
 
-import { SignInView } from 'src/sections/auth';
-
-// ----------------------------------------------------------------------
+import { OverviewAnalyticsView } from 'src/sections/overview/view';
 
 export default function Page() {
     return (
         <>
             <Helmet>
-                <title> {`Sign in - ${CONFIG.appName}`}</title>
+                <title> {`Dashboard - ${CONFIG.appName}`}</title>
             </Helmet>
 
-            <SignInView />
+            <OverviewAnalyticsView />
         </>
     );
 }

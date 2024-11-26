@@ -16,7 +16,7 @@ export const loginUser = async (username: string, password: string) =>
         { validateStatus: (status) => status >= 200 && status < 300 }
     );
 
-export const fetchUserData = async (token: string) =>
+export const getUserProfile = async (token: string) =>
     axios.get(
         `${API_URL}/profile`,
         {

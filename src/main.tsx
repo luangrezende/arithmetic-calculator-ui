@@ -6,8 +6,6 @@ import { HelmetProvider } from 'react-helmet-async';
 import App from './app';
 import { AuthProvider } from './context/auth-context';
 
-// ----------------------------------------------------------------------
-
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
 root.render(

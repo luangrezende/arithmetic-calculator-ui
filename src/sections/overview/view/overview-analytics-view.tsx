@@ -17,13 +17,13 @@ export function OverviewAnalyticsView() {
             </Typography>
 
             <Grid container spacing={3}>
-                <Grid xs={12} sm={6} md={4}>
+                <Grid xs={12} sm={6} md={6}>
                     <AnalyticsWidgetSummary
-                        title="New users"
+                        title="Operations"
                         percent={-0.1}
-                        total={1352831}
+                        total={22}
                         color="secondary"
-                        icon={<img alt="icon" src="/assets/icons/glass/ic-glass-users.svg" />}
+                        icon={<img alt="icon" src="/assets/icons/glass/ic-glass-message.svg" />}
                         chart={{
                             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
                             series: [56, 47, 40, 62, 73, 30, 23, 54],
@@ -31,30 +31,16 @@ export function OverviewAnalyticsView() {
                     />
                 </Grid>
 
-                <Grid xs={12} sm={6} md={4}>
+                <Grid xs={12} sm={6} md={6}>
                     <AnalyticsWidgetSummary
-                        title="New users"
+                        title="Credit"
                         percent={-0.1}
-                        total={1352831}
+                        total={250}
                         color="secondary"
-                        icon={<img alt="icon" src="/assets/icons/glass/ic-glass-users.svg" />}
+                        icon={<img alt="icon" src="/assets/icons/glass/ic-glass-bag.svg" />}
                         chart={{
                             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
                             series: [56, 47, 40, 62, 73, 30, 23, 54],
-                        }}
-                    />
-                </Grid>
-
-                <Grid xs={12} sm={6} md={4}>
-                    <AnalyticsWidgetSummary
-                        title="Purchase orders"
-                        percent={2.8}
-                        total={1723315}
-                        color="success"
-                        icon={<img alt="icon" src="/assets/icons/glass/ic-glass-buy.svg" />}
-                        chart={{
-                            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-                            series: [40, 70, 50, 28, 70, 75, 7, 64],
                         }}
                     />
                 </Grid>

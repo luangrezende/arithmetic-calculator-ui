@@ -13,16 +13,6 @@ export const navData = [
     {
         title: 'Operations',
         path: '/operation',
-        icon: icon('ic-analytics'),
-    },
-    {
-        title: 'Sign in',
-        path: '/sign-in',
-        icon: icon('ic-lock'),
-    },
-    {
-        title: 'Not found',
-        path: '/404',
-        icon: icon('ic-disabled'),
+        icon: icon('ic-cart'),
     },
 ];

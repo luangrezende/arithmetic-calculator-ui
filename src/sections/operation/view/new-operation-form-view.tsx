@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Box, Typography, Button, TextField, MenuItem, Alert } from '@mui/material';
+
+import { Box, Alert, Button, MenuItem, TextField } from '@mui/material';
 
 const operations = [
     { value: 'addition', label: 'Addition', cost: 10 },
@@ -17,7 +18,7 @@ export function NewOperationForm({ onClose }: { onClose: () => void }) {
     const [result, setResult] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [fieldError, setFieldError] = useState<{ value1?: string; value2?: string }>({});
-    const [credit, setCredit] = useState(100); // Saldo inicial do usuário
+    const [credit, setCredit] = useState(0);
 
     const validateFields = () => {
         const errors: { value1?: string; value2?: string } = {};
@@ -49,7 +50,6 @@ export function NewOperationForm({ onClose }: { onClose: () => void }) {
 
             const operationCost = operations.find((op) => op.value === operationType)?.cost || 0;
 
-            // Verifica saldo antes de subtrair
             if (credit < operationCost) {
                 setErrorMessage('Insufficient credit for this operation');
                 return;
@@ -71,8 +71,7 @@ export function NewOperationForm({ onClose }: { onClose: () => void }) {
             const data = await response.json();
             setResult(data.result);
 
-            // Subtraindo o custo da operação do saldo
-            setCredit((prev) => Math.max(prev - operationCost, 0)); // Garante que o saldo não fique negativo
+            setCredit((prev) => Math.max(prev - operationCost, 0));
         } catch (error: any) {
             setErrorMessage(error.message || 'Failed to perform operation');
         }
@@ -89,12 +88,6 @@ export function NewOperationForm({ onClose }: { onClose: () => void }) {
                 handleSubmit();
             }}
         >
-            {/* Exibição do saldo */}
-            <Typography variant="h6">
-                Credit:{' '}
-                <span style={{ color: credit > 0 ? 'green' : 'red' }}>${credit.toFixed(2)}</span>
-            </Typography>
-
             <TextField
                 select
                 label="Operation"

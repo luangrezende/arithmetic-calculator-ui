@@ -7,32 +7,22 @@ import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Popover from '@mui/material/Popover';
 import Divider from '@mui/material/Divider';
-import MenuList from '@mui/material/MenuList';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
-import { useRouter, usePathname } from 'src/routes/hooks';
+import { useRouter } from 'src/routes/hooks';
+
+import { useLocalUser } from 'src/hooks/use-local-user';
 
 import { _myAccount } from 'src/_mock';
 import { useAuth } from 'src/context/auth-context';
-import { useLocalUser } from 'src/hooks/use-local-user';
 
-export type AccountPopoverProps = IconButtonProps & {
-    data?: {
-        label: string;
-        href: string;
-        icon?: React.ReactNode;
-        info?: React.ReactNode;
-    }[];
-};
+export type AccountPopoverProps = IconButtonProps & {};
 
-export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps) {
+export function AccountPopover({ sx, ...other }: AccountPopoverProps) {
     const localUser = useLocalUser();
     const { logout } = useAuth();
     const router = useRouter();
-
-    const pathname = usePathname();
 
     const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
@@ -43,14 +33,6 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
     const handleClosePopover = useCallback(() => {
         setOpenPopover(null);
     }, []);
-
-    const handleClickItem = useCallback(
-        (path: string) => {
-            handleClosePopover();
-            router.push(path);
-        },
-        [handleClosePopover, router]
-    );
 
     const handleLogout = useCallback(() => {
         logout();
@@ -99,44 +81,11 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
                     </Typography>
 
                     <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-                        {localUser?.email}
+                        {localUser?.username}
                     </Typography>
                 </Box>
 
                 <Divider sx={{ borderStyle: 'dashed' }} />
-
-                <MenuList
-                    disablePadding
-                    sx={{
-                        p: 1,
-                        gap: 0.5,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        [`& .${menuItemClasses.root}`]: {
-                            px: 1,
-                            gap: 2,
-                            borderRadius: 0.75,
-                            color: 'text.secondary',
-                            '&:hover': { color: 'text.primary' },
-                            [`&.${menuItemClasses.selected}`]: {
-                                color: 'text.primary',
-                                bgcolor: 'action.selected',
-                                fontWeight: 'fontWeightSemiBold',
-                            },
-                        },
-                    }}
-                >
-                    {data.map((option) => (
-                        <MenuItem
-                            key={option.label}
-                            selected={option.href === pathname}
-                            onClick={() => handleClickItem(option.href)}
-                        >
-                            {option.icon}
-                            {option.label}
-                        </MenuItem>
-                    ))}
-                </MenuList>
 
                 <Divider sx={{ borderStyle: 'dashed' }} />
 

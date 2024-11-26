@@ -1,6 +1,6 @@
 export interface BankAccount {
     id: string;
-    accountType: 'personal' | 'business';
+    accountType: string;
     balance: number;
     currency: string;
 }

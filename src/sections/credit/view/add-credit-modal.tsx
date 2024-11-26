@@ -54,7 +54,7 @@ export function AddCreditModal({ open, onClose, onAddCredit }: any) {
 
             // Faz a chamada à API para adicionar crédito
             const response = await axios.post(
-                'https://hw830ty0zi.execute-api.us-east-1.amazonaws.com/develop/user/account/add-balance',
+                'https://hw830ty0zi.execute-api.us-east-1.amazonaws.com/develop/v1/user/account/add-balance',
                 {
                     accountId: bankAccount.id,
                     amount,

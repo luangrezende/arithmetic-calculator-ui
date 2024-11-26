@@ -45,8 +45,8 @@ export default function SignInView() {
 
         try {
             const response = await loginUser(form.email, form.password);
-            console.log(response.data.token);
             const userData = await fetchUserData(response.data.token);
+
             setSnackbarOpen(true);
             setLoginSuccess(true);
             setTimeout(() => {

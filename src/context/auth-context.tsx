@@ -23,9 +23,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
     const [user, setUser] = useState<User | null>(null);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const login = (newToken: string, userData: User) => {
         setToken(newToken);
         setUser(userData);
+        console.log(user);
         localStorage.setItem('token', newToken);
         localStorage.setItem('user', JSON.stringify(userData));
     };
@@ -51,7 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             login,
             logout,
         }),
-        [token, user]
+        [login, token, user]
     );
 
     return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;

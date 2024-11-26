@@ -16,6 +16,7 @@ import { useRouter, usePathname } from 'src/routes/hooks';
 
 import { _myAccount } from 'src/_mock';
 import { useAuth } from 'src/context/auth-context';
+import { useLocalUser } from 'src/hooks/use-local-user';
 
 export type AccountPopoverProps = IconButtonProps & {
     data?: {
@@ -27,6 +28,7 @@ export type AccountPopoverProps = IconButtonProps & {
 };
 
 export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps) {
+    const localUser = useLocalUser();
     const { logout } = useAuth();
     const router = useRouter();
 
@@ -72,10 +74,10 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
             >
                 <Avatar
                     src={_myAccount.photoURL}
-                    alt={_myAccount.displayName}
+                    alt={localUser?.name}
                     sx={{ width: 1, height: 1 }}
                 >
-                    {_myAccount.displayName.charAt(0).toUpperCase()}
+                    {localUser?.name.charAt(0).toUpperCase()}
                 </Avatar>
             </IconButton>
 
@@ -93,11 +95,11 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
             >
                 <Box sx={{ p: 2, pb: 1.5 }}>
                     <Typography variant="subtitle2" noWrap>
-                        {_myAccount?.displayName}
+                        {localUser?.name}
                     </Typography>
 
                     <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-                        {_myAccount?.email}
+                        {localUser?.email}
                     </Typography>
                 </Box>
 

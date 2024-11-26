@@ -1,17 +1,19 @@
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 
+import { useLocalUser } from 'src/hooks/use-local-user';
+
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { AnalyticsWidgetSummary } from '../analytics-widget-summary';
 
-// ----------------------------------------------------------------------
-
 export function OverviewAnalyticsView() {
+    const user = useLocalUser();
+
     return (
         <DashboardContent maxWidth="xl">
             <Typography variant="h4" sx={{ mb: { xs: 3, md: 5 } }}>
-                Hi, USER_NAME 👋
+                Hi, {user?.name || 'Guest'} 👋
             </Typography>
 
             <Grid container spacing={3}>

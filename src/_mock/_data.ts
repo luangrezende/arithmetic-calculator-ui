@@ -1,8 +1,6 @@
 import { _id, _times, _fullName } from "./_mock";
 
 export const _myAccount = {
-  displayName: 'USER_NAME',
-  email: 'USER_EMAIL',
   photoURL: '/assets/images/avatar/avatar-default.webp',
 };
 

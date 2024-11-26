@@ -36,8 +36,8 @@ export default function SignUpView() {
 
             setTimeout(() => navigate('/sign-in'), 2000);
         } catch (err) {
-            if (axios.isAxiosError(err) && err.response?.data?.error) {
-                setError(err.response.data.error);
+            if (axios.isAxiosError(err) && err.response?.data?.data?.error) {
+                setError(err.response.data.data.error);
             } else {
                 setError('An unexpected error occurred. Please try again.');
             }

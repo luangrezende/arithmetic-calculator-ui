@@ -45,6 +45,10 @@ export function Router() {
                 </AuthLayout>
             ),
         },
+        {
+            path: '/404',
+            element: <Page404 />,
+        },
     ];
 
     const privateRoutes = [

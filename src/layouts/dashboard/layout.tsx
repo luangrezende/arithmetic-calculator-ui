@@ -3,13 +3,11 @@ import type { Theme, SxProps, Breakpoint } from '@mui/material/styles';
 import { useState } from 'react';
 
 import Box from '@mui/material/Box';
-import Alert from '@mui/material/Alert';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import { _notifications } from 'src/_mock';
-
-import { Iconify } from 'src/components/iconify';
+import { useAuth } from 'src/context/auth-context';
 
 import { AddCreditModal } from 'src/sections/credit/view/add-credit-modal';
 
@@ -17,7 +15,6 @@ import { Main } from './main';
 import { layoutClasses } from '../classes';
 import { NavMobile, NavDesktop } from './nav';
 import { navData } from '../config-nav-dashboard';
-import { _workspaces } from '../config-nav-workspace';
 import { MenuButton } from '../components/menu-button';
 import { LayoutSection } from '../core/layout-section';
 import { HeaderSection } from '../core/header-section';
@@ -34,9 +31,9 @@ export type DashboardLayoutProps = {
 
 export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) {
     const theme = useTheme();
+    const { bankAccount } = useAuth();
 
     const [navOpen, setNavOpen] = useState(false);
-    const [credit, setCredit] = useState(100); // Saldo inicial
     const [openModal, setOpenModal] = useState(false);
 
     const layoutQuery: Breakpoint = 'lg';
@@ -44,9 +41,7 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
     const handleOpenModal = () => setOpenModal(true);
     const handleCloseModal = () => setOpenModal(false);
 
-    const handleAddCredit = (amount: number) => {
-        setCredit((prev) => prev + amount);
-    };
+    const handleAddCredit = (amount: number) => {};
 
     return (
         <LayoutSection
@@ -61,11 +56,6 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
                     }}
                     sx={header?.sx}
                     slots={{
-                        topArea: (
-                            <Alert severity="info" sx={{ display: 'none', borderRadius: 0 }}>
-                                This is an info Alert.
-                            </Alert>
-                        ),
                         leftArea: (
                             <>
                                 <MenuButton
@@ -79,70 +69,65 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
                                     data={navData}
                                     open={navOpen}
                                     onClose={() => setNavOpen(false)}
-                                    workspaces={_workspaces}
                                 />
                             </>
                         ),
                         rightArea: (
                             <Box gap={2} display="flex" alignItems="center">
-                                {/* Exibição do saldo com clique para abrir o modal */}
-                                <Box
-                                    display="flex"
-                                    alignItems="center"
-                                    sx={{
-                                        px: 2,
-                                        py: 1,
-                                        borderRadius: 1,
-                                        bgcolor: credit > 0 ? 'success.light' : 'error.light',
-                                        cursor: 'pointer',
-                                    }}
-                                    onClick={handleOpenModal}
-                                >
+                                <Box display="flex" alignItems="center" gap={1}>
                                     <Typography
                                         variant="body1"
-                                        fontWeight="bold"
+                                        fontWeight="medium"
                                         sx={{
-                                            color: credit > 0 ? 'green' : 'red',
+                                            color: 'text.secondary',
                                         }}
                                     >
-                                        Credit: ${credit.toFixed(2)}
+                                        Credit:
                                     </Typography>
+
+                                    <Box
+                                        display="flex"
+                                        alignItems="center"
+                                        justifyContent="center"
+                                        sx={{
+                                            px: 2,
+                                            py: 1,
+                                            borderRadius: 1,
+                                            bgcolor:
+                                                bankAccount?.balance || -1 > 0
+                                                    ? 'success.light'
+                                                    : 'error.light',
+                                            cursor: 'pointer',
+                                            boxShadow: 1,
+                                            '&:hover': {
+                                                boxShadow: 3,
+                                            },
+                                        }}
+                                        onClick={handleOpenModal}
+                                    >
+                                        <Typography
+                                            variant="h6"
+                                            fontWeight="bold"
+                                            sx={{
+                                                color:
+                                                    bankAccount?.balance || -1 > 0
+                                                        ? 'success.dark'
+                                                        : 'error.dark',
+                                            }}
+                                        >
+                                            ${bankAccount?.balance.toFixed(2)}
+                                        </Typography>
+                                    </Box>
                                 </Box>
 
-                                {/* Ícones de notificações e perfil */}
                                 <NotificationsPopover data={_notifications} />
-                                <AccountPopover
-                                    data={[
-                                        {
-                                            label: 'Home',
-                                            href: '/',
-                                            icon: (
-                                                <Iconify
-                                                    width={22}
-                                                    icon="solar:home-angle-bold-duotone"
-                                                />
-                                            ),
-                                        },
-                                        {
-                                            label: 'Profile',
-                                            href: '#',
-                                            icon: (
-                                                <Iconify
-                                                    width={22}
-                                                    icon="solar:shield-keyhole-bold-duotone"
-                                                />
-                                            ),
-                                        },
-                                    ]}
-                                />
+                                <AccountPopover />
                             </Box>
                         ),
                     }}
                 />
             }
-            sidebarSection={
-                <NavDesktop data={navData} layoutQuery={layoutQuery} workspaces={_workspaces} />
-            }
+            sidebarSection={<NavDesktop data={navData} layoutQuery={layoutQuery} />}
             footerSection={null}
             cssVars={{
                 '--layout-nav-vertical-width': '300px',
@@ -161,7 +146,6 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
         >
             <Main>{children}</Main>
 
-            {/* Modal para adicionar saldo */}
             <AddCreditModal
                 open={openModal}
                 onClose={handleCloseModal}

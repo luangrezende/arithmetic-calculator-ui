@@ -6,7 +6,7 @@ import { SignUpForm } from 'src/routes/components/forms/sign-up/sign-up-form';
 
 import { useSignUpForm } from 'src/hooks/use-signup-form';
 
-import { registerUser } from 'src/services/api/auth';
+import { registerUser } from 'src/services/api/auth-service';
 
 import { AlertSnackbar } from 'src/components/common/alert-snackbar';
 
@@ -33,14 +33,9 @@ export default function SignUpView() {
 
             setSnackbarOpen(true);
             setRegisterSuccess(true);
-
             setTimeout(() => navigate('/sign-in'), 2000);
         } catch (err) {
-            if (axios.isAxiosError(err) && err.response?.data?.data?.error) {
-                setError(err.response.data.data.error);
-            } else {
-                setError('An unexpected error occurred. Please try again.');
-            }
+            setError(err || 'An unexpected error occurred. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -65,7 +60,7 @@ export default function SignUpView() {
 
             <AlertSnackbar
                 open={snackbarOpen}
-                message="Account created successfully. Redirecting..."
+                message="Account created successfully. Redirecting to login page..."
                 onClose={() => setSnackbarOpen(false)}
                 severity="success"
             />

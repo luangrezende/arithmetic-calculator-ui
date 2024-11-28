@@ -16,7 +16,7 @@ export function ForgotPasswordButtons({ onCancel, onSubmit, loading }: ForgotPas
                 color="inherit"
                 variant="outlined"
                 onClick={onCancel}
-                loading={loading}
+                loading={false}
                 disabled={loading}
             >
                 Cancel

@@ -16,9 +16,7 @@ export default function ForgotPasswordView() {
             setError(null);
             setTimeout(() => navigate('/sign-in'), 2000);
         } catch (err) {
-            setError('Failed to send password recovery email. Please try again.');
-        } finally {
-            setLoading(false);
+            setError(err || 'An unexpected error occurred. Please try again.');
         }
     };
 

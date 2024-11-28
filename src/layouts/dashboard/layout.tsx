@@ -1,13 +1,16 @@
 import type { Theme, SxProps, Breakpoint } from '@mui/material/styles';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
+import { CircularProgress } from '@mui/material';
 import Typography from '@mui/material/Typography';
 
+import { getProfileBankAccount } from 'src/utils/profile-manager';
+
 import { _notifications } from 'src/_mock';
-import { useAuth } from 'src/context/auth-context';
+import { useAuthContext } from 'src/context/auth-context';
 
 import { AddCreditModal } from 'src/sections/credit/view/add-credit-modal';
 
@@ -31,7 +34,8 @@ export type DashboardLayoutProps = {
 
 export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) {
     const theme = useTheme();
-    const { bankAccount } = useAuth();
+    const bankAccount = getProfileBankAccount();
+    const { isBalanceLoaded, isLoaded } = useAuthContext();
 
     const [navOpen, setNavOpen] = useState(false);
     const [openModal, setOpenModal] = useState(false);
@@ -42,6 +46,10 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
     const handleCloseModal = () => setOpenModal(false);
 
     const handleAddCredit = (amount: number) => {};
+
+    useEffect(() => {
+        isLoaded();
+    });
 
     return (
         <LayoutSection
@@ -93,33 +101,37 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
                                             px: 2,
                                             py: 1,
                                             borderRadius: 1,
-                                            bgcolor:
-                                                bankAccount?.balance || -1 > 0
-                                                    ? 'success.light'
-                                                    : 'error.light',
-                                            cursor: 'pointer',
+                                            bgcolor: isBalanceLoaded
+                                                ? bankAccount?.balance || -1 > 0
+                                                    ? 'success.light' // Verde claro para saldo positivo
+                                                    : 'grey.300' // Cinza para saldo negativo ou inexistente
+                                                : 'grey.300', // Cinza enquanto carrega
+                                            cursor: isBalanceLoaded ? 'pointer' : 'default',
                                             boxShadow: 1,
                                             '&:hover': {
-                                                boxShadow: 3,
+                                                boxShadow: isBalanceLoaded ? 3 : 1, // Hover apenas se carregado
                                             },
                                         }}
-                                        onClick={handleOpenModal}
+                                        onClick={isBalanceLoaded ? handleOpenModal : undefined} // Evita cliques enquanto carrega
                                     >
-                                        <Typography
-                                            variant="h6"
-                                            fontWeight="bold"
-                                            sx={{
-                                                color:
-                                                    bankAccount?.balance || -1 > 0
-                                                        ? 'success.dark'
-                                                        : 'error.dark',
-                                            }}
-                                        >
-                                            ${bankAccount?.balance.toFixed(2)}
-                                        </Typography>
+                                        {isBalanceLoaded ? (
+                                            <Typography
+                                                variant="h6"
+                                                fontWeight="bold"
+                                                sx={{
+                                                    color:
+                                                        bankAccount?.balance || -1 > 0
+                                                            ? 'success.dark' // Verde escuro para saldo positivo
+                                                            : 'text.secondary', // Cinza para saldo negativo ou inexistente
+                                                }}
+                                            >
+                                                ${bankAccount?.balance.toFixed(2)}
+                                            </Typography>
+                                        ) : (
+                                            <CircularProgress size={24} color="inherit" /> // Spinner enquanto carrega
+                                        )}
                                     </Box>
                                 </Box>
-
                                 <NotificationsPopover data={_notifications} />
                                 <AccountPopover />
                             </Box>

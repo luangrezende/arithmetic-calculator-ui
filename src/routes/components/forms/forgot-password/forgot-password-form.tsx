@@ -35,6 +35,7 @@ export function ForgotPasswordForm({
             setFieldError(true);
             return;
         }
+
         setFieldError(false);
         setSnackbarOpen(true);
 

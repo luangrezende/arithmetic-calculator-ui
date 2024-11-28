@@ -10,20 +10,16 @@ import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
-import { useRouter } from 'src/routes/hooks';
-
 import { useLocalUser } from 'src/hooks/use-local-user';
 
+import { logoutUser } from 'src/utils/auth-manager';
+
 import { _myAccount } from 'src/_mock';
-import { useAuth } from 'src/context/auth-context';
 
 export type AccountPopoverProps = IconButtonProps & {};
 
 export function AccountPopover({ sx, ...other }: AccountPopoverProps) {
-    const localUser = useLocalUser();
-    const { logout } = useAuth();
-    const router = useRouter();
-
+    const user = useLocalUser();
     const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
     const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
@@ -35,10 +31,8 @@ export function AccountPopover({ sx, ...other }: AccountPopoverProps) {
     }, []);
 
     const handleLogout = useCallback(() => {
-        logout();
-
-        router.push('/sign-in');
-    }, [logout, router]);
+        logoutUser();
+    }, []);
 
     return (
         <>
@@ -54,12 +48,8 @@ export function AccountPopover({ sx, ...other }: AccountPopoverProps) {
                 }}
                 {...other}
             >
-                <Avatar
-                    src={_myAccount.photoURL}
-                    alt={localUser?.name}
-                    sx={{ width: 1, height: 1 }}
-                >
-                    {localUser?.name.charAt(0).toUpperCase()}
+                <Avatar src={_myAccount.photoURL} alt={user?.name} sx={{ width: 1, height: 1 }}>
+                    {user?.name.charAt(0).toUpperCase()}
                 </Avatar>
             </IconButton>
 
@@ -77,11 +67,11 @@ export function AccountPopover({ sx, ...other }: AccountPopoverProps) {
             >
                 <Box sx={{ p: 2, pb: 1.5 }}>
                     <Typography variant="subtitle2" noWrap>
-                        {localUser?.name}
+                        {user?.name}
                     </Typography>
 
                     <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-                        {localUser?.username}
+                        {user?.username}
                     </Typography>
                 </Box>
 

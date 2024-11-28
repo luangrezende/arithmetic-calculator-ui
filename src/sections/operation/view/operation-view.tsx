@@ -2,21 +2,22 @@ import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
+import Fade from '@mui/material/Fade';
 import Table from '@mui/material/Table';
+import Modal from '@mui/material/Modal';
+import Button from '@mui/material/Button';
+import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import Typography from '@mui/material/Typography';
+import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
-import Modal from '@mui/material/Modal';
-import Fade from '@mui/material/Fade';
-import Backdrop from '@mui/material/Backdrop';
 
 import { DashboardContent } from 'src/layouts/dashboard';
+
 import { Iconify } from 'src/components/iconify';
+
 import { NewOperationForm } from './new-operation-form-view';
 
 const modalStyle = {
@@ -29,6 +30,7 @@ const modalStyle = {
     boxShadow: 24,
     p: 4,
     borderRadius: 2,
+    outline: 'none',
 };
 
 const getTimeAgo = (minutes: number) =>
@@ -159,15 +161,7 @@ export function OperationView() {
                 />
             </Card>
 
-            <Modal
-                open={openModal}
-                onClose={handleCloseModal}
-                closeAfterTransition
-                BackdropComponent={Backdrop}
-                BackdropProps={{
-                    timeout: 500,
-                }}
-            >
+            <Modal open={openModal} onClose={handleCloseModal} closeAfterTransition>
                 <Fade in={openModal}>
                     <Box sx={modalStyle}>
                         <Typography variant="h6" component="h2" mb={2}>

@@ -1,4 +1,4 @@
-import type { ColorSystemOptions } from '@mui/material/styles';
+import type { ColorSystemOptions, SimplePaletteColorOptions } from '@mui/material/styles';
 
 import COLORS from './colors.json';
 import { varAlpha, createPaletteChannel } from '../styles';
@@ -16,12 +16,6 @@ declare module '@mui/material/styles/createPalette' {
     interface TypeBackground {
         neutral: string;
         neutralChannel: string;
-    }
-    interface SimplePaletteColorOptions {
-        lighter: string;
-        darker: string;
-        lighterChannel: string;
-        darkerChannel: string;
     }
     interface PaletteColor {
         lighter: string;
@@ -113,9 +107,9 @@ export const action = {
     light: { ...baseAction, active: grey[600] },
 };
 
-/*
- * Base palette
- */
+// ----------------------------------------------------------------------
+
+// Base palette
 export const basePalette = {
     primary,
     secondary,
@@ -138,6 +132,32 @@ export const lightPalette = {
 
 // ----------------------------------------------------------------------
 
-export const colorSchemes: Partial<Record<'light', ColorSystemOptions>> = {
+// Color Schemes
+export const colorSchemes: Partial<Record<'light' | 'dark', ColorSystemOptions>> = {
     light: { palette: lightPalette },
+    dark: {
+        palette: {
+            mode: 'dark',
+            primary: {
+                main: '#90caf9',
+                light: '#e3f2fd',
+                dark: '#42a5f5',
+                contrastText: '#ffffff',
+            } as SimplePaletteColorOptions,
+            secondary: {
+                main: '#f48fb1',
+                light: '#f8bbd0',
+                dark: '#c2185b',
+                contrastText: '#000000',
+            } as SimplePaletteColorOptions,
+            background: {
+                default: '#121212',
+                paper: '#1e1e1e',
+            },
+            text: {
+                primary: '#ffffff',
+                secondary: '#b0b0b0',
+            },
+        },
+    },
 };

@@ -23,11 +23,9 @@ const modalStyle = {
 };
 
 export function AddCreditModal({ open, onClose, onAddCredit }: any) {
-    const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [addAmount, setAddAmount] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [validationError, setValidationError] = useState<string | null>(null);
-    const [apiError, setApiError] = useState<string | null>(null);
     const [snackbar, setSnackbar] = useState<{
         open: boolean;
         message: string;
@@ -40,49 +38,65 @@ export function AddCreditModal({ open, onClose, onAddCredit }: any) {
 
     const bankAccount = getProfileBankAccount();
 
-    const handleAddCredit = async () => {
-        const amount = parseFloat(addAmount);
+    const formatCurrency = (value: string) => {
+        const numericValue = value.replace(/[^\d]/g, ''); // Remove caracteres não numéricos
+        const number = parseFloat(numericValue) / 100; // Converte para centavos
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+        }).format(number || 0);
+    };
 
-        // eslint-disable-next-line no-restricted-globals
-        if (isNaN(amount) || amount <= 0 || amount > 300) {
+    const handleAddAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const input = e.target.value;
+        setAddAmount(formatCurrency(input));
+    };
+
+    const handleCloseModal = () => {
+        setAddAmount('');
+        onClose();
+    };
+
+    const handleAddCredit = async () => {
+        const amount = parseFloat(addAmount.replace(/[^0-9.-]+/g, '')); // Remove formatação
+
+        // Validação do valor inserido
+        if (Number.isNaN(amount) || amount <= 0 || amount > 300) {
             setValidationError(
                 amount > 300
                     ? 'The maximum amount you can add is $300.'
                     : 'Please enter a valid amount greater than $0.'
             );
-            setApiError(null);
             return;
         }
 
         if (!bankAccount?.id) {
             setValidationError('No account selected. Please select an account first.');
-            setApiError(null);
             return;
         }
 
         setIsLoading(true);
+        setValidationError(null);
 
         try {
-            const response = await addBalance(amount, bankAccount?.id);
+            const response = await addBalance(amount, bankAccount.id);
 
             if (response.statusCode === 200) {
                 const profileResponse = await getUserProfile();
                 saveProfile(profileResponse.data);
 
                 setAddAmount('');
-                setValidationError(null);
-                setApiError(null);
                 onAddCredit(amount);
                 onClose();
 
-                // Mostrar Snackbar de sucesso
+                // Snackbar de sucesso
                 setSnackbar({
                     open: true,
                     message: 'Credit added successfully!',
                     severity: 'success',
                 });
             } else {
-                setApiError('Failed to add balance. Please try again.');
+                // Snackbar de erro
                 setSnackbar({
                     open: true,
                     message: 'Failed to add balance. Please try again.',
@@ -97,9 +111,12 @@ export function AddCreditModal({ open, onClose, onAddCredit }: any) {
                 severity: 'error',
             });
         } finally {
-            setSnackbarOpen(true);
             setIsLoading(false);
         }
+    };
+
+    const handleSnackbarClose = () => {
+        setSnackbar((prev) => ({ ...prev, open: false }));
     };
 
     return (
@@ -108,7 +125,7 @@ export function AddCreditModal({ open, onClose, onAddCredit }: any) {
                 <Fade in={open}>
                     <Box sx={modalStyle}>
                         <Typography variant="h6" mb={2}>
-                            Add credit
+                            Add Credit
                         </Typography>
 
                         <TextField
@@ -140,27 +157,21 @@ export function AddCreditModal({ open, onClose, onAddCredit }: any) {
 
                         <TextField
                             fullWidth
-                            type="number"
+                            type="text"
                             label="Amount"
                             value={addAmount}
-                            onChange={(e) => setAddAmount(e.target.value)}
+                            onChange={handleAddAmountChange}
                             sx={{ mt: 2 }}
                             error={!!validationError}
                             helperText={validationError}
                         />
 
-                        {apiError && (
-                            <Typography
-                                variant="body2"
-                                color="error"
-                                sx={{ mt: 1, textAlign: 'left' }}
-                            >
-                                {apiError}
-                            </Typography>
-                        )}
-
                         <Box display="flex" justifyContent="flex-end" gap={2} sx={{ mt: 2 }}>
-                            <Button onClick={onClose} variant="outlined" disabled={isLoading}>
+                            <Button
+                                onClick={handleCloseModal}
+                                variant="outlined"
+                                disabled={isLoading}
+                            >
                                 Cancel
                             </Button>
                             <Button
@@ -177,9 +188,9 @@ export function AddCreditModal({ open, onClose, onAddCredit }: any) {
             </Modal>
 
             <AlertSnackbar
-                open={snackbarOpen}
+                open={snackbar.open}
                 message={snackbar.message}
-                onClose={() => setSnackbarOpen(false)}
+                onClose={handleSnackbarClose}
                 severity={snackbar.severity}
             />
         </>

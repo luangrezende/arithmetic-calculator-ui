@@ -22,7 +22,7 @@ export function OverviewAnalyticsView() {
                         title="Operations"
                         percent={-0.1}
                         total={22}
-                        color="secondary"
+                        color="primary"
                         icon={<img alt="icon" src="/assets/icons/glass/ic-glass-message.svg" />}
                         chart={{
                             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
@@ -35,8 +35,8 @@ export function OverviewAnalyticsView() {
                     <AnalyticsWidgetSummary
                         title="Credit"
                         percent={-0.1}
-                        total={250}
-                        color="secondary"
+                        total={25054}
+                        color="primary"
                         icon={<img alt="icon" src="/assets/icons/glass/ic-glass-bag.svg" />}
                         chart={{
                             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],

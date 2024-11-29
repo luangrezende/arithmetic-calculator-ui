@@ -1,12 +1,12 @@
 import { Box } from '@mui/material';
 
-import { LoadingButton } from 'src/components/common/loading-button';
+import { LoadingButton } from 'src/components/button/loading-button';
 
-import { AuthTitle } from '../../auth/auth-title';
-import { ErrorMessage } from '../../common/error-message';
-import { AuthFormLayout } from '../../common/auth-form-layout';
-import { InputFieldForm } from '../../common/input-field-form';
-import { ForgotPasswordLink } from '../../auth/forgot-password-link';
+import { AuthTitle } from '../shared/title';
+import { InputFieldForm } from '../shared/input-field';
+import { ErrorMessage } from '../shared/error-message';
+import { AuthFormLayout } from '../shared/auth-form-layout';
+import { ForgotPasswordLink } from './forgot-password-link';
 
 export interface SignInFormProps {
     email: string;

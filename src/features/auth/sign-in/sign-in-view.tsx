@@ -1,15 +1,14 @@
-import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import { SignInForm } from 'src/routes/components/forms/sign-in/sign-in-form';
 
 import { getTokens } from 'src/utils/auth-manager';
 import { validateFieldsSignin } from 'src/utils/validation';
 
 import { loginUser } from 'src/services/api/auth-service';
 
-export default function SignInView() {
+import { SignInForm } from './sign-in-form';
+
+export function SignInView() {
     const navigate = useNavigate();
     const login = loginUser();
     const { token } = getTokens();
@@ -37,10 +36,9 @@ export default function SignInView() {
             return;
         }
 
-        setLoading(true);
-        setError(null);
-
         try {
+            setLoading(true);
+            setError(null);
             await login(form.email, form.password);
             setLoginSuccess(true);
         } catch (err) {

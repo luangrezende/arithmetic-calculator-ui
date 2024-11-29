@@ -1,27 +1,34 @@
 import { Box } from '@mui/material';
 
-import { LoadingButton } from 'src/components/common/loading-button';
+import { LoadingButton } from 'src/components/button/loading-button';
 
-export interface ForgotPasswordButtonsProps {
-    onCancel: () => void;
+interface FormButtonsProps {
     onSubmit: () => void;
+    onCancel: () => void;
     loading: boolean;
+    submitLabel?: string;
+    cancelLabel?: string;
 }
 
-export function ForgotPasswordButtons({ onCancel, onSubmit, loading }: ForgotPasswordButtonsProps) {
+export function FormButtons({
+    onSubmit,
+    onCancel,
+    loading,
+    submitLabel = 'Submit',
+    cancelLabel = 'Cancel',
+}: FormButtonsProps) {
     return (
-        <Box display="flex" justifyContent="space-between" width="100%">
+        <Box display="flex" justifyContent="space-between" mt={2} width="100%">
             <LoadingButton
                 size="large"
                 color="inherit"
                 variant="outlined"
                 onClick={onCancel}
-                loading={false}
+                loading={loading}
                 disabled={loading}
             >
-                Cancel
+                {cancelLabel}
             </LoadingButton>
-
             <LoadingButton
                 size="large"
                 color="inherit"
@@ -30,7 +37,7 @@ export function ForgotPasswordButtons({ onCancel, onSubmit, loading }: ForgotPas
                 loading={loading}
                 disabled={loading}
             >
-                Submit
+                {submitLabel}
             </LoadingButton>
         </Box>
     );

@@ -1,14 +1,13 @@
-import axios from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import { SignUpForm } from 'src/routes/components/forms/sign-up/sign-up-form';
 
 import { useSignUpForm } from 'src/hooks/use-signup-form';
 
 import { registerUser } from 'src/services/api/auth-service';
 
 import { AlertSnackbar } from 'src/components/common/alert-snackbar';
+
+import { SignUpForm } from './sign-up-form';
 
 export default function SignUpView() {
     const navigate = useNavigate();

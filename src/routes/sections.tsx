@@ -9,12 +9,20 @@ import { PrivateRoute } from 'src/components/private-route/private-route';
 
 import { HelmetTitle } from './helmet-title';
 
-export const HomePage = lazy(() => import('src/pages/home/dashboard-view'));
-export const OperationPage = lazy(() => import('src/pages/operation'));
-export const SignUpPage = lazy(() => import('src/pages/auth/sign-up-view'));
-export const SignInPage = lazy(() => import('src/pages/auth/sign-in-view'));
-export const ForgotPasswordPage = lazy(() => import('src/pages/auth/forgot-password-view'));
-export const Page404 = lazy(() => import('src/pages/page-not-found'));
+const HomePage = lazy(() => import('src/pages/home/dashboard-view'));
+const OperationPage = lazy(() => import('src/pages/operation'));
+const SignUpPage = lazy(() => import('src/features/auth/sign-up'));
+const SignInPage = lazy(() => import('src/features/auth/sign-in'));
+const ForgotPasswordPage = lazy(
+    () => import('src/features/auth/forgot-password/forgot-password-view')
+);
+const Page404 = lazy(() => import('src/pages/page-not-found'));
+
+const withSuspense = (Component: React.ComponentType) => (
+    <Suspense fallback={<FallbackLoader />}>
+        <Component />
+    </Suspense>
+);
 
 export function Router() {
     const publicRoutes = [
@@ -23,7 +31,7 @@ export function Router() {
             element: (
                 <AuthLayout>
                     <HelmetTitle title="Sign in" />
-                    <SignInPage />
+                    {withSuspense(SignInPage)}
                 </AuthLayout>
             ),
         },
@@ -32,7 +40,7 @@ export function Router() {
             element: (
                 <AuthLayout>
                     <HelmetTitle title="Sign up" />
-                    <SignUpPage />
+                    {withSuspense(SignUpPage)}
                 </AuthLayout>
             ),
         },
@@ -41,13 +49,13 @@ export function Router() {
             element: (
                 <AuthLayout>
                     <HelmetTitle title="Forgot password" />
-                    <ForgotPasswordPage />
+                    {withSuspense(ForgotPasswordPage)}
                 </AuthLayout>
             ),
         },
         {
             path: '/404',
-            element: <Page404 />,
+            element: withSuspense(Page404),
         },
     ];
 
@@ -63,8 +71,8 @@ export function Router() {
                 </PrivateRoute>
             ),
             children: [
-                { element: <HomePage />, index: true },
-                { path: 'operation', element: <OperationPage /> },
+                { element: withSuspense(HomePage), index: true },
+                { path: 'operation', element: withSuspense(OperationPage) },
             ],
         },
     ];

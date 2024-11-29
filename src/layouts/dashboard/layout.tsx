@@ -1,6 +1,6 @@
 import type { Theme, SxProps, Breakpoint } from '@mui/material/styles';
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
@@ -10,9 +10,8 @@ import Typography from '@mui/material/Typography';
 import { getProfileBankAccount } from 'src/utils/profile-manager';
 
 import { _notifications } from 'src/_mock';
+import { AddCreditModal } from 'src/features/add-credit';
 import { useAuthContext } from 'src/context/auth-context';
-
-import { AddCreditModal } from 'src/sections/credit/view/add-credit-modal';
 
 import { Main } from './main';
 import { layoutClasses } from '../classes';
@@ -103,16 +102,16 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
                                             borderRadius: 1,
                                             bgcolor: isBalanceLoaded
                                                 ? bankAccount?.balance || -1 > 0
-                                                    ? 'success.light' // Verde claro para saldo positivo
-                                                    : 'grey.300' // Cinza para saldo negativo ou inexistente
-                                                : 'grey.300', // Cinza enquanto carrega
+                                                    ? 'success.light'
+                                                    : 'grey.300'
+                                                : 'grey.300',
                                             cursor: isBalanceLoaded ? 'pointer' : 'default',
                                             boxShadow: 1,
                                             '&:hover': {
-                                                boxShadow: isBalanceLoaded ? 3 : 1, // Hover apenas se carregado
+                                                boxShadow: isBalanceLoaded ? 3 : 1,
                                             },
                                         }}
-                                        onClick={isBalanceLoaded ? handleOpenModal : undefined} // Evita cliques enquanto carrega
+                                        onClick={isBalanceLoaded ? handleOpenModal : undefined}
                                     >
                                         {isBalanceLoaded ? (
                                             <Typography
@@ -121,14 +120,14 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
                                                 sx={{
                                                     color:
                                                         bankAccount?.balance || -1 > 0
-                                                            ? 'success.dark' // Verde escuro para saldo positivo
-                                                            : 'text.secondary', // Cinza para saldo negativo ou inexistente
+                                                            ? 'success.dark'
+                                                            : 'text.secondary',
                                                 }}
                                             >
                                                 ${bankAccount?.balance.toFixed(2)}
                                             </Typography>
                                         ) : (
-                                            <CircularProgress size={24} color="inherit" /> // Spinner enquanto carrega
+                                            <CircularProgress size={24} color="inherit" />
                                         )}
                                     </Box>
                                 </Box>

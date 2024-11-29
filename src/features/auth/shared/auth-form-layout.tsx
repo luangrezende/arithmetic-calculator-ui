@@ -1,13 +1,10 @@
-import type { Theme, SxProps } from '@mui/material';
-
 import { Box } from '@mui/material';
 
-export interface AuthFormLayoutProps {
+interface AuthFormLayoutProps {
     children: React.ReactNode;
-    sx?: SxProps<Theme>;
 }
 
-export function AuthFormLayout({ children, sx }: AuthFormLayoutProps) {
+export function AuthFormLayout({ children }: AuthFormLayoutProps) {
     return (
         <Box
             component="form"
@@ -16,7 +13,6 @@ export function AuthFormLayout({ children, sx }: AuthFormLayoutProps) {
             alignItems="center"
             maxWidth={400}
             width="100%"
-            sx={sx}
         >
             {children}
         </Box>

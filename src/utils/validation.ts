@@ -33,6 +33,12 @@ export const validatePasswordStrength = (password: string) => {
     return { score, label };
 };
 
+export function validateEmail(email: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+}
+
+
+
 
 
 

@@ -9,6 +9,7 @@ import Popover from '@mui/material/Popover';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+import { MenuItem, MenuList, menuItemClasses } from '@mui/material';
 
 import { useLocalUser } from 'src/hooks/use-local-user';
 
@@ -76,6 +77,37 @@ export function AccountPopover({ sx, ...other }: AccountPopoverProps) {
                 </Box>
 
                 <Divider sx={{ borderStyle: 'dashed' }} />
+
+                <MenuList
+                    disablePadding
+                    sx={{
+                        p: 1,
+                        gap: 0.5,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        [`& .${menuItemClasses.root}`]: {
+                            px: 1,
+                            gap: 2,
+                            borderRadius: 0.75,
+                            color: 'text.secondary',
+                            '&:hover': { color: 'text.primary' },
+                            [`&.${menuItemClasses.selected}`]: {
+                                color: 'text.primary',
+                                bgcolor: 'action.selected',
+                                fontWeight: 'fontWeightSemiBold',
+                            },
+                        },
+                    }}
+                >
+                    <MenuItem key="Profile" selected={false}>
+                        <img
+                            src="/assets/icons/navbar/ic-user.svg"
+                            alt="Visa"
+                            style={{ width: 25, height: 25 }}
+                        />
+                        Profile
+                    </MenuItem>
+                </MenuList>
 
                 <Divider sx={{ borderStyle: 'dashed' }} />
 

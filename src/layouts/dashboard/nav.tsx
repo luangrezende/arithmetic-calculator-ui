@@ -15,6 +15,7 @@ import { varAlpha } from 'src/theme/styles';
 
 import { Logo } from 'src/components/logo';
 import { Scrollbar } from 'src/components/scrollbar';
+import { Divider, Typography } from '@mui/material';
 
 export type NavContentProps = {
     data: {
@@ -105,12 +106,27 @@ export function NavContent({ data, slots, sx }: NavContentProps) {
 
     return (
         <>
-            <Box sx={{ mb: 5 }}>
+            {/* Logo */}
+            <Box sx={{ mb: 8, px: 1 }}>
                 <Logo />
             </Box>
 
+            {/* Texto acima do Divider */}
+            <Typography
+                variant="caption"
+                sx={{
+                    mb: 2,
+                    px: 1,
+                    textTransform: 'uppercase',
+                    color: 'secondary',
+                }}
+            >
+                Overview
+            </Typography>
+
             {slots?.topArea}
 
+            {/* Conteúdo principal de navegação */}
             <Scrollbar fillContent>
                 <Box component="nav" display="flex" flex="1 1 auto" flexDirection="column" sx={sx}>
                     <Box component="ul" gap={0.5} display="flex" flexDirection="column">

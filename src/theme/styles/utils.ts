@@ -1,5 +1,3 @@
-// ----------------------------------------------------------------------
-
 export const stylesMode = {
     light: '[data-mui-color-scheme="light"] &',
     dark: '[data-mui-color-scheme="dark"] &',

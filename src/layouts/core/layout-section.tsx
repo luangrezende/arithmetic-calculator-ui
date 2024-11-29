@@ -7,8 +7,6 @@ import GlobalStyles from '@mui/material/GlobalStyles';
 import { baseVars } from '../config-vars';
 import { layoutClasses } from '../classes';
 
-// ----------------------------------------------------------------------
-
 export type LayoutSectionProps = {
     sx?: SxProps<Theme>;
     cssVars?: CSSObject;

@@ -1,4 +1,4 @@
-import { AlertSnackbar } from 'src/components/common/alert-snackbar';
+import { AlertSnackbar } from 'src/components/alert-snackbar';
 
 interface FormMessagesProps {
     error?: string;

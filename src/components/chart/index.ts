@@ -1,7 +1,4 @@
-export * from './chart';
-
-export * from './use-chart';
-
-export type * from './types';
-
-export * from './chart-legends';
+export { Chart } from './chart';
+export { useChart } from './use-chart';
+export { ChartLegends } from './chart-legends';
+export type { ChartProps, ChartOptions, ChartLegendProps } from './types';

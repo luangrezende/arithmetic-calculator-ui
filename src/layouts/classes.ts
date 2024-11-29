@@ -1,5 +1,3 @@
-// ----------------------------------------------------------------------
-
 export const layoutClasses = {
     root: 'layout__root',
     main: 'layout__main',

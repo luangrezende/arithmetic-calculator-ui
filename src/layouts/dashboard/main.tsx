@@ -8,8 +8,6 @@ import Container from '@mui/material/Container';
 
 import { layoutClasses } from 'src/layouts/classes';
 
-// ----------------------------------------------------------------------
-
 export function Main({ children, sx, ...other }: BoxProps) {
     return (
         <Box
@@ -27,8 +25,6 @@ export function Main({ children, sx, ...other }: BoxProps) {
         </Box>
     );
 }
-
-// ----------------------------------------------------------------------
 
 type DashboardContentProps = ContainerProps & {
     disablePadding?: boolean;

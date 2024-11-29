@@ -7,7 +7,7 @@ import { saveProfile, getProfileBankAccount } from 'src/utils/profile-manager';
 import { addBalance } from 'src/services/api/balance-service';
 import { getUserProfile } from 'src/services/api/auth-service';
 
-import { AlertSnackbar } from 'src/components/common/alert-snackbar';
+import { AlertSnackbar } from 'src/components/alert-snackbar';
 
 import type { AddCreditFormProps } from './add-credit.types';
 

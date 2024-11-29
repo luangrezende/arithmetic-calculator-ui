@@ -4,8 +4,6 @@ import { experimental_extendTheme as extendTheme } from '@mui/material/styles';
 
 import { shadows, typography, components, colorSchemes, customShadows } from './core';
 
-// ----------------------------------------------------------------------
-
 export function createTheme(): Theme {
     const initialTheme = {
         colorSchemes,
@@ -22,8 +20,6 @@ export function createTheme(): Theme {
 
     return theme;
 }
-
-// ----------------------------------------------------------------------
 
 function shouldSkipGeneratingVar(keys: string[], value: string | number): boolean {
     const skipGlobalKeys = [

@@ -7,8 +7,6 @@ import { varAlpha, stylesMode } from 'src/theme/styles';
 
 import type { LabelColor, LabelVariant } from './types';
 
-// ----------------------------------------------------------------------
-
 export const StyledLabel = styled(Box)(({
     theme,
     ownerState: { color, variant },

@@ -4,8 +4,6 @@ import SvgIcon from '@mui/material/SvgIcon';
 
 import { varAlpha } from '../styles';
 
-// ----------------------------------------------------------------------
-
 const MuiBackdrop: Components<Theme>['MuiBackdrop'] = {
     styleOverrides: {
         root: ({ theme }) => ({
@@ -154,8 +152,6 @@ const MuiRadio: Components<Theme>['MuiRadio'] = {
         ),
     },
 };
-
-// ----------------------------------------------------------------------
 
 export const components = {
     MuiCard,

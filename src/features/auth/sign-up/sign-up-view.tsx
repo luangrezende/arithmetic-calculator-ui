@@ -1,16 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useSignUpForm } from 'src/hooks/use-signup-form';
 
+import { getTokens } from 'src/utils/auth-manager';
+
 import { registerUser } from 'src/services/api/auth-service';
 
-import { AlertSnackbar } from 'src/components/common/alert-snackbar';
+import { AlertSnackbar } from 'src/components/alert-snackbar';
 
 import { SignUpForm } from './sign-up-form';
 
 export default function SignUpView() {
     const navigate = useNavigate();
+    const { token } = getTokens();
     const { form, fieldErrors, passwordStrength, handleFieldChange, validateForm } =
         useSignUpForm();
 
@@ -18,6 +21,10 @@ export default function SignUpView() {
     const [registerSuccess, setRegisterSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+    useEffect(() => {
+        if (token) navigate('/');
+    }, [token, navigate]);
 
     const handleSubmit = async () => {
         if (!validateForm()) {

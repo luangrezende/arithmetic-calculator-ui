@@ -13,8 +13,6 @@ import { Iconify } from '../iconify';
 
 import type { ColorPickerProps } from './types';
 
-// ----------------------------------------------------------------------
-
 export const ColorPicker = forwardRef<HTMLDivElement, BoxProps & ColorPickerProps>(
     ({ colors, selected, onSelectColor, limit = 'auto', sx, slotProps, ...other }, ref) => {
         const singleSelect = typeof selected === 'string';

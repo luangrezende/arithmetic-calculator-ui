@@ -1,5 +1,3 @@
-import type { BoxProps } from '@mui/material/Box';
-
 import ApexChart from 'react-apexcharts';
 
 import Box from '@mui/material/Box';
@@ -8,22 +6,11 @@ import { chartClasses } from './classes';
 
 import type { ChartProps } from './types';
 
-// ----------------------------------------------------------------------
-
-export function Chart({
-    sx,
-    type,
-    series,
-    height,
-    options,
-    className,
-    width = '100%',
-    ...other
-}: BoxProps & ChartProps) {
+export function Chart({ type, series, options, height, width = '100%', sx, ...other }: ChartProps) {
     return (
         <Box
             dir="ltr"
-            className={chartClasses.root.concat(className ? ` ${className}` : '')}
+            className={chartClasses.root}
             sx={{
                 width,
                 height,

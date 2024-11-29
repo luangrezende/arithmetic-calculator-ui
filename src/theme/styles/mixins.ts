@@ -1,7 +1,5 @@
 import type { CSSObject } from '@mui/material/styles';
 
-// ----------------------------------------------------------------------
-
 /**
  * Usage:
  * ...hideScrollX,

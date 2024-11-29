@@ -5,7 +5,7 @@ interface LoadingButtonProps {
     loading: boolean;
     onClick: () => void;
     fullWidth?: boolean;
-    disabled: boolean;
+    disabled?: boolean;
     variant?: 'contained' | 'outlined' | 'text';
     size?: 'small' | 'medium' | 'large';
     color?: 'inherit' | 'primary' | 'secondary';
@@ -15,8 +15,8 @@ export function LoadingButton({
     children,
     loading,
     onClick,
-    disabled,
     fullWidth = false,
+    disabled = false,
     variant = 'contained',
     size = 'medium',
     color = 'primary',

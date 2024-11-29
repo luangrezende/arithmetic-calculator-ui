@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { TextField, IconButton, InputAdornment } from '@mui/material';
 
 import { validateEmail } from 'src/utils/validation';
+import { formatCurrency } from 'src/utils/format-number';
 
 import { Iconify } from 'src/components/iconify';
 
@@ -10,10 +11,10 @@ interface InputFieldFormProps {
     name: string;
     label: string;
     value: string;
-    type?: string;
+    type?: 'text' | 'email' | 'password' | 'amount';
     error?: boolean;
     helperText?: string;
-    onChange: (value: string) => void;
+    onChange: (newValue: string) => void;
 }
 
 export function InputFieldForm({
@@ -21,38 +22,50 @@ export function InputFieldForm({
     label,
     value,
     type = 'text',
-    error: externalError = false,
-    helperText: externalHelperText = '',
+    error = false,
+    helperText = '',
     onChange,
 }: InputFieldFormProps) {
     const [showPassword, setShowPassword] = useState(false);
     const [localError, setLocalError] = useState(false);
-    const [localHelperText, setLocalHelperText] = useState('');
+    const [localHelperText, setLocalHelperText] = useState(helperText);
 
     useEffect(() => {
-        if (externalHelperText) {
-            setLocalHelperText(externalHelperText);
-        }
-    }, [externalHelperText]);
-
-    useEffect(() => {
-        setLocalError(externalError);
-    }, [externalError]);
+        setLocalHelperText(helperText);
+        setLocalError(error);
+    }, [helperText, error]);
 
     const togglePasswordVisibility = () => {
         setShowPassword((prev) => !prev);
     };
 
-    const isPasswordField = type === 'password';
-
-    const handleChange = (newValue: string) => {
-        onChange(newValue);
+    const handleChange = (inputValue: string) => {
+        let formattedValue = inputValue;
 
         if (type === 'email') {
-            const isValidEmail = validateEmail(newValue);
+            const isValidEmail = validateEmail(inputValue);
             setLocalError(!isValidEmail);
             setLocalHelperText(isValidEmail ? '' : 'Please enter a valid email address.');
         }
+
+        if (type === 'amount') {
+            const numericValue = parseFloat(inputValue.replace(/[^0-9.-]+/g, '')) || 0;
+            formattedValue = formatCurrency(numericValue.toString());
+
+            if (numericValue <= 1 || numericValue > 500) {
+                setLocalError(true);
+                setLocalHelperText(
+                    numericValue > 500
+                        ? 'The maximum amount you can add is $500.'
+                        : 'Please enter a valid amount greater than $1.'
+                );
+            } else {
+                setLocalError(false);
+                setLocalHelperText('');
+            }
+        }
+
+        onChange(formattedValue);
     };
 
     return (
@@ -63,11 +76,11 @@ export function InputFieldForm({
             value={value}
             onChange={(e) => handleChange(e.target.value)}
             error={localError}
-            helperText={localHelperText || externalHelperText}
+            helperText={localHelperText}
             InputLabelProps={{ shrink: true }}
-            type={isPasswordField && !showPassword ? 'password' : 'text'}
+            type={type === 'password' && !showPassword ? 'password' : 'text'}
             InputProps={{
-                endAdornment: isPasswordField && (
+                endAdornment: type === 'password' && (
                     <InputAdornment position="end">
                         <IconButton
                             onClick={togglePasswordVisibility}

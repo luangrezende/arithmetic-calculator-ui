@@ -1,18 +1,23 @@
 import { useState, useCallback } from 'react';
 
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Fade from '@mui/material/Fade';
-import Table from '@mui/material/Table';
-import Modal from '@mui/material/Modal';
-import Button from '@mui/material/Button';
-import TableRow from '@mui/material/TableRow';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import Typography from '@mui/material/Typography';
-import TableContainer from '@mui/material/TableContainer';
-import TablePagination from '@mui/material/TablePagination';
+import {
+    Box,
+    Card,
+    Fade,
+    Table,
+    Modal,
+    Button,
+    TableRow,
+    Checkbox,
+    TableBody,
+    TableCell,
+    TableHead,
+    TextField,
+    Typography,
+    IconButton,
+    TableContainer,
+    TablePagination,
+} from '@mui/material';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
@@ -25,7 +30,8 @@ const modalStyle = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: '90%',
+    maxWidth: 500,
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
@@ -42,17 +48,18 @@ const initialOperations = [
     { id: 3, type: 'Multiplication', cost: 15.5, result: 45, credit: 68.5, date: getTimeAgo(30) },
     { id: 4, type: 'Subtraction', cost: 5.25, result: 8, credit: 84.0, date: getTimeAgo(40) },
     { id: 5, type: 'Addition', cost: 10.75, result: 15, credit: 89.25, date: getTimeAgo(50) },
-    { id: 6, type: 'Addition', cost: 10.75, result: 15, credit: 100.0, date: getTimeAgo(60) },
-    { id: 7, type: 'Addition', cost: 10.75, result: 15, credit: 110.75, date: getTimeAgo(70) },
 ];
 
 export function OperationView() {
     const [openModal, setOpenModal] = useState(false);
     const [operations, setOperations] = useState(initialOperations);
-    const [credit, setCredit] = useState(48.5); // Saldo inicial
-    const [order, setOrder] = useState<'asc' | 'desc'>('desc'); // Estado de ordenação
+    const [credit, setCredit] = useState(48.5);
+    const [order, setOrder] = useState<'asc' | 'desc'>('desc');
+    const [orderBy, setOrderBy] = useState<keyof (typeof initialOperations)[0]>('date');
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selected, setSelected] = useState<number[]>([]);
 
     const handleOpenModal = useCallback(() => setOpenModal(true), []);
     const handleCloseModal = useCallback(() => setOpenModal(false), []);
@@ -69,14 +76,38 @@ export function OperationView() {
         setCredit(newCredit);
     };
 
-    const handleSort = () => {
+    const handleSort = (column: keyof (typeof initialOperations)[0]) => {
+        setOrderBy(column);
         setOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
     };
 
-    const sortedData = [...operations].sort((a, b) =>
-        order === 'desc'
-            ? new Date(a.date).getTime() - new Date(b.date).getTime()
-            : new Date(b.date).getTime() - new Date(a.date).getTime()
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(event.target.value);
+    };
+
+    const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSelected(event.target.checked ? operations.map((op) => op.id) : []);
+    };
+
+    const handleSelect = (id: number) => {
+        setSelected((prev) =>
+            prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+        );
+    };
+
+    const handleDeleteSelected = () => {
+        setOperations((prev) => prev.filter((op) => !selected.includes(op.id)));
+        setSelected([]);
+    };
+
+    const filteredOperations = operations.filter(
+        (op) =>
+            op.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            op.result.toString().includes(searchQuery)
+    );
+
+    const sortedData = [...filteredOperations].sort((a, b) =>
+        order === 'asc' ? (a[orderBy] < b[orderBy] ? -1 : 1) : a[orderBy] > b[orderBy] ? -1 : 1
     );
 
     const paginatedData = sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
@@ -93,10 +124,18 @@ export function OperationView() {
                 <Typography variant="h4" flexGrow={1}>
                     Operations
                 </Typography>
+                <TextField
+                    size="small"
+                    variant="outlined"
+                    placeholder="Search"
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                    sx={{ mr: 2 }}
+                />
                 <Button
                     variant="contained"
                     color="primary"
-                    startIcon={<Iconify icon="mingcute:add-line" />}
+                    startIcon={<Iconify icon="mingcute:add-line" width={20} />}
                     onClick={handleOpenModal}
                 >
                     New operation
@@ -108,23 +147,46 @@ export function OperationView() {
                     <Table>
                         <TableHead>
                             <TableRow>
-                                <TableCell align="left">ID</TableCell>
-                                <TableCell align="left">Operation Type</TableCell>
-                                <TableCell align="left">Result</TableCell>
-                                <TableCell align="left">Cost</TableCell>
-                                <TableCell align="left">Balance</TableCell>
-                                <TableCell
-                                    align="left"
-                                    onClick={handleSort}
-                                    style={{ cursor: 'pointer' }}
-                                >
-                                    Date {order === 'asc' ? '▲' : '▼'}
+                                <TableCell padding="checkbox">
+                                    <Checkbox
+                                        indeterminate={
+                                            selected.length > 0 &&
+                                            selected.length < operations.length
+                                        }
+                                        checked={
+                                            operations.length > 0 &&
+                                            selected.length === operations.length
+                                        }
+                                        onChange={handleSelectAll}
+                                    />
                                 </TableCell>
+                                <TableCell align="left">ID</TableCell>
+                                <TableCell align="left" onClick={() => handleSort('type')}>
+                                    Operation Type{' '}
+                                    {orderBy === 'type' && (order === 'asc' ? '▲' : '▼')}
+                                </TableCell>
+                                <TableCell align="left" onClick={() => handleSort('result')}>
+                                    Result {orderBy === 'result' && (order === 'asc' ? '▲' : '▼')}
+                                </TableCell>
+                                <TableCell align="left" onClick={() => handleSort('cost')}>
+                                    Cost {orderBy === 'cost' && (order === 'asc' ? '▲' : '▼')}
+                                </TableCell>
+                                <TableCell align="left">Balance</TableCell>
+                                <TableCell align="left" onClick={() => handleSort('date')}>
+                                    Date {orderBy === 'date' && (order === 'asc' ? '▲' : '▼')}
+                                </TableCell>
+                                <TableCell align="center">Actions</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {paginatedData.map((record) => (
-                                <TableRow key={record.id}>
+                                <TableRow key={record.id} selected={selected.includes(record.id)}>
+                                    <TableCell padding="checkbox">
+                                        <Checkbox
+                                            checked={selected.includes(record.id)}
+                                            onChange={() => handleSelect(record.id)}
+                                        />
+                                    </TableCell>
                                     <TableCell>{record.id}</TableCell>
                                     <TableCell>{record.type}</TableCell>
                                     <TableCell>{record.result}</TableCell>
@@ -144,6 +206,11 @@ export function OperationView() {
                                         </span>
                                     </TableCell>
                                     <TableCell>{record.date}</TableCell>
+                                    <TableCell align="center">
+                                        <IconButton onClick={() => handleSelect(record.id)}>
+                                            <Iconify icon="solar:trash-bin-bold" width={20} />
+                                        </IconButton>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -153,13 +220,26 @@ export function OperationView() {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 20]}
                     component="div"
-                    count={operations.length}
+                    count={sortedData.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Card>
+
+            {selected.length > 0 && (
+                <Box display="flex" justifyContent="flex-end" my={2}>
+                    <Button
+                        variant="contained"
+                        color="error"
+                        startIcon={<Iconify icon="solar:trash-bin-bold" width={20} />}
+                        onClick={handleDeleteSelected}
+                    >
+                        Delete Selected
+                    </Button>
+                </Box>
+            )}
 
             <Modal open={openModal} onClose={handleCloseModal} closeAfterTransition>
                 <Fade in={openModal}>
@@ -169,7 +249,8 @@ export function OperationView() {
                         </Typography>
                         <NewOperationForm
                             onClose={handleCloseModal}
-                            // onAddOperation={handleNewOperation}
+                            onAddOperation={handleNewOperation}
+                            credit={credit}
                         />
                     </Box>
                 </Fade>

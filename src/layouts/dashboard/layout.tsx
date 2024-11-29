@@ -13,9 +13,11 @@ import { _notifications } from 'src/_mock';
 import { AddCreditModal } from 'src/features/add-credit';
 import { useAuthContext } from 'src/context/auth-context';
 
+import { AlertSnackbar } from 'src/components/alert-snackbar';
+import { NavMobile, NavDesktop } from 'src/components/navigation';
+
 import { Main } from './main';
 import { layoutClasses } from '../classes';
-import { NavMobile, NavDesktop } from './nav';
 import { navData } from '../config-nav-dashboard';
 import { MenuButton } from '../components/menu-button';
 import { LayoutSection } from '../core/layout-section';
@@ -35,6 +37,11 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
     const theme = useTheme();
     const bankAccount = getProfileBankAccount();
     const { isBalanceLoaded, isLoaded } = useAuthContext();
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success' as 'success' | 'error',
+    });
 
     const [navOpen, setNavOpen] = useState(false);
     const [openModal, setOpenModal] = useState(false);
@@ -42,9 +49,19 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
     const layoutQuery: Breakpoint = 'lg';
 
     const handleOpenModal = () => setOpenModal(true);
-    const handleCloseModal = () => setOpenModal(false);
 
-    const handleAddCredit = (amount: number) => {};
+    const handleCloseModal = () => {
+        setOpenModal(false);
+    };
+
+    const handleOpenSnackbar = (status: 'success' | 'error') => {
+        setOpenModal(false);
+        setSnackbar({
+            open: true,
+            message: status === 'success' ? 'Credit added successfully!' : 'Failed to add credit.',
+            severity: status,
+        });
+    };
 
     useEffect(() => {
         isLoaded();
@@ -160,7 +177,14 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
             <AddCreditModal
                 open={openModal}
                 onClose={handleCloseModal}
-                onAddCredit={handleAddCredit}
+                onOpenSnackBar={handleOpenSnackbar}
+            />
+
+            <AlertSnackbar
+                open={snackbar.open}
+                message={snackbar.message}
+                onClose={() => setSnackbar({ ...snackbar, open: false })}
+                severity={snackbar.severity}
             />
         </LayoutSection>
     );

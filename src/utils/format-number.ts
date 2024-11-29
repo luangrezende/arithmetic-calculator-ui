@@ -85,3 +85,13 @@ export function fData(inputValue: InputNumberValue) {
 
     return fm;
 }
+
+export const formatCurrency = (value: string) => {
+    const numericValue = value.replace(/[^\d]/g, '');
+    const number = parseFloat(numericValue) / 100;
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+    }).format(number || 0);
+};
+

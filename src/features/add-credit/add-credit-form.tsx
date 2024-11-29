@@ -2,102 +2,68 @@ import { useState } from 'react';
 
 import { Box, Button, TextField } from '@mui/material';
 
+import { formatCurrency } from 'src/utils/format-number';
 import { saveProfile, getProfileBankAccount } from 'src/utils/profile-manager';
 
 import { addBalance } from 'src/services/api/balance-service';
 import { getUserProfile } from 'src/services/api/auth-service';
 
-import { AlertSnackbar } from 'src/components/alert-snackbar';
+import { InputFieldForm } from '../auth/shared';
 
 import type { AddCreditFormProps } from './add-credit.types';
 
-export function AddCreditForm({ onClose, onAddCredit }: AddCreditFormProps) {
-    const [addAmount, setAddAmount] = useState('');
+export function AddCreditForm({ onClose, onOpenSnackBar }: AddCreditFormProps) {
     const [isLoading, setIsLoading] = useState(false);
-    const [validationError, setValidationError] = useState<string | null>(null);
-    const [snackbar, setSnackbar] = useState({
-        open: false,
-        message: '',
-        severity: 'success' as 'success' | 'error',
-    });
-
     const bankAccount = getProfileBankAccount();
+    const [form, setForm] = useState({ amount: '' });
+    const [fieldErrors, setFieldErrors] = useState({ amount: false });
 
-    const formatCurrency = (value: string) => {
-        const numericValue = value.replace(/[^\d]/g, '');
-        const number = parseFloat(numericValue) / 100;
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-        }).format(number || 0);
-    };
+    const handleFieldChange = (field: string, value: string) => {
+        if (field === 'amount') {
+            const numericValue = parseFloat(value.replace(/[^0-9.-]+/g, '')) || 0;
+            const formattedValue = formatCurrency(numericValue.toString());
 
-    const handleAddAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const input = e.target.value;
-        setAddAmount(formatCurrency(input));
+            setForm((prev) => ({ ...prev, [field]: formattedValue }));
+            setFieldErrors((prev) => ({
+                ...prev,
+                amount: numericValue <= 1 || numericValue > 500,
+            }));
+        } else {
+            setForm((prev) => ({ ...prev, [field]: value }));
+        }
     };
 
     const handleAddCredit = async () => {
-        const amount = parseFloat(addAmount.replace(/[^0-9.-]+/g, ''));
+        const amount = parseFloat(form.amount.replace(/[^0-9.-]+/g, ''));
 
-        if (Number.isNaN(amount) || amount <= 0 || amount > 300) {
-            setValidationError(
-                amount > 300
-                    ? 'The maximum amount you can add is $300.'
-                    : 'Please enter a valid amount greater than $0.'
-            );
+        if (Number.isNaN(amount) || amount <= 1 || amount > 500) {
+            setFieldErrors({ amount: true });
             return;
         }
-
-        if (!bankAccount?.id) {
-            setValidationError('No account selected. Please select an account first.');
-            return;
-        }
+        console.log(amount);
 
         setIsLoading(true);
-        setValidationError(null);
 
         try {
-            const response = await addBalance(amount, bankAccount.id);
-
+            const response = await addBalance(amount, bankAccount!.id);
             if (response.statusCode === 200) {
                 const profileResponse = await getUserProfile();
                 saveProfile(profileResponse.data);
-
-                setAddAmount('');
-                onAddCredit(amount);
                 onClose();
-
-                setSnackbar({
-                    open: true,
-                    message: 'Credit added successfully!',
-                    severity: 'success',
-                });
+                onOpenSnackBar('success');
             } else {
-                setSnackbar({
-                    open: true,
-                    message: 'Failed to add balance. Please try again.',
-                    severity: 'error',
-                });
+                onOpenSnackBar('error');
             }
         } catch (error) {
+            onOpenSnackBar('error');
             console.error(error);
-            setSnackbar({
-                open: true,
-                message: 'An error occurred. Please try again.',
-                severity: 'error',
-            });
         } finally {
             setIsLoading(false);
         }
     };
 
-    const handleSnackbarClose = () => {
-        setSnackbar((prev) => ({ ...prev, open: false }));
-    };
-
     return (
-        <>
+        <Box>
             <TextField
                 fullWidth
                 type="text"
@@ -125,15 +91,14 @@ export function AddCreditForm({ onClose, onAddCredit }: AddCreditFormProps) {
                 <TextField fullWidth type="text" label="CVV" value="123" disabled />
             </Box>
 
-            <TextField
-                fullWidth
-                type="text"
+            <InputFieldForm
+                name="amount"
                 label="Amount"
-                value={addAmount}
-                onChange={handleAddAmountChange}
-                sx={{ mt: 2 }}
-                error={!!validationError}
-                helperText={validationError}
+                value={form.amount}
+                type="amount"
+                onChange={(value) => handleFieldChange('amount', value)}
+                error={fieldErrors.amount}
+                helperText={fieldErrors.amount ? 'Amount must be between $1 and $500.' : ''}
             />
 
             <Box display="flex" justifyContent="flex-end" gap={2} sx={{ mt: 2 }}>
@@ -149,13 +114,6 @@ export function AddCreditForm({ onClose, onAddCredit }: AddCreditFormProps) {
                     {isLoading ? 'Adding...' : 'Add'}
                 </Button>
             </Box>
-
-            <AlertSnackbar
-                open={snackbar.open}
-                message={snackbar.message}
-                onClose={handleSnackbarClose}
-                severity={snackbar.severity}
-            />
-        </>
+        </Box>
     );
 }

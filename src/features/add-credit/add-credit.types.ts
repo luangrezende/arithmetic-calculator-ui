@@ -1,10 +1,10 @@
 export interface AddCreditModalProps {
     open: boolean;
     onClose: () => void;
-    onAddCredit: (amount: number) => void;
+    onOpenSnackBar: (type: "success" | "error") => void;
 }
 
 export interface AddCreditFormProps {
     onClose: () => void;
-    onAddCredit: (amount: number) => void;
+    onOpenSnackBar: (type: "success" | "error") => void;
 }

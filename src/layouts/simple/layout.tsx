@@ -11,8 +11,6 @@ import { Main, CompactContent } from './main';
 import { LayoutSection } from '../core/layout-section';
 import { HeaderSection } from '../core/header-section';
 
-// ----------------------------------------------------------------------
-
 export type SimpleLayoutProps = {
     sx?: SxProps<Theme>;
     children: React.ReactNode;

@@ -13,8 +13,6 @@ import { bgBlur, varAlpha } from 'src/theme/styles';
 
 import { layoutClasses } from '../classes';
 
-// ----------------------------------------------------------------------
-
 export type HeaderSectionProps = AppBarProps & {
     layoutQuery: Breakpoint;
     slots?: {

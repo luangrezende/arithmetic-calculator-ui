@@ -7,8 +7,6 @@ import Box from '@mui/material/Box';
 
 import { iconifyClasses } from './classes';
 
-// ----------------------------------------------------------------------
-
 export type FlagIconProps = BoxProps & {
     code?: string;
 };

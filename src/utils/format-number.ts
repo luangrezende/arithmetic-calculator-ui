@@ -86,6 +86,8 @@ export function fData(inputValue: InputNumberValue) {
     return fm;
 }
 
+export const parseAmount = (value: string) => parseFloat(value.replace(/[^0-9.-]+/g, ''));
+
 export const formatCurrency = (value: string) => {
     const numericValue = value.replace(/[^\d]/g, '');
     const number = parseFloat(numericValue) / 100;
@@ -94,4 +96,3 @@ export const formatCurrency = (value: string) => {
         currency: 'USD',
     }).format(number || 0);
 };
-

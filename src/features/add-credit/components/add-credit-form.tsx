@@ -1,16 +1,17 @@
 import { useState } from 'react';
 
-import { Box, Button, TextField } from '@mui/material';
+import { Box, Button } from '@mui/material';
 
-import { formatCurrency } from 'src/utils/format-number';
+import { parseAmount } from 'src/utils/format-number';
 import { saveProfile, getProfileBankAccount } from 'src/utils/profile-manager';
 
 import { addBalance } from 'src/services/api/balance-service';
 import { getUserProfile } from 'src/services/api/auth-service';
 
-import { InputFieldForm } from '../auth/shared';
+import { CardDetails } from './card-details';
+import { AmountInput } from './amount-input';
 
-import type { AddCreditFormProps } from './add-credit.types';
+import type { AddCreditFormProps } from '../types/add-credit.types';
 
 export function AddCreditForm({ onClose, onOpenSnackBar }: AddCreditFormProps) {
     const [isLoading, setIsLoading] = useState(false);
@@ -19,17 +20,13 @@ export function AddCreditForm({ onClose, onOpenSnackBar }: AddCreditFormProps) {
     const [fieldErrors, setFieldErrors] = useState({ amount: false });
 
     const handleFieldChange = (field: string, value: string) => {
+        setForm((prev) => ({ ...prev, [field]: value }));
         if (field === 'amount') {
-            const numericValue = parseFloat(value.replace(/[^0-9.-]+/g, '')) || 0;
-            const formattedValue = formatCurrency(numericValue.toString());
-
-            setForm((prev) => ({ ...prev, [field]: formattedValue }));
+            const numericValue = parseAmount(value) || 0;
             setFieldErrors((prev) => ({
                 ...prev,
                 amount: numericValue <= 1 || numericValue > 500,
             }));
-        } else {
-            setForm((prev) => ({ ...prev, [field]: value }));
         }
     };
 
@@ -37,10 +34,8 @@ export function AddCreditForm({ onClose, onOpenSnackBar }: AddCreditFormProps) {
         const amount = parseFloat(form.amount.replace(/[^0-9.-]+/g, ''));
 
         if (Number.isNaN(amount) || amount <= 1 || amount > 500) {
-            setFieldErrors({ amount: true });
             return;
         }
-        console.log(amount);
 
         setIsLoading(true);
 
@@ -64,43 +59,13 @@ export function AddCreditForm({ onClose, onOpenSnackBar }: AddCreditFormProps) {
 
     return (
         <Box>
-            <TextField
-                fullWidth
-                type="text"
-                label="Cardholder Name"
-                value="Test Env"
-                disabled
-                sx={{ mb: 2 }}
-            />
-            <Box display="flex" alignItems="center" gap={2} sx={{ mb: 2 }}>
-                <img
-                    src="/assets/icons/navbar/ic-lock.svg"
-                    alt="Visa"
-                    style={{ width: 40, height: 50 }}
-                />
-                <TextField
-                    fullWidth
-                    type="text"
-                    label="Card Number"
-                    value="5685 5524 5875 6254"
-                    disabled
-                />
-            </Box>
-            <Box display="flex" gap={2} sx={{ mb: 2 }}>
-                <TextField fullWidth type="text" label="Expiry Date" value="12/28" disabled />
-                <TextField fullWidth type="text" label="CVV" value="123" disabled />
-            </Box>
-
-            <InputFieldForm
-                name="amount"
-                label="Amount"
+            <CardDetails />
+            <AmountInput
                 value={form.amount}
-                type="amount"
                 onChange={(value) => handleFieldChange('amount', value)}
                 error={fieldErrors.amount}
                 helperText={fieldErrors.amount ? 'Amount must be between $1 and $500.' : ''}
             />
-
             <Box display="flex" justifyContent="flex-end" gap={2} sx={{ mt: 2 }}>
                 <Button onClick={onClose} variant="outlined" disabled={isLoading}>
                     Cancel

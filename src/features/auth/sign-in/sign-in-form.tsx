@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 import { LoadingButton } from 'src/components/button/loading-button';
 
 import { AuthTitle } from '../shared/title';
-import { InputFieldForm } from '../shared/input-field';
+import { InputFieldForm } from '../../shared/input-field';
 import { ErrorMessage } from '../shared/error-message';
 import { AuthFormLayout } from '../shared/auth-form-layout';
 import { ForgotPasswordLink } from './forgot-password-link';

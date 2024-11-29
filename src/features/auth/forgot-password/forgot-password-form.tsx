@@ -1,6 +1,6 @@
 import { useSnackbar } from 'src/hooks/use-snackbar';
 
-import { InputFieldForm } from 'src/features/auth/shared/input-field';
+import { InputFieldForm } from 'src/features/shared/input-field';
 import { AuthFormLayout } from 'src/features/auth/shared/auth-form-layout';
 import { FormButtons } from 'src/features/auth/forgot-password/forgot-password-buttons';
 

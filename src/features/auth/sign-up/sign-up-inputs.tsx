@@ -1,4 +1,4 @@
-import { InputFieldForm } from 'src/features/auth/shared/input-field';
+import { InputFieldForm } from 'src/features/shared/input-field';
 import { PasswordStrengthIndicator } from 'src/features/auth/shared/password-strength-indicator';
 
 interface SignUpInputsProps {

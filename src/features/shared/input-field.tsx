@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 
 import { TextField, IconButton, InputAdornment } from '@mui/material';
 
-import { validateEmail } from 'src/utils/validation';
 import { formatCurrency } from 'src/utils/format-number';
+import { validateEmail, validateAmount } from 'src/utils/validation';
 
 import { Iconify } from 'src/components/iconify';
 
@@ -27,17 +27,15 @@ export function InputFieldForm({
     onChange,
 }: InputFieldFormProps) {
     const [showPassword, setShowPassword] = useState(false);
-    const [localError, setLocalError] = useState(false);
+    const [localError, setLocalError] = useState(error);
     const [localHelperText, setLocalHelperText] = useState(helperText);
 
     useEffect(() => {
-        setLocalHelperText(helperText);
         setLocalError(error);
-    }, [helperText, error]);
+        setLocalHelperText(helperText);
+    }, [error, helperText]);
 
-    const togglePasswordVisibility = () => {
-        setShowPassword((prev) => !prev);
-    };
+    const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
     const handleChange = (inputValue: string) => {
         let formattedValue = inputValue;
@@ -49,20 +47,10 @@ export function InputFieldForm({
         }
 
         if (type === 'amount') {
-            const numericValue = parseFloat(inputValue.replace(/[^0-9.-]+/g, '')) || 0;
-            formattedValue = formatCurrency(numericValue.toString());
-
-            if (numericValue <= 1 || numericValue > 500) {
-                setLocalError(true);
-                setLocalHelperText(
-                    numericValue > 500
-                        ? 'The maximum amount you can add is $500.'
-                        : 'Please enter a valid amount greater than $1.'
-                );
-            } else {
-                setLocalError(false);
-                setLocalHelperText('');
-            }
+            formattedValue = formatCurrency(inputValue);
+            const { isValid, message } = validateAmount(inputValue);
+            setLocalError(!isValid);
+            setLocalHelperText(message);
         }
 
         onChange(formattedValue);

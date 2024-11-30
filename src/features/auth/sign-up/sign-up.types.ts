@@ -1,11 +1,12 @@
-export interface SignInFormProps {
+export interface SignUpFormProps {
+    name: string;
     email: string;
     password: string;
-    loginSuccess: boolean;
+    confirmPassword: string;
+    registerSuccess: boolean;
     loading: boolean;
     error: string | null;
     onFieldChange: (field: string, value: string) => void;
     onSubmit: () => void;
-    onSignUp: () => void;
-    onForgotPassword: () => void;
+    onBackToSignIn: () => void;
 }

@@ -8,8 +8,6 @@ import { varAlpha } from 'src/theme/styles';
 
 import type { ColorPreviewProps } from './types';
 
-// ----------------------------------------------------------------------
-
 export const ColorPreview = forwardRef<HTMLDivElement, BoxProps & ColorPreviewProps>(
     ({ colors, limit = 3, sx, ...other }, ref) => {
         const colorsRange = colors.slice(0, limit);

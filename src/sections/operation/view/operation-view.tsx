@@ -7,6 +7,7 @@ import {
     Table,
     Modal,
     Button,
+    Dialog,
     TableRow,
     Checkbox,
     TableBody,
@@ -14,16 +15,22 @@ import {
     TableHead,
     TextField,
     Typography,
-    IconButton,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
     TableContainer,
+    TableSortLabel,
+    InputAdornment,
     TablePagination,
+    DialogContentText,
 } from '@mui/material';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Iconify } from 'src/components/iconify';
+import { AlertSnackbar } from 'src/components/alert-snackbar';
 
-import { NewOperationForm } from './new-operation-form-view';
+import { NewOperationForm } from './new-operation-form';
 
 const modalStyle = {
     position: 'absolute',
@@ -43,11 +50,69 @@ const getTimeAgo = (minutes: number) =>
     new Date(new Date().getTime() - minutes * 60 * 1000).toLocaleString();
 
 const initialOperations = [
-    { id: 1, type: 'Square Root', cost: 5.0, result: 3, credit: 48.5, date: getTimeAgo(10) },
-    { id: 2, type: 'Division', cost: 15.0, result: 2, credit: 53.5, date: getTimeAgo(20) },
-    { id: 3, type: 'Multiplication', cost: 15.5, result: 45, credit: 68.5, date: getTimeAgo(30) },
-    { id: 4, type: 'Subtraction', cost: 5.25, result: 8, credit: 84.0, date: getTimeAgo(40) },
-    { id: 5, type: 'Addition', cost: 10.75, result: 15, credit: 89.25, date: getTimeAgo(50) },
+    {
+        id: 1,
+        type: 'Square Root',
+        cost: 5.0,
+        value: '9',
+        result: 3,
+        credit: 48.5,
+        date: getTimeAgo(10),
+    },
+    {
+        id: 2,
+        type: 'Division',
+        cost: 15.0,
+        value: '10/5',
+        result: 2,
+        credit: 53.5,
+        date: getTimeAgo(20),
+    },
+    {
+        id: 3,
+        type: 'Multiplication',
+        cost: 15.5,
+        value: '9*5',
+        result: 45,
+        credit: 68.5,
+        date: getTimeAgo(30),
+    },
+    {
+        id: 4,
+        type: 'Subtraction',
+        cost: 5.25,
+        value: '13-5',
+        result: 8,
+        credit: 84.0,
+        date: getTimeAgo(40),
+    },
+    {
+        id: 5,
+        type: 'Addition',
+        cost: 10.75,
+        value: '2+2',
+        result: 4,
+        credit: 89.25,
+        date: getTimeAgo(50),
+    },
+    {
+        id: 6,
+        type: 'Square Root',
+        cost: 5.0,
+        value: '16',
+        result: 4,
+        credit: 43.5,
+        date: getTimeAgo(15),
+    },
+    {
+        id: 7,
+        type: 'Random String',
+        cost: 8.0,
+        value: '',
+        result: 'xXz1Fg9',
+        credit: 35.5,
+        date: getTimeAgo(25),
+    },
 ];
 
 export function OperationView() {
@@ -60,20 +125,34 @@ export function OperationView() {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [searchQuery, setSearchQuery] = useState('');
     const [selected, setSelected] = useState<number[]>([]);
+    const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success' as 'success' | 'error',
+    });
 
     const handleOpenModal = useCallback(() => setOpenModal(true), []);
     const handleCloseModal = useCallback(() => setOpenModal(false), []);
+    const handleOpenConfirmDelete = useCallback(() => setConfirmDeleteOpen(true), []);
+    const handleCloseConfirmDelete = useCallback(() => setConfirmDeleteOpen(false), []);
 
-    const handleNewOperation = (newOperation: any) => {
-        const newCredit = Math.max(credit + newOperation.cost, 0);
-        const operationWithCredit = {
-            ...newOperation,
-            id: operations.length + 1,
-            credit: newCredit,
-            date: new Date().toLocaleString(),
-        };
-        setOperations((prev) => [operationWithCredit, ...prev]);
-        setCredit(newCredit);
+    const handleDeleteSelected = useCallback(() => {
+        setOperations((prev) => prev.filter((op) => !selected.includes(op.id)));
+        setSelected([]);
+    }, [selected]);
+
+    const handleConfirmDelete = useCallback(() => {
+        handleDeleteSelected();
+        setConfirmDeleteOpen(false);
+    }, [handleDeleteSelected]);
+
+    const handleNewOperation = () => {
+        setSnackbar({
+            open: true,
+            message: 'Operation calculated.',
+            severity: 'success',
+        });
     };
 
     const handleSort = (column: keyof (typeof initialOperations)[0]) => {
@@ -93,11 +172,6 @@ export function OperationView() {
         setSelected((prev) =>
             prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
         );
-    };
-
-    const handleDeleteSelected = () => {
-        setOperations((prev) => prev.filter((op) => !selected.includes(op.id)));
-        setSelected([]);
     };
 
     const filteredOperations = operations.filter(
@@ -130,15 +204,46 @@ export function OperationView() {
                     placeholder="Search"
                     value={searchQuery}
                     onChange={handleSearchChange}
-                    sx={{ mr: 2 }}
+                    sx={{
+                        mr: { xs: 1, sm: 2 },
+                        width: { xs: '150px', sm: 'auto' },
+                    }}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <Iconify icon="mdi:magnify" width={20} />
+                            </InputAdornment>
+                        ),
+                    }}
                 />
+
                 <Button
                     variant="contained"
                     color="primary"
-                    startIcon={<Iconify icon="mingcute:add-line" width={20} />}
                     onClick={handleOpenModal}
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        minWidth: { xs: '40px', sm: 'auto' },
+                        padding: { xs: '8px', sm: '10px 16px' },
+                    }}
                 >
-                    New operation
+                    <Iconify
+                        icon="mingcute:add-line"
+                        width={20}
+                        sx={{
+                            mr: { xs: 0, sm: 1 },
+                        }}
+                    />
+                    <Typography
+                        variant="button"
+                        sx={{
+                            display: { xs: 'none', sm: 'inline' },
+                        }}
+                    >
+                        New operation
+                    </Typography>
                 </Button>
             </Box>
 
@@ -161,23 +266,70 @@ export function OperationView() {
                                     />
                                 </TableCell>
                                 <TableCell align="left">ID</TableCell>
-                                <TableCell align="left" onClick={() => handleSort('type')}>
-                                    Operation Type{' '}
-                                    {orderBy === 'type' && (order === 'asc' ? '▲' : '▼')}
+                                <TableCell
+                                    align="left"
+                                    sortDirection={orderBy === 'type' ? order : false}
+                                >
+                                    <TableSortLabel
+                                        active={orderBy === 'type'}
+                                        direction={orderBy === 'type' ? order : 'asc'}
+                                        onClick={() => handleSort('type')}
+                                    >
+                                        Operation Type
+                                    </TableSortLabel>
                                 </TableCell>
-                                <TableCell align="left" onClick={() => handleSort('result')}>
-                                    Result {orderBy === 'result' && (order === 'asc' ? '▲' : '▼')}
+                                <TableCell
+                                    align="left"
+                                    sortDirection={orderBy === 'value' ? order : false}
+                                >
+                                    <TableSortLabel
+                                        active={orderBy === 'value'}
+                                        direction={orderBy === 'value' ? order : 'asc'}
+                                        onClick={() => handleSort('value')}
+                                    >
+                                        Value
+                                    </TableSortLabel>
                                 </TableCell>
-                                <TableCell align="left" onClick={() => handleSort('cost')}>
-                                    Cost {orderBy === 'cost' && (order === 'asc' ? '▲' : '▼')}
+                                <TableCell
+                                    align="left"
+                                    sortDirection={orderBy === 'result' ? order : false}
+                                >
+                                    <TableSortLabel
+                                        active={orderBy === 'result'}
+                                        direction={orderBy === 'result' ? order : 'asc'}
+                                        onClick={() => handleSort('result')}
+                                    >
+                                        Result
+                                    </TableSortLabel>
+                                </TableCell>
+                                <TableCell
+                                    align="left"
+                                    sortDirection={orderBy === 'cost' ? order : false}
+                                >
+                                    <TableSortLabel
+                                        active={orderBy === 'cost'}
+                                        direction={orderBy === 'cost' ? order : 'asc'}
+                                        onClick={() => handleSort('cost')}
+                                    >
+                                        Cost
+                                    </TableSortLabel>
                                 </TableCell>
                                 <TableCell align="left">Balance</TableCell>
-                                <TableCell align="left" onClick={() => handleSort('date')}>
-                                    Date {orderBy === 'date' && (order === 'asc' ? '▲' : '▼')}
+                                <TableCell
+                                    align="left"
+                                    sortDirection={orderBy === 'date' ? order : false}
+                                >
+                                    <TableSortLabel
+                                        active={orderBy === 'date'}
+                                        direction={orderBy === 'date' ? order : 'asc'}
+                                        onClick={() => handleSort('date')}
+                                    >
+                                        Date
+                                    </TableSortLabel>
                                 </TableCell>
-                                <TableCell align="center">Actions</TableCell>
                             </TableRow>
                         </TableHead>
+
                         <TableBody>
                             {paginatedData.map((record) => (
                                 <TableRow key={record.id} selected={selected.includes(record.id)}>
@@ -189,6 +341,7 @@ export function OperationView() {
                                     </TableCell>
                                     <TableCell>{record.id}</TableCell>
                                     <TableCell>{record.type}</TableCell>
+                                    <TableCell>{record.value}</TableCell>
                                     <TableCell>{record.result}</TableCell>
                                     <TableCell>
                                         <span style={{ color: 'red', fontWeight: 'bold' }}>
@@ -206,11 +359,6 @@ export function OperationView() {
                                         </span>
                                     </TableCell>
                                     <TableCell>{record.date}</TableCell>
-                                    <TableCell align="center">
-                                        <IconButton onClick={() => handleSelect(record.id)}>
-                                            <Iconify icon="solar:trash-bin-bold" width={20} />
-                                        </IconButton>
-                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -233,13 +381,36 @@ export function OperationView() {
                     <Button
                         variant="contained"
                         color="error"
-                        startIcon={<Iconify icon="solar:trash-bin-bold" width={20} />}
-                        onClick={handleDeleteSelected}
+                        startIcon={<Iconify icon="tabler:trash" width={20} />}
+                        onClick={handleOpenConfirmDelete}
                     >
                         Delete Selected
                     </Button>
                 </Box>
             )}
+
+            <Dialog
+                open={confirmDeleteOpen}
+                onClose={handleCloseConfirmDelete}
+                aria-labelledby="confirm-delete-title"
+                aria-describedby="confirm-delete-description"
+            >
+                <DialogTitle id="confirm-delete-title">Confirm Deletion</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="confirm-delete-description">
+                        Are you sure you want to delete the selected operations? This action cannot
+                        be undone.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseConfirmDelete} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleConfirmDelete} color="error" variant="contained">
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
 
             <Modal open={openModal} onClose={handleCloseModal} closeAfterTransition>
                 <Fade in={openModal}>
@@ -255,6 +426,13 @@ export function OperationView() {
                     </Box>
                 </Fade>
             </Modal>
+
+            <AlertSnackbar
+                open={snackbar.open}
+                message={snackbar.message}
+                onClose={() => setSnackbar({ ...snackbar, open: false })}
+                severity={snackbar.severity}
+            />
         </DashboardContent>
     );
 }

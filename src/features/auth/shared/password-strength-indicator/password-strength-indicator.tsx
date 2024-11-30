@@ -1,11 +1,18 @@
 import { Box, useTheme, Typography, LinearProgress } from '@mui/material';
 
+import { validatePasswordStrength } from 'src/utils/validation';
+
 import { getPasswordStrengthColor } from './password-strength-indicator.styles';
 
-import type { PasswordStrengthIndicatorProps } from './password-strength-indicator.types';
+interface PasswordStrengthIndicatorProps {
+    password: string;
+}
 
-export function PasswordStrengthIndicator({ score, label }: PasswordStrengthIndicatorProps) {
+export function PasswordStrengthIndicator({ password }: PasswordStrengthIndicatorProps) {
     const theme = useTheme();
+
+    const { score, label } = validatePasswordStrength(password);
+
     const strengthColor = getPasswordStrengthColor(theme, score);
 
     return (

@@ -7,6 +7,7 @@ import { useTheme } from '@mui/material/styles';
 import { CircularProgress } from '@mui/material';
 import Typography from '@mui/material/Typography';
 
+import { formatCurrency } from 'src/utils/format-number';
 import { getProfileBankAccount } from 'src/utils/profile-manager';
 
 import { _notifications } from 'src/_mock';
@@ -141,7 +142,10 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
                                                             : 'text.secondary',
                                                 }}
                                             >
-                                                ${bankAccount?.balance.toFixed(2)}
+                                                {formatCurrency(
+                                                    bankAccount?.balance.toFixed(2).toString() ||
+                                                        '0'
+                                                )}
                                             </Typography>
                                         ) : (
                                             <CircularProgress size={24} color="inherit" />

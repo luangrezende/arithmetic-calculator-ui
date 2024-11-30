@@ -13,9 +13,10 @@ import { MenuItem, MenuList, menuItemClasses } from '@mui/material';
 
 import { useLocalUser } from 'src/hooks/use-local-user';
 
-import { logoutUser } from 'src/utils/auth-manager';
+import { logout } from 'src/utils/auth-manager';
 
 import { _myAccount } from 'src/_mock';
+import { logoutUser } from 'src/services/api/auth-service';
 
 export type AccountPopoverProps = IconButtonProps & {};
 
@@ -31,8 +32,13 @@ export function AccountPopover({ sx, ...other }: AccountPopoverProps) {
         setOpenPopover(null);
     }, []);
 
-    const handleLogout = useCallback(() => {
-        logoutUser();
+    const handleLogout = useCallback(async () => {
+        try {
+            await logoutUser();
+            logout();
+        } catch (error) {
+            console.error(error);
+        }
     }, []);
 
     return (

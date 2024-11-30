@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { getTokens, saveTokens, logoutUser } from "src/utils/auth-manager";
+import { logout, getTokens, saveTokens } from "src/utils/auth-manager";
 
 import { USER_API_URL, AUTH_ENDPOINTS } from "src/config/api-config";
 
@@ -37,7 +37,7 @@ axiosUserInstance.interceptors.response.use(
                 }
             } catch (refreshError) {
                 console.error("Error refreshing token:", refreshError);
-                logoutUser();
+                logout();
             }
         }
 

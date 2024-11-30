@@ -1,44 +1,28 @@
-import { Box } from '@mui/material';
+import { Box, Button, CircularProgress } from '@mui/material';
 
-import { LoadingButton } from 'src/components/button/loading-button';
+import type { FormButtonsProps } from './forgot-password.types';
 
-interface FormButtonsProps {
-    onSubmit: () => void;
-    onCancel: () => void;
-    loading: boolean;
-    submitLabel?: string;
-    cancelLabel?: string;
-}
-
-export function FormButtons({
-    onSubmit,
-    onCancel,
-    loading,
-    submitLabel = 'Submit',
-    cancelLabel = 'Cancel',
-}: FormButtonsProps) {
+export function FormButtons({ onSubmit, onCancel, loading }: FormButtonsProps) {
     return (
         <Box display="flex" justifyContent="space-between" mt={2} width="100%">
-            <LoadingButton
+            <Button
                 size="large"
                 color="inherit"
                 variant="outlined"
                 onClick={onCancel}
-                loading={loading}
                 disabled={loading}
             >
-                {cancelLabel}
-            </LoadingButton>
-            <LoadingButton
-                size="large"
-                color="inherit"
-                variant="contained"
+                Cancel
+            </Button>
+            <Button
                 onClick={onSubmit}
-                loading={loading}
+                variant="contained"
+                color="inherit"
                 disabled={loading}
+                startIcon={loading ? <CircularProgress size={16} color="inherit" /> : null}
             >
-                {submitLabel}
-            </LoadingButton>
+                {loading ? 'Sending...' : 'Send'}
+            </Button>
         </Box>
     );
 }

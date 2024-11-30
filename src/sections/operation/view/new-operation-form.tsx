@@ -2,6 +2,8 @@ import { useState } from 'react';
 
 import { Box, Alert, Button, MenuItem, TextField } from '@mui/material';
 
+import { Iconify } from 'src/components/iconify';
+
 const operations = [
     { value: 'addition', label: 'Addition', cost: 10 },
     { value: 'subtraction', label: 'Subtraction', cost: 10 },
@@ -14,14 +16,17 @@ const operations = [
 interface NewOperationFormProps {
     onClose: () => void;
     credit: number;
-    onAddOperation: (operation: {
-        operationType: string;
-        value1?: number;
-        value2?: number;
-        result: string | number;
-        cost: number;
-    }) => void;
+    onAddOperation: () => void;
 }
+
+const operationIcons: { [key: string]: string } = {
+    addition: 'mdi:plus',
+    subtraction: 'mdi:minus',
+    multiplication: 'mdi:close',
+    division: 'mdi:division',
+    square_root: 'mdi:root',
+    random_string: 'mdi:shuffle-variant',
+};
 
 export function NewOperationForm({ onClose, credit, onAddOperation }: NewOperationFormProps) {
     const [operationType, setOperationType] = useState('');
@@ -88,28 +93,14 @@ export function NewOperationForm({ onClose, credit, onAddOperation }: NewOperati
 
         const result = calculateResult();
 
-        onAddOperation({
-            operationType,
-            value1: parseFloat(value1),
-            value2: parseFloat(value2),
-            result: result ?? 'Error',
-            cost: operationCost,
-        });
+        alert(result);
+        onAddOperation();
 
         onClose();
     };
 
     return (
-        <Box
-            component="form"
-            display="flex"
-            flexDirection="column"
-            gap={2}
-            onSubmit={(e) => {
-                e.preventDefault();
-                handleSubmit();
-            }}
-        >
+        <Box component="form" display="flex" flexDirection="column" gap={2}>
             <TextField
                 select
                 label="Operation"
@@ -124,25 +115,39 @@ export function NewOperationForm({ onClose, credit, onAddOperation }: NewOperati
                 ))}
             </TextField>
 
-            {operationType !== 'square_root' && operationType !== 'random_string' && (
-                <>
-                    <TextField
-                        label="Value 1"
-                        type="number"
-                        value={value1}
-                        onChange={(e) => setValue1(e.target.value)}
-                        error={!!fieldError.value1}
-                        helperText={fieldError.value1}
-                    />
-                    <TextField
-                        label="Value 2"
-                        type="number"
-                        value={value2}
-                        onChange={(e) => setValue2(e.target.value)}
-                        error={!!fieldError.value2}
-                        helperText={fieldError.value2}
-                    />
-                </>
+            {/* Exibir campos somente após selecionar o tipo */}
+            {operationType && (
+                <Box display="flex" alignItems="center" gap={1}>
+                    {operationType !== 'random_string' && (
+                        <TextField
+                            label={operationType === 'square_root' ? 'Value' : 'Value 1'}
+                            type="number"
+                            value={value1}
+                            onChange={(e) => setValue1(e.target.value)}
+                            error={!!fieldError.value1}
+                            helperText={fieldError.value1}
+                            sx={{ flex: 1 }}
+                        />
+                    )}
+                    {operationType !== 'square_root' && operationType !== 'random_string' && (
+                        <>
+                            <Iconify
+                                icon={operationIcons[operationType]}
+                                width={24}
+                                sx={{ mx: 1 }}
+                            />
+                            <TextField
+                                label="Value 2"
+                                type="number"
+                                value={value2}
+                                onChange={(e) => setValue2(e.target.value)}
+                                error={!!fieldError.value2}
+                                helperText={fieldError.value2}
+                                sx={{ flex: 1 }}
+                            />
+                        </>
+                    )}
+                </Box>
             )}
 
             {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
@@ -151,8 +156,8 @@ export function NewOperationForm({ onClose, credit, onAddOperation }: NewOperati
                 <Button onClick={onClose} variant="outlined">
                     Cancel
                 </Button>
-                <Button type="submit" variant="contained">
-                    Submit
+                <Button onClick={handleSubmit} variant="contained">
+                    Calculate
                 </Button>
             </Box>
         </Box>

@@ -8,8 +8,6 @@ import { useLocalUser } from 'src/hooks/use-local-user';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
-import { Chart } from 'src/components/chart';
-
 import { AnalyticsWidgetSummary } from '../analytics-widget-summary';
 
 export function OverviewAnalyticsView() {

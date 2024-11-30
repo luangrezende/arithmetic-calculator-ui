@@ -6,8 +6,6 @@ import { useTheme } from '@mui/material/styles';
 
 import { layoutClasses } from '../classes';
 
-// ----------------------------------------------------------------------
-
 export function Main({ children, sx, ...other }: BoxProps) {
     return (
         <Box
@@ -25,8 +23,6 @@ export function Main({ children, sx, ...other }: BoxProps) {
         </Box>
     );
 }
-
-// ----------------------------------------------------------------------
 
 export function CompactContent({
     sx,

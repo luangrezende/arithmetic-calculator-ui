@@ -1,1 +1,1 @@
-export { AddCreditModal } from './add-credit-modal';
+export { AddCreditModal } from './components/add-credit-modal';

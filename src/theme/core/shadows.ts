@@ -3,8 +3,6 @@ import type { Shadows } from '@mui/material/styles';
 import { grey } from './palette';
 import { varAlpha } from '../styles';
 
-// ----------------------------------------------------------------------
-
 export function shadows(): Shadows {
     const colorChannel = grey['500Channel'];
 

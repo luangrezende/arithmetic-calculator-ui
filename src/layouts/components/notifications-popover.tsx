@@ -178,8 +178,6 @@ function NotificationItem({ notification }: { notification: NotificationItemProp
     );
 }
 
-// ----------------------------------------------------------------------
-
 function renderContent(notification: NotificationItemProps) {
     const title = (
         <Typography variant="subtitle2">

@@ -1,3 +1,5 @@
+import { parseAmount } from "./format-number";
+
 export const validateField = (value: string): boolean => !value.trim();
 
 export const validateFieldsSignup = (fields: { name: string; email: string; password: string, confirmPassword: string }) => ({
@@ -37,6 +39,19 @@ export function validateEmail(email: string): boolean {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 }
 
+export const validateAmount = (value: string): { isValid: boolean; message: string } => {
+    const numericValue = parseAmount(value) || 0;
+
+    if (numericValue <= 1) {
+        return { isValid: false, message: 'Amount must be greater than $1.' };
+    }
+
+    if (numericValue > 500) {
+        return { isValid: false, message: 'The maximum amount you can add is $500.' };
+    }
+
+    return { isValid: true, message: '' };
+};
 
 
 

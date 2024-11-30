@@ -1,7 +1,5 @@
 import type { Theme, SxProps } from '@mui/material/styles';
 
-// ----------------------------------------------------------------------
-
 export type ColorPickerProps = {
     multi?: boolean;
     colors: string[];

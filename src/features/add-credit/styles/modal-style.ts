@@ -13,4 +13,3 @@ export const modalStyle: SxProps = {
     width: '90%',
     maxWidth: 400,
 };
-

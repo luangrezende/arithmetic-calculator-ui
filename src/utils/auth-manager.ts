@@ -9,7 +9,7 @@ export const saveTokens = (token: string, refreshToken: string) => {
     localStorage.setItem("refreshToken", refreshToken);
 };
 
-export const logoutUser = () => {
+export const logout = () => {
     localStorage.clear();
     window.location.href = "/sign-in";
 };

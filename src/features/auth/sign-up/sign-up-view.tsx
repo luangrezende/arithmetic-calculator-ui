@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useSignUpForm } from 'src/hooks/use-signup-form';
-
 import { getTokens } from 'src/utils/auth-manager';
 
 import { registerUser } from 'src/services/api/auth-service';
@@ -14,9 +12,8 @@ import { SignUpForm } from './sign-up-form';
 export default function SignUpView() {
     const navigate = useNavigate();
     const { token } = getTokens();
-    const { form, fieldErrors, passwordStrength, handleFieldChange, validateForm } =
-        useSignUpForm();
 
+    const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' });
     const [loading, setLoading] = useState(false);
     const [registerSuccess, setRegisterSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -26,16 +23,16 @@ export default function SignUpView() {
         if (token) navigate('/');
     }, [token, navigate]);
 
+    const handleFieldChange = (field: string, value: string) => {
+        setForm((prev) => ({ ...prev, [field]: value }));
+    };
+
     const handleSubmit = async () => {
-        if (!validateForm()) {
-            return;
-        }
-
-        setLoading(true);
-        setError(null);
-
         try {
-            await registerUser(form.email, form.password, form.name);
+            setLoading(true);
+            setError(null);
+
+            await registerUser(form.name, form.email, form.password, form.confirmPassword);
 
             setSnackbarOpen(true);
             setRegisterSuccess(true);
@@ -54,9 +51,7 @@ export default function SignUpView() {
                 email={form.email}
                 password={form.password}
                 confirmPassword={form.confirmPassword}
-                passwordStrength={passwordStrength}
                 registerSuccess={registerSuccess}
-                fieldErrors={fieldErrors}
                 loading={loading}
                 error={error}
                 onFieldChange={handleFieldChange}
@@ -66,7 +61,7 @@ export default function SignUpView() {
 
             <AlertSnackbar
                 open={snackbarOpen}
-                message="Account created successfully. Redirecting to login page..."
+                message="Account created successfully. Redirecting to sign-in page..."
                 onClose={() => setSnackbarOpen(false)}
                 severity="success"
             />

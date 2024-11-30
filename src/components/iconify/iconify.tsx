@@ -1,29 +1,25 @@
-import { forwardRef } from 'react';
-import { Icon, disableCache } from '@iconify/react';
+import type { Theme, SxProps } from '@mui/material';
 
-import Box from '@mui/material/Box';
+import { Icon } from '@iconify/react';
 
-import { iconifyClasses } from './classes';
+import { Box } from '@mui/material';
 
-import type { IconifyProps } from './types';
+interface IconifyProps {
+    icon: string;
+    width?: number | string;
+    sx?: SxProps<Theme>;
+}
 
-export const Iconify = forwardRef<SVGElement, IconifyProps>(
-    ({ className, width = 20, sx, ...other }, ref) => (
+export function Iconify({ icon, width = 24, sx }: IconifyProps) {
+    return (
         <Box
-            ssr
-            ref={ref}
             component={Icon}
-            className={iconifyClasses.root.concat(className ? ` ${className}` : '')}
+            icon={icon}
             sx={{
                 width,
                 height: width,
-                flexShrink: 0,
-                display: 'inline-flex',
                 ...sx,
             }}
-            {...other}
         />
-    )
-);
-
-disableCache('local');
+    );
+}

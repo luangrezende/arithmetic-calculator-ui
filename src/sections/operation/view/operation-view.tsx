@@ -1,31 +1,44 @@
 import { useState, useCallback } from 'react';
 
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Fade from '@mui/material/Fade';
-import Table from '@mui/material/Table';
-import Modal from '@mui/material/Modal';
-import Button from '@mui/material/Button';
-import TableRow from '@mui/material/TableRow';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import Typography from '@mui/material/Typography';
-import TableContainer from '@mui/material/TableContainer';
-import TablePagination from '@mui/material/TablePagination';
+import {
+    Box,
+    Card,
+    Fade,
+    Table,
+    Modal,
+    Button,
+    Dialog,
+    TableRow,
+    Checkbox,
+    TableBody,
+    TableCell,
+    TableHead,
+    TextField,
+    Typography,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    TableContainer,
+    TableSortLabel,
+    InputAdornment,
+    TablePagination,
+    DialogContentText,
+} from '@mui/material';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Iconify } from 'src/components/iconify';
+import { AlertSnackbar } from 'src/components/alert-snackbar';
 
-import { NewOperationForm } from './new-operation-form-view';
+import { NewOperationForm } from './new-operation-form';
 
 const modalStyle = {
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: '90%',
+    maxWidth: 500,
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
@@ -37,46 +50,138 @@ const getTimeAgo = (minutes: number) =>
     new Date(new Date().getTime() - minutes * 60 * 1000).toLocaleString();
 
 const initialOperations = [
-    { id: 1, type: 'Square Root', cost: 5.0, result: 3, credit: 48.5, date: getTimeAgo(10) },
-    { id: 2, type: 'Division', cost: 15.0, result: 2, credit: 53.5, date: getTimeAgo(20) },
-    { id: 3, type: 'Multiplication', cost: 15.5, result: 45, credit: 68.5, date: getTimeAgo(30) },
-    { id: 4, type: 'Subtraction', cost: 5.25, result: 8, credit: 84.0, date: getTimeAgo(40) },
-    { id: 5, type: 'Addition', cost: 10.75, result: 15, credit: 89.25, date: getTimeAgo(50) },
-    { id: 6, type: 'Addition', cost: 10.75, result: 15, credit: 100.0, date: getTimeAgo(60) },
-    { id: 7, type: 'Addition', cost: 10.75, result: 15, credit: 110.75, date: getTimeAgo(70) },
+    {
+        id: 1,
+        type: 'Square Root',
+        cost: 5.0,
+        value: '9',
+        result: 3,
+        credit: 48.5,
+        date: getTimeAgo(10),
+    },
+    {
+        id: 2,
+        type: 'Division',
+        cost: 15.0,
+        value: '10/5',
+        result: 2,
+        credit: 53.5,
+        date: getTimeAgo(20),
+    },
+    {
+        id: 3,
+        type: 'Multiplication',
+        cost: 15.5,
+        value: '9*5',
+        result: 45,
+        credit: 68.5,
+        date: getTimeAgo(30),
+    },
+    {
+        id: 4,
+        type: 'Subtraction',
+        cost: 5.25,
+        value: '13-5',
+        result: 8,
+        credit: 84.0,
+        date: getTimeAgo(40),
+    },
+    {
+        id: 5,
+        type: 'Addition',
+        cost: 10.75,
+        value: '2+2',
+        result: 4,
+        credit: 89.25,
+        date: getTimeAgo(50),
+    },
+    {
+        id: 6,
+        type: 'Square Root',
+        cost: 5.0,
+        value: '16',
+        result: 4,
+        credit: 43.5,
+        date: getTimeAgo(15),
+    },
+    {
+        id: 7,
+        type: 'Random String',
+        cost: 8.0,
+        value: '',
+        result: 'xXz1Fg9',
+        credit: 35.5,
+        date: getTimeAgo(25),
+    },
 ];
 
 export function OperationView() {
     const [openModal, setOpenModal] = useState(false);
     const [operations, setOperations] = useState(initialOperations);
-    const [credit, setCredit] = useState(48.5); // Saldo inicial
-    const [order, setOrder] = useState<'asc' | 'desc'>('desc'); // Estado de ordenação
+    const [credit, setCredit] = useState(48.5);
+    const [order, setOrder] = useState<'asc' | 'desc'>('desc');
+    const [orderBy, setOrderBy] = useState<keyof (typeof initialOperations)[0]>('date');
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selected, setSelected] = useState<number[]>([]);
+    const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success' as 'success' | 'error',
+    });
 
     const handleOpenModal = useCallback(() => setOpenModal(true), []);
     const handleCloseModal = useCallback(() => setOpenModal(false), []);
+    const handleOpenConfirmDelete = useCallback(() => setConfirmDeleteOpen(true), []);
+    const handleCloseConfirmDelete = useCallback(() => setConfirmDeleteOpen(false), []);
 
-    const handleNewOperation = (newOperation: any) => {
-        const newCredit = Math.max(credit + newOperation.cost, 0);
-        const operationWithCredit = {
-            ...newOperation,
-            id: operations.length + 1,
-            credit: newCredit,
-            date: new Date().toLocaleString(),
-        };
-        setOperations((prev) => [operationWithCredit, ...prev]);
-        setCredit(newCredit);
+    const handleDeleteSelected = useCallback(() => {
+        setOperations((prev) => prev.filter((op) => !selected.includes(op.id)));
+        setSelected([]);
+    }, [selected]);
+
+    const handleConfirmDelete = useCallback(() => {
+        handleDeleteSelected();
+        setConfirmDeleteOpen(false);
+    }, [handleDeleteSelected]);
+
+    const handleNewOperation = () => {
+        setSnackbar({
+            open: true,
+            message: 'Operation calculated.',
+            severity: 'success',
+        });
     };
 
-    const handleSort = () => {
+    const handleSort = (column: keyof (typeof initialOperations)[0]) => {
+        setOrderBy(column);
         setOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
     };
 
-    const sortedData = [...operations].sort((a, b) =>
-        order === 'desc'
-            ? new Date(a.date).getTime() - new Date(b.date).getTime()
-            : new Date(b.date).getTime() - new Date(a.date).getTime()
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(event.target.value);
+    };
+
+    const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSelected(event.target.checked ? operations.map((op) => op.id) : []);
+    };
+
+    const handleSelect = (id: number) => {
+        setSelected((prev) =>
+            prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+        );
+    };
+
+    const filteredOperations = operations.filter(
+        (op) =>
+            op.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            op.result.toString().includes(searchQuery)
+    );
+
+    const sortedData = [...filteredOperations].sort((a, b) =>
+        order === 'asc' ? (a[orderBy] < b[orderBy] ? -1 : 1) : a[orderBy] > b[orderBy] ? -1 : 1
     );
 
     const paginatedData = sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
@@ -93,13 +198,52 @@ export function OperationView() {
                 <Typography variant="h4" flexGrow={1}>
                     Operations
                 </Typography>
+                <TextField
+                    size="small"
+                    variant="outlined"
+                    placeholder="Search"
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                    sx={{
+                        mr: { xs: 1, sm: 2 },
+                        width: { xs: '150px', sm: 'auto' },
+                    }}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <Iconify icon="mdi:magnify" width={20} />
+                            </InputAdornment>
+                        ),
+                    }}
+                />
+
                 <Button
                     variant="contained"
                     color="primary"
-                    startIcon={<Iconify icon="mingcute:add-line" />}
                     onClick={handleOpenModal}
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        minWidth: { xs: '40px', sm: 'auto' },
+                        padding: { xs: '8px', sm: '10px 16px' },
+                    }}
                 >
-                    New operation
+                    <Iconify
+                        icon="mingcute:add-line"
+                        width={20}
+                        sx={{
+                            mr: { xs: 0, sm: 1 },
+                        }}
+                    />
+                    <Typography
+                        variant="button"
+                        sx={{
+                            display: { xs: 'none', sm: 'inline' },
+                        }}
+                    >
+                        New operation
+                    </Typography>
                 </Button>
             </Box>
 
@@ -108,25 +252,96 @@ export function OperationView() {
                     <Table>
                         <TableHead>
                             <TableRow>
+                                <TableCell padding="checkbox">
+                                    <Checkbox
+                                        indeterminate={
+                                            selected.length > 0 &&
+                                            selected.length < operations.length
+                                        }
+                                        checked={
+                                            operations.length > 0 &&
+                                            selected.length === operations.length
+                                        }
+                                        onChange={handleSelectAll}
+                                    />
+                                </TableCell>
                                 <TableCell align="left">ID</TableCell>
-                                <TableCell align="left">Operation Type</TableCell>
-                                <TableCell align="left">Result</TableCell>
-                                <TableCell align="left">Cost</TableCell>
+                                <TableCell
+                                    align="left"
+                                    sortDirection={orderBy === 'type' ? order : false}
+                                >
+                                    <TableSortLabel
+                                        active={orderBy === 'type'}
+                                        direction={orderBy === 'type' ? order : 'asc'}
+                                        onClick={() => handleSort('type')}
+                                    >
+                                        Operation Type
+                                    </TableSortLabel>
+                                </TableCell>
+                                <TableCell
+                                    align="left"
+                                    sortDirection={orderBy === 'value' ? order : false}
+                                >
+                                    <TableSortLabel
+                                        active={orderBy === 'value'}
+                                        direction={orderBy === 'value' ? order : 'asc'}
+                                        onClick={() => handleSort('value')}
+                                    >
+                                        Value
+                                    </TableSortLabel>
+                                </TableCell>
+                                <TableCell
+                                    align="left"
+                                    sortDirection={orderBy === 'result' ? order : false}
+                                >
+                                    <TableSortLabel
+                                        active={orderBy === 'result'}
+                                        direction={orderBy === 'result' ? order : 'asc'}
+                                        onClick={() => handleSort('result')}
+                                    >
+                                        Result
+                                    </TableSortLabel>
+                                </TableCell>
+                                <TableCell
+                                    align="left"
+                                    sortDirection={orderBy === 'cost' ? order : false}
+                                >
+                                    <TableSortLabel
+                                        active={orderBy === 'cost'}
+                                        direction={orderBy === 'cost' ? order : 'asc'}
+                                        onClick={() => handleSort('cost')}
+                                    >
+                                        Cost
+                                    </TableSortLabel>
+                                </TableCell>
                                 <TableCell align="left">Balance</TableCell>
                                 <TableCell
                                     align="left"
-                                    onClick={handleSort}
-                                    style={{ cursor: 'pointer' }}
+                                    sortDirection={orderBy === 'date' ? order : false}
                                 >
-                                    Date {order === 'asc' ? '▲' : '▼'}
+                                    <TableSortLabel
+                                        active={orderBy === 'date'}
+                                        direction={orderBy === 'date' ? order : 'asc'}
+                                        onClick={() => handleSort('date')}
+                                    >
+                                        Date
+                                    </TableSortLabel>
                                 </TableCell>
                             </TableRow>
                         </TableHead>
+
                         <TableBody>
                             {paginatedData.map((record) => (
-                                <TableRow key={record.id}>
+                                <TableRow key={record.id} selected={selected.includes(record.id)}>
+                                    <TableCell padding="checkbox">
+                                        <Checkbox
+                                            checked={selected.includes(record.id)}
+                                            onChange={() => handleSelect(record.id)}
+                                        />
+                                    </TableCell>
                                     <TableCell>{record.id}</TableCell>
                                     <TableCell>{record.type}</TableCell>
+                                    <TableCell>{record.value}</TableCell>
                                     <TableCell>{record.result}</TableCell>
                                     <TableCell>
                                         <span style={{ color: 'red', fontWeight: 'bold' }}>
@@ -153,13 +368,49 @@ export function OperationView() {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 20]}
                     component="div"
-                    count={operations.length}
+                    count={sortedData.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Card>
+
+            {selected.length > 0 && (
+                <Box display="flex" justifyContent="flex-end" my={2}>
+                    <Button
+                        variant="contained"
+                        color="error"
+                        startIcon={<Iconify icon="tabler:trash" width={20} />}
+                        onClick={handleOpenConfirmDelete}
+                    >
+                        Delete Selected
+                    </Button>
+                </Box>
+            )}
+
+            <Dialog
+                open={confirmDeleteOpen}
+                onClose={handleCloseConfirmDelete}
+                aria-labelledby="confirm-delete-title"
+                aria-describedby="confirm-delete-description"
+            >
+                <DialogTitle id="confirm-delete-title">Confirm Deletion</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="confirm-delete-description">
+                        Are you sure you want to delete the selected operations? This action cannot
+                        be undone.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseConfirmDelete} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleConfirmDelete} color="error" variant="contained">
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
 
             <Modal open={openModal} onClose={handleCloseModal} closeAfterTransition>
                 <Fade in={openModal}>
@@ -169,11 +420,19 @@ export function OperationView() {
                         </Typography>
                         <NewOperationForm
                             onClose={handleCloseModal}
-                            // onAddOperation={handleNewOperation}
+                            onAddOperation={handleNewOperation}
+                            credit={credit}
                         />
                     </Box>
                 </Fade>
             </Modal>
+
+            <AlertSnackbar
+                open={snackbar.open}
+                message={snackbar.message}
+                onClose={() => setSnackbar({ ...snackbar, open: false })}
+                severity={snackbar.severity}
+            />
         </DashboardContent>
     );
 }

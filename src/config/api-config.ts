@@ -2,6 +2,7 @@ export const USER_API_URL = 'https://hw830ty0zi.execute-api.us-east-1.amazonaws.
 
 export const AUTH_ENDPOINTS = {
     LOGIN: '/auth/login',
+    LOGOUT: '/auth/logout',
     REFRESH: '/auth/refresh',
     PROFILE: '/auth/profile',
     REGISTER: '/auth/register',

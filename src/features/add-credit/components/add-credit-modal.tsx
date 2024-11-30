@@ -1,11 +1,11 @@
 import { Box, Fade, Modal, Typography } from '@mui/material';
 
-import { modalStyle } from './add-credit.styles';
 import { AddCreditForm } from './add-credit-form';
+import { modalStyle } from '../styles/modal-style';
 
-import type { AddCreditModalProps } from './add-credit.types';
+import type { AddCreditModalProps } from '../types/add-credit.types';
 
-export function AddCreditModal({ open, onClose, onAddCredit }: AddCreditModalProps) {
+export function AddCreditModal({ open, onClose, onOpenSnackBar }: AddCreditModalProps) {
     return (
         <Modal open={open} onClose={onClose} closeAfterTransition>
             <Fade in={open}>
@@ -13,7 +13,7 @@ export function AddCreditModal({ open, onClose, onAddCredit }: AddCreditModalPro
                     <Typography variant="h6" mb={2}>
                         Add Credit
                     </Typography>
-                    <AddCreditForm onClose={onClose} onAddCredit={onAddCredit} />
+                    <AddCreditForm onClose={onClose} onOpenSnackBar={onOpenSnackBar} />
                 </Box>
             </Fade>
         </Modal>

@@ -5,7 +5,8 @@ import { Box, Button, CircularProgress } from '@mui/material';
 import { parseAmount } from 'src/utils/format-number';
 import { saveProfile, getProfileBankAccount } from 'src/utils/profile-manager';
 
-import { addBalance } from 'src/services/api/balance-service';
+import { useBalance } from 'src/context/balance-context';
+import { addCredit } from 'src/services/api/balance-service';
 import { getUserProfile } from 'src/services/api/auth-service';
 
 import { InputField } from 'src/components/input-field.tsx/input-field';
@@ -37,7 +38,7 @@ export function AddCreditForm({ onClose, onOpenSnackBar }: AddCreditFormProps) {
         setIsLoading(true);
 
         try {
-            const response = await addBalance(amount, bankAccount!.id);
+            const response = await addCredit(amount!, bankAccount!.id);
             if (response.statusCode === 200) {
                 const profileResponse = await getUserProfile();
                 saveProfile(profileResponse.data);

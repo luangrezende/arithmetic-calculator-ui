@@ -20,7 +20,6 @@ export function OverviewAnalyticsView() {
             </Typography>
 
             <Grid container spacing={3}>
-                {/* Card 1: Operações */}
                 <Grid xs={12} sm={6} md={6}>
                     <Paper elevation={3} sx={{ p: 3 }}>
                         <AnalyticsWidgetSummary
@@ -28,7 +27,7 @@ export function OverviewAnalyticsView() {
                             percent={0.1}
                             total={22}
                             color="primary"
-                            icon={<img alt="icon" src="/assets/icons/glass/ic-glass-message.svg" />}
+                            icon={<img alt="icon" src="/assets/icons/glass/ic-glass-bag.svg" />}
                             chart={{
                                 categories: [
                                     'Jan',
@@ -43,7 +42,6 @@ export function OverviewAnalyticsView() {
                                 series: [56, 47, 40, 62, 73, 30, 23, 54],
                             }}
                         />
-                        {/* Adicionando progresso */}
                         <Box sx={{ mt: 2 }}>
                             <Typography variant="body2" color="text.secondary">
                                 Monthly Target
@@ -53,7 +51,6 @@ export function OverviewAnalyticsView() {
                     </Paper>
                 </Grid>
 
-                {/* Card 2: Crédito */}
                 <Grid xs={12} sm={6} md={6}>
                     <Paper elevation={3} sx={{ p: 3 }}>
                         <AnalyticsWidgetSummary
@@ -61,7 +58,7 @@ export function OverviewAnalyticsView() {
                             percent={-0.2}
                             total={25054}
                             color="success"
-                            icon={<img alt="icon" src="/assets/icons/glass/ic-glass-bag.svg" />}
+                            icon={<img alt="icon" src="/assets/icons/glass/ic-glass-buy.svg" />}
                             chart={{
                                 categories: [
                                     'Jan',
@@ -76,7 +73,6 @@ export function OverviewAnalyticsView() {
                                 series: [70, 50, 90, 60, 80, 40, 30, 70],
                             }}
                         />
-                        {/* Adicionando progresso */}
                         <Box sx={{ mt: 2 }}>
                             <Typography variant="body2" color="text.secondary">
                                 Annual Target
@@ -87,7 +83,6 @@ export function OverviewAnalyticsView() {
                 </Grid>
             </Grid>
 
-            {/* Extra Gráficos/Seções */}
             <Box sx={{ mt: 5 }}>
                 <Typography variant="h5" gutterBottom>
                     Performance Highlights

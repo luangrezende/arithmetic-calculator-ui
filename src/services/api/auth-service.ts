@@ -3,9 +3,9 @@ import axios from 'axios';
 import { saveTokens } from 'src/utils/auth-manager';
 import { saveProfile } from 'src/utils/profile-manager';
 
-import { USER_API_URL, AUTH_ENDPOINTS } from 'src/config/api-config';
+import { USER_API_URL, AUTH_ENDPOINTS, USER_ENDPOINTS } from 'src/config/api-config';
 
-import axiosUserInstance from '../axios/axios-user-interceptor';
+import axiosInstance from '../axios/axios-interceptor';
 
 
 export const registerUser = async (name: string, username: string, password: string, confirmPassword: string) => {
@@ -77,7 +77,7 @@ export const getUserProfile = async () => {
         const token = localStorage.getItem('token');
         if (!token) throw new Error('Token not found. Please log in again.');
 
-        const response = await axiosUserInstance.get(`${AUTH_ENDPOINTS.PROFILE}`, {
+        const response = await axiosInstance.get(`${USER_ENDPOINTS.PROFILE}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },

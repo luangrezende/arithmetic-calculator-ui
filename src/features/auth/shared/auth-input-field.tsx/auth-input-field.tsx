@@ -18,7 +18,8 @@ export const AuthInputField = forwardRef(
             isRequired = false,
             onChange,
             loading = false,
-        }: AuthInputFieldFormProps & { loading?: boolean },
+            compareValue,
+        }: AuthInputFieldFormProps & { loading?: boolean; compareValue?: string },
         ref: React.Ref<{ validateFields: () => boolean }>
     ) => {
         const [error, setError] = useState(false);
@@ -53,6 +54,14 @@ export const AuthInputField = forwardRef(
                 }
             }
 
+            if (isValid && name === 'confirmPassword' && value.trim()) {
+                if (value !== compareValue) {
+                    setError(true);
+                    setHelperText('Passwords do not match.');
+                    isValid = false;
+                }
+            }
+
             if (isValid) {
                 setError(false);
                 setHelperText('');
@@ -70,6 +79,8 @@ export const AuthInputField = forwardRef(
         };
 
         const handleChange = (inputValue: string) => {
+            setHelperText('');
+            setError(false);
             onChange(inputValue);
         };
 

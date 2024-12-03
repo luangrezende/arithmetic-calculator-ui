@@ -1,22 +1,14 @@
 import { Box, TextField } from '@mui/material';
 
+import { useLocalUser } from 'src/hooks/use-local-user';
+
 export function CardDetails() {
+    const user = useLocalUser();
+
     return (
         <Box>
-            <TextField
-                fullWidth
-                type="text"
-                label="Cardholder Name"
-                value="Test Env"
-                disabled
-                sx={{ mb: 2 }}
-            />
+            <TextField fullWidth type="text" label={user?.name} value="" disabled sx={{ mb: 2 }} />
             <Box display="flex" alignItems="center" gap={2} sx={{ mb: 2 }}>
-                <img
-                    src="/assets/icons/navbar/ic-lock.svg"
-                    alt="Visa"
-                    style={{ width: 40, height: 50 }}
-                />
                 <TextField
                     fullWidth
                     type="text"

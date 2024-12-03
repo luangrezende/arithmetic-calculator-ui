@@ -5,6 +5,7 @@ import { HelmetProvider } from 'react-helmet-async';
 
 import App from './app';
 import { AuthProvider } from './context/auth-context';
+import { BalanceProvider } from './context/balance-context';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
@@ -14,7 +15,9 @@ root.render(
             <AuthProvider>
                 <BrowserRouter>
                     <Suspense>
-                        <App />
+                        <BalanceProvider>
+                            <App />
+                        </BalanceProvider>
                     </Suspense>
                 </BrowserRouter>
             </AuthProvider>

@@ -8,10 +8,10 @@ import { CircularProgress } from '@mui/material';
 import Typography from '@mui/material/Typography';
 
 import { formatCurrency } from 'src/utils/format-number';
-import { getProfileBankAccount } from 'src/utils/profile-manager';
 
 import { _notifications } from 'src/_mock';
 import { AddCreditModal } from 'src/features/add-credit';
+import { useBalance } from 'src/context/balance-context';
 import { useAuthContext } from 'src/context/auth-context';
 
 import { AlertSnackbar } from 'src/components/alert-snackbar';
@@ -36,8 +36,8 @@ export type DashboardLayoutProps = {
 
 export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) {
     const theme = useTheme();
-    const bankAccount = getProfileBankAccount();
-    const { isBalanceLoaded, isLoaded } = useAuthContext();
+    const { isLoaded } = useAuthContext();
+    const { balance, isBalanceLoaded, fetchBalance } = useBalance();
     const [snackbar, setSnackbar] = useState({
         open: false,
         message: '',
@@ -65,6 +65,7 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
     };
 
     useEffect(() => {
+        fetchBalance();
         isLoaded();
     });
 
@@ -119,7 +120,7 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
                                             py: 1,
                                             borderRadius: 1,
                                             bgcolor: isBalanceLoaded
-                                                ? bankAccount?.balance || -1 > 0
+                                                ? balance || -1 > 0
                                                     ? 'success.light'
                                                     : 'grey.300'
                                                 : 'grey.300',
@@ -137,14 +138,13 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
                                                 fontWeight="bold"
                                                 sx={{
                                                     color:
-                                                        bankAccount?.balance || -1 > 0
+                                                        balance || -1 > 0
                                                             ? 'success.dark'
                                                             : 'text.secondary',
                                                 }}
                                             >
                                                 {formatCurrency(
-                                                    bankAccount?.balance.toFixed(2).toString() ||
-                                                        '0'
+                                                    balance?.toFixed(2).toString() || '0'
                                                 )}
                                             </Typography>
                                         ) : (

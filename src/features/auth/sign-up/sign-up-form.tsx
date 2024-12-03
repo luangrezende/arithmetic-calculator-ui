@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 import { Box } from '@mui/material';
 
@@ -35,6 +35,10 @@ export function SignUpForm({
         const isEmailValid = emailRef.current?.validateFields();
         const isPasswordValid = passwordRef.current?.validateFields();
         const isConfirmPasswordValid = confirmPasswordRef.current?.validateFields();
+
+        if (password !== confirmPassword) {
+            return;
+        }
 
         if (isNameValid && isEmailValid && isPasswordValid && isConfirmPasswordValid) {
             onSubmit();
@@ -95,6 +99,7 @@ export function SignUpForm({
                     type="password"
                     isRequired
                     onChange={(value) => onFieldChange('confirmPassword', value)}
+                    compareValue={password}
                 />
 
                 {error && <ErrorMessage message={error} />}

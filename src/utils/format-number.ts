@@ -57,7 +57,7 @@ export function fPercent(inputValue: InputNumberValue, options?: Options) {
     return fm;
 }
 
-export function fShortenNumber(inputValue: InputNumberValue, options?: Options) {
+export function formatLargeNumber(inputValue: InputNumberValue, options?: Options) {
     const locale = DEFAULT_LOCALE;
 
     const number = processInput(inputValue);
@@ -65,11 +65,11 @@ export function fShortenNumber(inputValue: InputNumberValue, options?: Options) 
 
     const fm = new Intl.NumberFormat(locale.code, {
         notation: 'compact',
-        maximumFractionDigits: 2,
+        maximumFractionDigits: 1,
         ...options,
     }).format(number);
 
-    return fm.replace(/[A-Z]/g, (match) => match.toLowerCase());
+    return fm.replace(/[A-Z]/g, (match) => match.toUpperCase());
 }
 
 export function fData(inputValue: InputNumberValue) {
@@ -86,7 +86,13 @@ export function fData(inputValue: InputNumberValue) {
     return fm;
 }
 
-export const parseAmount = (value: string) => parseFloat(value.replace(/[^0-9.-]+/g, ''));
+export const parseAmount = (value: string): number | null => {
+    const sanitizedValue = value.replace(/[^0-9.-]+/g, '');
+
+    const parsedValue = parseFloat(sanitizedValue);
+
+    return Number.isNaN(parsedValue) ? null : parsedValue;
+};
 
 export const formatCurrency = (value: string) => {
     const numericValue = value.replace(/[^\d]/g, '');

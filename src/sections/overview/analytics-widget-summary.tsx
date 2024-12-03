@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import { useTheme } from '@mui/material/styles';
 
-import { fNumber, fPercent, fShortenNumber } from 'src/utils/format-number';
+import { fNumber, fPercent, formatLargeNumber } from 'src/utils/format-number';
 
 import { varAlpha, bgGradient } from 'src/theme/styles';
 
@@ -110,7 +110,7 @@ export function AnalyticsWidgetSummary({
             >
                 <Box sx={{ flexGrow: 1, minWidth: 112 }}>
                     <Box sx={{ mb: 1, typography: 'subtitle2' }}>{title}</Box>
-                    <Box sx={{ typography: 'h4' }}>{fShortenNumber(total)}</Box>
+                    <Box sx={{ typography: 'h4' }}>{formatLargeNumber(total)}</Box>
                 </Box>
 
                 <Chart

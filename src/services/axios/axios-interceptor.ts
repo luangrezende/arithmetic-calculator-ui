@@ -4,9 +4,9 @@ import { logout, getTokens, saveTokens } from "src/utils/auth-manager";
 
 import { USER_API_URL, AUTH_ENDPOINTS } from "src/config/api-config";
 
-const axiosUserInstance = axios.create({ baseURL: USER_API_URL });
+const axiosInstance = axios.create({ baseURL: USER_API_URL });
 
-axiosUserInstance.interceptors.response.use(
+axiosInstance.interceptors.response.use(
     (response) => response,
     async (error) => {
         const originalRequest = error.config;
@@ -33,7 +33,7 @@ axiosUserInstance.interceptors.response.use(
 
                     originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
-                    return await axiosUserInstance(originalRequest);
+                    return await axiosInstance(originalRequest);
                 }
             } catch (refreshError) {
                 console.error("Error refreshing token:", refreshError);
@@ -45,4 +45,4 @@ axiosUserInstance.interceptors.response.use(
     }
 );
 
-export default axiosUserInstance;
+export default axiosInstance;

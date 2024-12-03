@@ -11,30 +11,18 @@ export const mediaQueries = {
     upXl: '@media (min-width:1536px)',
 };
 
-/**
- * Set font family
- */
 export function setFont(fontName: string) {
     return `"${fontName}",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"`;
 }
 
-/**
- * Converts rem to px
- */
 export function remToPx(value: string): number {
     return Math.round(parseFloat(value) * 16);
 }
 
-/**
- * Converts px to rem
- */
 export function pxToRem(value: number): string {
     return `${value / 16}rem`;
 }
 
-/**
- * Responsive font sizes
- */
 export function responsiveFontSizes({ sm, md, lg }: { sm: number; md: number; lg: number }) {
     return {
         [mediaQueries.upSm]: { fontSize: pxToRem(sm) },
@@ -43,9 +31,6 @@ export function responsiveFontSizes({ sm, md, lg }: { sm: number; md: number; lg
     };
 }
 
-/**
- * Converts a hex color to RGB channels
- */
 export function hexToRgbChannel(hex: string) {
     if (!/^#[0-9A-F]{6}$/i.test(hex)) {
         throw new Error(`Invalid hex color: ${hex}`);
@@ -58,9 +43,6 @@ export function hexToRgbChannel(hex: string) {
     return `${r} ${g} ${b}`;
 }
 
-/**
- * Converts a hex color to RGB channels
- */
 export function createPaletteChannel(hexPalette: Record<string, string>) {
     const channelPalette: Record<string, string> = {};
 
@@ -71,9 +53,6 @@ export function createPaletteChannel(hexPalette: Record<string, string>) {
     return { ...hexPalette, ...channelPalette };
 }
 
-/**
- * Color with alpha channel
- */
 export function varAlpha(color: string, opacity = 1) {
     const unsupported =
         color.startsWith('#') ||

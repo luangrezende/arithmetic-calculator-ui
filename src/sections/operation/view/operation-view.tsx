@@ -1,13 +1,15 @@
-import { useState, useCallback } from 'react';
+import type { OperationRecord } from 'src/models/operation-record';
+
+import { useMemo, useState, useEffect, useCallback } from 'react';
 
 import {
     Box,
     Card,
-    Fade,
     Table,
     Modal,
     Button,
     Dialog,
+    Tooltip,
     TableRow,
     Checkbox,
     TableBody,
@@ -19,13 +21,21 @@ import {
     DialogContent,
     DialogActions,
     TableContainer,
-    TableSortLabel,
     InputAdornment,
+    TableSortLabel,
     TablePagination,
     DialogContentText,
+    CircularProgress,
 } from '@mui/material';
 
+import { formatDate } from 'src/utils/format-time';
+import { formatLargeNumber } from 'src/utils/format-number';
+
 import { DashboardContent } from 'src/layouts/dashboard';
+import {
+    deleteOperationRecords,
+    getPagedOperationRecords,
+} from 'src/services/api/operation-service';
 
 import { Iconify } from 'src/components/iconify';
 import { AlertSnackbar } from 'src/components/alert-snackbar';
@@ -46,151 +56,149 @@ const modalStyle = {
     outline: 'none',
 };
 
-const getTimeAgo = (minutes: number) =>
-    new Date(new Date().getTime() - minutes * 60 * 1000).toLocaleString();
-
-const initialOperations = [
-    {
-        id: 1,
-        type: 'Square Root',
-        cost: 5.0,
-        value: '9',
-        result: 3,
-        credit: 48.5,
-        date: getTimeAgo(10),
-    },
-    {
-        id: 2,
-        type: 'Division',
-        cost: 15.0,
-        value: '10/5',
-        result: 2,
-        credit: 53.5,
-        date: getTimeAgo(20),
-    },
-    {
-        id: 3,
-        type: 'Multiplication',
-        cost: 15.5,
-        value: '9*5',
-        result: 45,
-        credit: 68.5,
-        date: getTimeAgo(30),
-    },
-    {
-        id: 4,
-        type: 'Subtraction',
-        cost: 5.25,
-        value: '13-5',
-        result: 8,
-        credit: 84.0,
-        date: getTimeAgo(40),
-    },
-    {
-        id: 5,
-        type: 'Addition',
-        cost: 10.75,
-        value: '2+2',
-        result: 4,
-        credit: 89.25,
-        date: getTimeAgo(50),
-    },
-    {
-        id: 6,
-        type: 'Square Root',
-        cost: 5.0,
-        value: '16',
-        result: 4,
-        credit: 43.5,
-        date: getTimeAgo(15),
-    },
-    {
-        id: 7,
-        type: 'Random String',
-        cost: 8.0,
-        value: '',
-        result: 'xXz1Fg9',
-        credit: 35.5,
-        date: getTimeAgo(25),
-    },
-];
-
 export function OperationView() {
-    const [openModal, setOpenModal] = useState(false);
-    const [operations, setOperations] = useState(initialOperations);
-    const [credit, setCredit] = useState(48.5);
+    const handleOpenModal = () => setOpenModal(true);
+    const handleCloseModal = () => setOpenModal(false);
+    const handleCloseConfirmDelete = () => setConfirmDeleteOpen(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+    const [operations, setOperations] = useState<OperationRecord[]>([]);
+    const [loading, setLoading] = useState(false);
     const [order, setOrder] = useState<'asc' | 'desc'>('desc');
-    const [orderBy, setOrderBy] = useState<keyof (typeof initialOperations)[0]>('date');
+    const [orderBy, setOrderBy] = useState<keyof OperationRecord>('createdAt');
+    const [totalRecords, setTotalRecords] = useState(0);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [selected, setSelected] = useState<number[]>([]);
+    const [selected, setSelected] = useState<string[]>([]);
     const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+    const [openModal, setOpenModal] = useState(false);
     const [snackbar, setSnackbar] = useState({
         open: false,
         message: '',
         severity: 'success' as 'success' | 'error',
     });
 
-    const handleOpenModal = useCallback(() => setOpenModal(true), []);
-    const handleCloseModal = useCallback(() => setOpenModal(false), []);
-    const handleOpenConfirmDelete = useCallback(() => setConfirmDeleteOpen(true), []);
-    const handleCloseConfirmDelete = useCallback(() => setConfirmDeleteOpen(false), []);
+    const fetchPagedOperations = useCallback(async () => {
+        setLoading(true);
+        try {
+            const data = await getPagedOperationRecords(page, rowsPerPage, debouncedSearchQuery);
+            setOperations(data.records || []);
+            setTotalRecords(data.total || 0);
+        } catch (error) {
+            console.error('Failed to fetch operations:', error);
+        } finally {
+            setLoading(false);
+        }
+    }, [page, rowsPerPage, debouncedSearchQuery]);
 
-    const handleDeleteSelected = useCallback(() => {
-        setOperations((prev) => prev.filter((op) => !selected.includes(op.id)));
-        setSelected([]);
-    }, [selected]);
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedSearchQuery(searchQuery);
+        }, 600);
 
-    const handleConfirmDelete = useCallback(() => {
-        handleDeleteSelected();
-        setConfirmDeleteOpen(false);
-    }, [handleDeleteSelected]);
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [searchQuery]);
 
-    const handleNewOperation = () => {
-        setSnackbar({
-            open: true,
-            message: 'Operation calculated.',
-            severity: 'success',
-        });
-    };
-
-    const handleSort = (column: keyof (typeof initialOperations)[0]) => {
-        setOrderBy(column);
-        setOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
-    };
+    useEffect(() => {
+        fetchPagedOperations();
+    }, [fetchPagedOperations]);
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(event.target.value);
+    };
+
+    const handleOpenConfirmDelete = useCallback(() => {
+        if (selected.length === 0) {
+            setSnackbar({
+                open: true,
+                message: 'No records selected for deletion.',
+                severity: 'error',
+            });
+            return;
+        }
+        setConfirmDeleteOpen(true);
+    }, [selected]);
+
+    const deleteRecords = async (ids: string[]) => {
+        if (!ids.length) {
+            setSnackbar({
+                open: true,
+                message: 'No records selected for deletion.',
+                severity: 'error',
+            });
+            return;
+        }
+
+        setIsDeleting(true);
+        try {
+            await deleteOperationRecords(ids);
+            setSnackbar({
+                open: true,
+                message: 'Selected records were successfully deleted.',
+                severity: 'success',
+            });
+
+            setSelected([]);
+            fetchPagedOperations();
+            handleCloseConfirmDelete();
+        } catch (error) {
+            console.error('Failed to delete records:', error);
+            setSnackbar({
+                open: true,
+                message: 'Failed to delete selected records.',
+                severity: 'error',
+            });
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
+    const handleSelect = (id: string) => {
+        setSelected((prev) =>
+            prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+        );
     };
 
     const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSelected(event.target.checked ? operations.map((op) => op.id) : []);
     };
 
-    const handleSelect = (id: number) => {
-        setSelected((prev) =>
-            prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-        );
+    const handleNewOperation = () => {
+        setSnackbar({
+            open: true,
+            message: 'Operation was successfully added.',
+            severity: 'success',
+        });
+        fetchPagedOperations();
     };
 
-    const filteredOperations = operations.filter(
-        (op) =>
-            op.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            op.result.toString().includes(searchQuery)
-    );
+    const handleSort = (property: keyof OperationRecord) => {
+        const isAsc = orderBy === property && order === 'asc';
+        setOrder(isAsc ? 'desc' : 'asc');
+        setOrderBy(property);
+    };
 
-    const sortedData = [...filteredOperations].sort((a, b) =>
-        order === 'asc' ? (a[orderBy] < b[orderBy] ? -1 : 1) : a[orderBy] > b[orderBy] ? -1 : 1
-    );
+    const handleChangePage = (event: unknown, newPage: number) => {
+        setPage(newPage);
+    };
 
-    const paginatedData = sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-
-    const handleChangePage = (event: unknown, newPage: number) => setPage(newPage);
     const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
+
+    const sortedOperations = useMemo(
+        () =>
+            [...operations].sort((a, b) => {
+                if (a[orderBy] < b[orderBy]) return order === 'asc' ? -1 : 1;
+                if (a[orderBy] > b[orderBy]) return order === 'asc' ? 1 : -1;
+                return 0;
+            }),
+        [operations, orderBy, order]
+    );
 
     return (
         <DashboardContent>
@@ -216,7 +224,6 @@ export function OperationView() {
                         ),
                     }}
                 />
-
                 <Button
                     variant="contained"
                     color="primary"
@@ -248,132 +255,169 @@ export function OperationView() {
             </Box>
 
             <Card>
-                <TableContainer>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell padding="checkbox">
-                                    <Checkbox
-                                        indeterminate={
-                                            selected.length > 0 &&
-                                            selected.length < operations.length
-                                        }
-                                        checked={
-                                            operations.length > 0 &&
-                                            selected.length === operations.length
-                                        }
-                                        onChange={handleSelectAll}
-                                    />
-                                </TableCell>
-                                <TableCell align="left">ID</TableCell>
-                                <TableCell
-                                    align="left"
-                                    sortDirection={orderBy === 'type' ? order : false}
-                                >
-                                    <TableSortLabel
-                                        active={orderBy === 'type'}
-                                        direction={orderBy === 'type' ? order : 'asc'}
-                                        onClick={() => handleSort('type')}
-                                    >
-                                        Operation Type
-                                    </TableSortLabel>
-                                </TableCell>
-                                <TableCell
-                                    align="left"
-                                    sortDirection={orderBy === 'value' ? order : false}
-                                >
-                                    <TableSortLabel
-                                        active={orderBy === 'value'}
-                                        direction={orderBy === 'value' ? order : 'asc'}
-                                        onClick={() => handleSort('value')}
-                                    >
-                                        Value
-                                    </TableSortLabel>
-                                </TableCell>
-                                <TableCell
-                                    align="left"
-                                    sortDirection={orderBy === 'result' ? order : false}
-                                >
-                                    <TableSortLabel
-                                        active={orderBy === 'result'}
-                                        direction={orderBy === 'result' ? order : 'asc'}
-                                        onClick={() => handleSort('result')}
-                                    >
-                                        Result
-                                    </TableSortLabel>
-                                </TableCell>
-                                <TableCell
-                                    align="left"
-                                    sortDirection={orderBy === 'cost' ? order : false}
-                                >
-                                    <TableSortLabel
-                                        active={orderBy === 'cost'}
-                                        direction={orderBy === 'cost' ? order : 'asc'}
-                                        onClick={() => handleSort('cost')}
-                                    >
-                                        Cost
-                                    </TableSortLabel>
-                                </TableCell>
-                                <TableCell align="left">Balance</TableCell>
-                                <TableCell
-                                    align="left"
-                                    sortDirection={orderBy === 'date' ? order : false}
-                                >
-                                    <TableSortLabel
-                                        active={orderBy === 'date'}
-                                        direction={orderBy === 'date' ? order : 'asc'}
-                                        onClick={() => handleSort('date')}
-                                    >
-                                        Date
-                                    </TableSortLabel>
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-
-                        <TableBody>
-                            {paginatedData.map((record) => (
-                                <TableRow key={record.id} selected={selected.includes(record.id)}>
+                {loading ? (
+                    <Box display="flex" justifyContent="center" alignItems="center" p={5}>
+                        <Typography variant="h6" color="textSecondary">
+                            Loading...
+                        </Typography>
+                    </Box>
+                ) : operations.length > 0 ? (
+                    <TableContainer>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
                                     <TableCell padding="checkbox">
                                         <Checkbox
-                                            checked={selected.includes(record.id)}
-                                            onChange={() => handleSelect(record.id)}
+                                            indeterminate={
+                                                selected.length > 0 &&
+                                                selected.length < operations.length
+                                            }
+                                            checked={
+                                                operations.length > 0 &&
+                                                selected.length === operations.length
+                                            }
+                                            onChange={handleSelectAll}
                                         />
                                     </TableCell>
-                                    <TableCell>{record.id}</TableCell>
-                                    <TableCell>{record.type}</TableCell>
-                                    <TableCell>{record.value}</TableCell>
-                                    <TableCell>{record.result}</TableCell>
-                                    <TableCell>
-                                        <span style={{ color: 'red', fontWeight: 'bold' }}>
-                                            {`-$${record.cost.toFixed(2)}`}
-                                        </span>
-                                    </TableCell>
-                                    <TableCell>
-                                        <span
-                                            style={{
-                                                color: record.credit > 0 ? 'green' : 'red',
-                                                fontWeight: 'bold',
-                                            }}
+                                    <TableCell align="left">
+                                        <TableSortLabel
+                                            active={orderBy === 'operationTypeDescription'}
+                                            direction={order}
+                                            onClick={() => handleSort('operationTypeDescription')}
                                         >
-                                            ${record.credit.toFixed(2)}
-                                        </span>
+                                            Operation Type
+                                        </TableSortLabel>
                                     </TableCell>
-                                    <TableCell>{record.date}</TableCell>
+                                    <TableCell align="left">
+                                        <TableSortLabel
+                                            active={orderBy === 'operationValues'}
+                                            direction={order}
+                                            onClick={() => handleSort('operationValues')}
+                                        >
+                                            Operation
+                                        </TableSortLabel>
+                                    </TableCell>
+                                    <TableCell align="left">
+                                        <TableSortLabel
+                                            active={orderBy === 'operationResult'}
+                                            direction={order}
+                                            onClick={() => handleSort('operationResult')}
+                                        >
+                                            Result
+                                        </TableSortLabel>
+                                    </TableCell>
+                                    <TableCell align="left">
+                                        <TableSortLabel
+                                            active={orderBy === 'cost'}
+                                            direction={order}
+                                            onClick={() => handleSort('cost')}
+                                        >
+                                            Cost
+                                        </TableSortLabel>
+                                    </TableCell>
+                                    <TableCell align="left">
+                                        <TableSortLabel
+                                            active={orderBy === 'userBalance'}
+                                            direction={order}
+                                            onClick={() => handleSort('userBalance')}
+                                        >
+                                            Balance
+                                        </TableSortLabel>
+                                    </TableCell>
+                                    <TableCell align="left">
+                                        <TableSortLabel
+                                            active={orderBy === 'createdAt'}
+                                            direction={order}
+                                            onClick={() => handleSort('createdAt')}
+                                        >
+                                            Date
+                                        </TableSortLabel>
+                                    </TableCell>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                            </TableHead>
 
-                <TablePagination
-                    rowsPerPageOptions={[5, 10, 20]}
-                    component="div"
-                    count={sortedData.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />
+                            <TableBody>
+                                {sortedOperations.map((record) => (
+                                    <TableRow
+                                        key={record.id}
+                                        selected={selected.includes(record.id)}
+                                    >
+                                        <TableCell padding="checkbox">
+                                            <Checkbox
+                                                checked={selected.includes(record.id)}
+                                                onChange={() => handleSelect(record.id)}
+                                            />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Typography
+                                                variant="body2"
+                                                sx={{
+                                                    fontWeight: 'bold',
+                                                }}
+                                            >
+                                                {record.operationTypeDescription}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell>{record.operationValues}</TableCell>
+                                        <TableCell>
+                                            <Tooltip title={record.operationResult} arrow>
+                                                <Typography noWrap>
+                                                    {Number.isNaN(Number(record.operationResult))
+                                                        ? record.operationResult
+                                                        : formatLargeNumber(
+                                                              record.operationResult,
+                                                              {
+                                                                  notation: 'compact',
+                                                                  maximumFractionDigits: 2,
+                                                              }
+                                                          )}
+                                                </Typography>
+                                            </Tooltip>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Typography
+                                                variant="body2"
+                                                sx={{
+                                                    color: 'red',
+                                                    fontWeight: 'bold',
+                                                }}
+                                            >
+                                                -${record.cost.toFixed(2)}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Typography
+                                                variant="body2"
+                                                sx={{
+                                                    color: record.cost > 0 ? 'green' : 'red',
+                                                    fontWeight: 'bold',
+                                                }}
+                                            >
+                                                ${record.userBalance.toFixed(2)}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell>{formatDate(record.createdAt)}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                        <TablePagination
+                            rowsPerPageOptions={[5, 10, 25]}
+                            component="div"
+                            count={totalRecords}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
+                    </TableContainer>
+                ) : (
+                    <Box display="flex" justifyContent="center" alignItems="center" p={5}>
+                        <Typography variant="h6" color="textSecondary">
+                            No operations available.
+                        </Typography>
+                    </Box>
+                )}
             </Card>
 
             {selected.length > 0 && (
@@ -382,7 +426,17 @@ export function OperationView() {
                         variant="contained"
                         color="error"
                         startIcon={<Iconify icon="tabler:trash" width={20} />}
-                        onClick={handleOpenConfirmDelete}
+                        onClick={() => {
+                            if (selected.length > 0) {
+                                handleOpenConfirmDelete();
+                            } else {
+                                setSnackbar({
+                                    open: true,
+                                    message: 'Please select at least one record to delete.',
+                                    severity: 'error',
+                                });
+                            }
+                        }}
                     >
                         Delete Selected
                     </Button>
@@ -403,28 +457,39 @@ export function OperationView() {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCloseConfirmDelete} color="primary">
+                    <Button
+                        onClick={handleCloseConfirmDelete}
+                        color="primary"
+                        disabled={isDeleting}
+                    >
                         Cancel
                     </Button>
-                    <Button onClick={handleConfirmDelete} color="error" variant="contained">
-                        Confirm
+                    <Button
+                        onClick={() => {
+                            deleteRecords(selected);
+                        }}
+                        color="error"
+                        variant="contained"
+                        disabled={isDeleting}
+                        startIcon={
+                            isDeleting ? <CircularProgress size={16} color="inherit" /> : null
+                        }
+                    >
+                        {isDeleting ? 'Deleting...' : 'Confirm'}
                     </Button>
                 </DialogActions>
             </Dialog>
 
             <Modal open={openModal} onClose={handleCloseModal} closeAfterTransition>
-                <Fade in={openModal}>
-                    <Box sx={modalStyle}>
-                        <Typography variant="h6" component="h2" mb={2}>
-                            New Operation
-                        </Typography>
-                        <NewOperationForm
-                            onClose={handleCloseModal}
-                            onAddOperation={handleNewOperation}
-                            credit={credit}
-                        />
-                    </Box>
-                </Fade>
+                <Box sx={modalStyle}>
+                    <Typography variant="h6" component="h2" mb={2}>
+                        New Operation
+                    </Typography>
+                    <NewOperationForm
+                        onClose={handleCloseModal}
+                        onAddOperation={handleNewOperation}
+                    />
+                </Box>
             </Modal>
 
             <AlertSnackbar

@@ -1,21 +1,28 @@
-import { useState } from 'react';
+import type { OperationType } from 'src/models/operation-type';
 
-import { Box, Alert, Button, MenuItem, TextField } from '@mui/material';
+import { useState, useEffect } from 'react';
+
+import {
+    Box,
+    Alert,
+    Button,
+    MenuItem,
+    TextField,
+    Typography,
+    CircularProgress,
+} from '@mui/material';
+
+import { parseAmount } from 'src/utils/format-number';
+import { saveProfile, getProfileBankAccount } from 'src/utils/profile-manager';
+
+import { useBalance } from 'src/context/balance-context';
+import { getUserProfile } from 'src/services/api/auth-service';
+import { getOperationTypes, addOperationRecord } from 'src/services/api/operation-service';
 
 import { Iconify } from 'src/components/iconify';
 
-const operations = [
-    { value: 'addition', label: 'Addition', cost: 10 },
-    { value: 'subtraction', label: 'Subtraction', cost: 10 },
-    { value: 'multiplication', label: 'Multiplication', cost: 15 },
-    { value: 'division', label: 'Division', cost: 15 },
-    { value: 'square_root', label: 'Square Root', cost: 5 },
-    { value: 'random_string', label: 'Random String', cost: 5 },
-];
-
 interface NewOperationFormProps {
     onClose: () => void;
-    credit: number;
     onAddOperation: () => void;
 }
 
@@ -24,16 +31,69 @@ const operationIcons: { [key: string]: string } = {
     subtraction: 'mdi:minus',
     multiplication: 'mdi:close',
     division: 'mdi:division',
-    square_root: 'mdi:root',
+    square_root: 'mdi:square-root',
     random_string: 'mdi:shuffle-variant',
 };
 
-export function NewOperationForm({ onClose, credit, onAddOperation }: NewOperationFormProps) {
-    const [operationType, setOperationType] = useState('');
+const operationLabels: { [key: string]: string } = {
+    addition: 'Addition',
+    subtraction: 'Subtraction',
+    multiplication: 'Multiplication',
+    division: 'Division',
+    square_root: 'Square Root',
+    random_string: 'Random String',
+};
+
+export function NewOperationForm({ onClose, onAddOperation }: NewOperationFormProps) {
+    const [operationType, setOperationType] = useState<OperationType | null>(null);
+    const { fetchBalance, balance } = useBalance();
+    const bankAccount = getProfileBankAccount();
     const [value1, setValue1] = useState('');
     const [value2, setValue2] = useState('');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [fieldError, setFieldError] = useState<{ value1?: string; value2?: string }>({});
+    const [operationTypes, setOperationTypes] = useState<OperationType[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingOperationTypes, setIsLoadingOperationTypes] = useState(true);
+
+    useEffect(() => {
+        const fetchOperationTypes = async () => {
+            try {
+                setIsLoadingOperationTypes(true);
+                const response = await getOperationTypes();
+                setOperationTypes(response.data);
+            } catch (error) {
+                console.error('Failed to fetch operation types:', error);
+                setErrorMessage('Failed to load operation types.');
+            } finally {
+                setIsLoadingOperationTypes(false);
+            }
+        };
+
+        fetchOperationTypes();
+    }, []);
+
+    const handleValueChange = (
+        value: string,
+        setValue: React.Dispatch<React.SetStateAction<string>>,
+        min: number = 0,
+        max: number = 999999
+    ) => {
+        const numericValue = parseFloat(value);
+
+        if (Number.isNaN(numericValue)) {
+            setValue('');
+            return;
+        }
+
+        if (numericValue < min) {
+            setValue(String(min));
+        } else if (numericValue > max) {
+            setValue(String(max));
+        } else {
+            setValue(value);
+        }
+    };
 
     const validateFields = () => {
         const errors: { value1?: string; value2?: string } = {};
@@ -43,15 +103,19 @@ export function NewOperationForm({ onClose, credit, onAddOperation }: NewOperati
             return false;
         }
 
-        if (!value1 && operationType !== 'square_root' && operationType !== 'random_string') {
+        if (!value1 && operationType.description !== 'Random String') {
             errors.value1 = 'Value 1 is required';
         }
 
-        if (!value2 && operationType !== 'square_root' && operationType !== 'random_string') {
+        if (
+            !value2 &&
+            operationType.description !== 'Square Root' &&
+            operationType.description !== 'Random String'
+        ) {
             errors.value2 = 'Value 2 is required';
         }
 
-        if (operationType === 'division' && value2 === '0') {
+        if (operationType.description === 'Division' && value2 === '0') {
             errors.value2 = 'Division by zero is not allowed';
         }
 
@@ -59,105 +123,157 @@ export function NewOperationForm({ onClose, credit, onAddOperation }: NewOperati
         return Object.keys(errors).length === 0;
     };
 
-    const calculateResult = () => {
-        const num1 = parseFloat(value1);
-        const num2 = parseFloat(value2);
-
-        switch (operationType) {
-            case 'addition':
-                return num1 + num2;
-            case 'subtraction':
-                return num1 - num2;
-            case 'multiplication':
-                return num1 * num2;
-            case 'division':
-                return num1 / num2;
-            case 'square_root':
-                return Math.sqrt(num1);
-            case 'random_string':
-                return Math.random().toString(36).substring(7);
-            default:
-                return null;
-        }
-    };
-
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!validateFields()) return;
 
-        const operationCost = operations.find((op) => op.value === operationType)?.cost || 0;
+        setIsLoading(true);
 
-        if (credit < operationCost) {
+        const operationCost = operationType?.cost || 0;
+
+        if (balance! < operationCost) {
             setErrorMessage('Insufficient credit for this operation');
+            setIsLoading(false);
             return;
         }
 
-        const result = calculateResult();
+        try {
+            const response = await addOperationRecord(
+                operationType?.id || '',
+                bankAccount!.id,
+                parseAmount(value1),
+                parseAmount(value2)
+            );
 
-        alert(result);
-        onAddOperation();
+            const profileResponse = await getUserProfile();
+            saveProfile(profileResponse.data);
 
-        onClose();
+            if (response.statusCode === 200) {
+                onClose();
+                onAddOperation();
+            } else {
+                setErrorMessage('Failed to process the operation.');
+            }
+
+            fetchBalance();
+        } catch (error) {
+            console.error(error);
+            setErrorMessage('An error occurred while processing the operation.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleOperationChange = (operationId: string) => {
+        const selectedOp = operationTypes.find((op) => op.id === operationId);
+        setOperationType(selectedOp || null);
+        setValue1('');
+        setValue2('');
+        setFieldError({});
+        setErrorMessage(null);
     };
 
     return (
         <Box component="form" display="flex" flexDirection="column" gap={2}>
-            <TextField
-                select
-                label="Operation"
-                value={operationType}
-                onChange={(e) => setOperationType(e.target.value)}
-                required
-            >
-                {operations.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                        {option.label} (${option.cost})
-                    </MenuItem>
-                ))}
-            </TextField>
+            {isLoadingOperationTypes ? (
+                <Box display="flex" justifyContent="center" alignItems="center" height={56}>
+                    <CircularProgress size={32} />
+                </Box>
+            ) : (
+                <TextField
+                    select
+                    label="Operation"
+                    value={operationType?.id || ''}
+                    onChange={(e) => handleOperationChange(e.target.value)}
+                    required
+                    fullWidth
+                >
+                    {operationTypes.map((option) => (
+                        <MenuItem key={option.id} value={option.id}>
+                            {operationLabels[option.description.toLowerCase()] ||
+                                option.description}{' '}
+                            ($
+                            {option.cost})
+                        </MenuItem>
+                    ))}
+                </TextField>
+            )}
 
-            {/* Exibir campos somente após selecionar o tipo */}
             {operationType && (
-                <Box display="flex" alignItems="center" gap={1}>
-                    {operationType !== 'random_string' && (
-                        <TextField
-                            label={operationType === 'square_root' ? 'Value' : 'Value 1'}
-                            type="number"
-                            value={value1}
-                            onChange={(e) => setValue1(e.target.value)}
-                            error={!!fieldError.value1}
-                            helperText={fieldError.value1}
-                            sx={{ flex: 1 }}
-                        />
+                <Box display="flex" flexDirection="column" gap={2}>
+                    {operationType.description === 'Random String' && (
+                        <Typography variant="body2" color="textSecondary">
+                            A new random string will be generated using the <b>RANDOM.ORG</b>{' '}
+                            service.
+                        </Typography>
                     )}
-                    {operationType !== 'square_root' && operationType !== 'random_string' && (
-                        <>
-                            <Iconify
-                                icon={operationIcons[operationType]}
-                                width={24}
-                                sx={{ mx: 1 }}
-                            />
+
+                    {operationType.description === 'Square Root' && (
+                        <Box display="flex" alignItems="center" gap={1}>
+                            <Iconify icon={operationIcons.square_root} width={24} sx={{ mx: 1 }} />
                             <TextField
-                                label="Value 2"
+                                label="Value"
                                 type="number"
-                                value={value2}
-                                onChange={(e) => setValue2(e.target.value)}
-                                error={!!fieldError.value2}
-                                helperText={fieldError.value2}
+                                value={value1}
+                                onChange={(e) => handleValueChange(e.target.value, setValue1)}
+                                error={!!fieldError.value1}
+                                helperText={fieldError.value1}
+                                required
                                 sx={{ flex: 1 }}
                             />
-                        </>
+                        </Box>
                     )}
+
+                    {operationType.description !== 'Random String' &&
+                        operationType.description !== 'Square Root' && (
+                            <Box display="flex" alignItems="center" gap={1}>
+                                <TextField
+                                    label="Value 1"
+                                    type="number"
+                                    value={value1}
+                                    onChange={(e) => handleValueChange(e.target.value, setValue1)}
+                                    error={!!fieldError.value1}
+                                    helperText={fieldError.value1}
+                                    required
+                                    sx={{ flex: 1 }}
+                                />
+                                <Iconify
+                                    icon={
+                                        operationIcons[
+                                            operationType.description.toLowerCase() || ''
+                                        ]
+                                    }
+                                    width={24}
+                                    sx={{ mx: 1 }}
+                                />
+                                <TextField
+                                    label="Value 2"
+                                    type="number"
+                                    value={value2}
+                                    onChange={(e) => handleValueChange(e.target.value, setValue2)}
+                                    error={!!fieldError.value2}
+                                    helperText={fieldError.value2}
+                                    required
+                                    sx={{ flex: 1 }}
+                                />
+                            </Box>
+                        )}
                 </Box>
             )}
 
             {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
 
             <Box display="flex" justifyContent="flex-end" gap={2}>
-                <Button onClick={onClose} variant="outlined">
+                <Button onClick={onClose} variant="outlined" disabled={isLoading}>
                     Cancel
                 </Button>
-                <Button onClick={handleSubmit} variant="contained">
-                    Calculate
+                <Button
+                    onClick={handleSubmit}
+                    variant="contained"
+                    color="primary"
+                    disabled={isLoading}
+                    startIcon={isLoading ? <CircularProgress size={16} color="inherit" /> : null}
+                >
+                    {isLoading ? 'Calculating...' : 'Calculate'}
                 </Button>
             </Box>
         </Box>

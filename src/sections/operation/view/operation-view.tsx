@@ -29,7 +29,7 @@ import {
 } from '@mui/material';
 
 import { formatDate } from 'src/utils/format-time';
-import { formatLargeNumber } from 'src/utils/format-number';
+import { formatCurrency, formatLargeNumber } from 'src/utils/format-number';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 import {
@@ -382,7 +382,7 @@ export function OperationView() {
                                                     fontWeight: 'bold',
                                                 }}
                                             >
-                                                -${record.cost.toFixed(2)}
+                                                -{formatCurrency(record.cost.toFixed(2))}
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
@@ -393,7 +393,7 @@ export function OperationView() {
                                                     fontWeight: 'bold',
                                                 }}
                                             >
-                                                ${record.userBalance.toFixed(2)}
+                                                {formatCurrency(record.userBalance.toFixed(2))}
                                             </Typography>
                                         </TableCell>
                                         <TableCell>{formatDate(record.createdAt)}</TableCell>

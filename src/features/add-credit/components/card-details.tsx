@@ -13,7 +13,7 @@ export function CardDetails() {
                     fullWidth
                     type="text"
                     label="Card Number"
-                    value="5685 5524 5875 6254"
+                    value="4321 4321 4321 4321"
                     disabled
                 />
             </Box>

@@ -147,7 +147,7 @@ export function NewOperationForm({ onClose, onAddOperation }: NewOperationFormPr
             const profileResponse = await getUserProfile();
             saveProfile(profileResponse.data);
 
-            if (response.statusCode === 200) {
+            if (response.statusCode === 201) {
                 onClose();
                 onAddOperation();
             } else {

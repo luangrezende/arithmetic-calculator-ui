@@ -27,7 +27,7 @@ export function OverviewAnalyticsView() {
                             percent={0.1}
                             total={22}
                             color="primary"
-                            icon={<img alt="icon" src="/assets/icons/glass/ic-glass-bag.svg" />}
+                            icon={<img alt="icon" src="/assets/icons/custom/calculator.svg" />}
                             chart={{
                                 categories: [
                                     'Jan',
@@ -58,7 +58,7 @@ export function OverviewAnalyticsView() {
                             percent={-0.2}
                             total={25054}
                             color="success"
-                            icon={<img alt="icon" src="/assets/icons/glass/ic-glass-buy.svg" />}
+                            icon={<img alt="icon" src="/assets/icons/custom/pound-banknote.svg" />}
                             chart={{
                                 categories: [
                                     'Jan',
@@ -84,40 +84,30 @@ export function OverviewAnalyticsView() {
             </Grid>
 
             <Box sx={{ mt: 5 }}>
-                <Typography variant="h5" gutterBottom>
+                <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
                     Performance Highlights
                 </Typography>
                 <Grid container spacing={3}>
-                    <Grid xs={12} sm={6} md={4}>
-                        <Paper elevation={2} sx={{ p: 3, textAlign: 'center' }}>
-                            <Typography variant="h6" color="primary">
-                                87%
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                Customer Satisfaction
-                            </Typography>
-                        </Paper>
-                    </Grid>
-                    <Grid xs={12} sm={6} md={4}>
-                        <Paper elevation={2} sx={{ p: 3, textAlign: 'center' }}>
-                            <Typography variant="h6" color="error">
-                                5,000
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                Pending Orders
-                            </Typography>
-                        </Paper>
-                    </Grid>
-                    <Grid xs={12} sm={6} md={4}>
-                        <Paper elevation={2} sx={{ p: 3, textAlign: 'center' }}>
-                            <Typography variant="h6" color="success">
-                                $1.2M
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                Total Revenue
-                            </Typography>
-                        </Paper>
-                    </Grid>
+                    {[
+                        { value: 55, label: 'Users created', color: 'primary.main' },
+                        { value: 4985, label: 'Total operations', color: 'primary.main' },
+                        { value: '$1.2M', label: 'Total cash added', color: 'success.main' },
+                    ].map((item, index) => (
+                        <Grid xs={12} sm={6} md={4} key={index}>
+                            <Paper elevation={2} sx={{ p: 3, textAlign: 'center' }}>
+                                <Typography variant="h6" sx={{ color: item.color }}>
+                                    {item.value}
+                                </Typography>
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                    aria-label={item.label}
+                                >
+                                    {item.label}
+                                </Typography>
+                            </Paper>
+                        </Grid>
+                    ))}
                 </Grid>
             </Box>
         </DashboardContent>

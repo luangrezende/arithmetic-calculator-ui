@@ -285,7 +285,7 @@ export function OperationView() {
                                             direction={order}
                                             onClick={() => handleSort('operationTypeDescription')}
                                         >
-                                            Operation Type
+                                            Type
                                         </TableSortLabel>
                                     </TableCell>
                                     <TableCell align="left">

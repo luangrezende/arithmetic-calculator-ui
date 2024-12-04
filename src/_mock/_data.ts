@@ -1,9 +1,5 @@
 import { _id, _times, _fullName } from "./_mock";
 
-export const _myAccount = {
-  photoURL: '/assets/images/avatar/avatar-default.webp',
-};
-
 export const _notifications = [
   {
       id: _id(2),

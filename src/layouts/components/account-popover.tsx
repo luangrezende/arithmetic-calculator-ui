@@ -15,13 +15,13 @@ import { useLocalUser } from 'src/hooks/use-local-user';
 
 import { logout } from 'src/utils/auth-manager';
 
-import { _myAccount } from 'src/_mock';
 import { logoutUser } from 'src/services/api/auth-service';
 
 export type AccountPopoverProps = IconButtonProps & {};
 
 export function AccountPopover({ sx, ...other }: AccountPopoverProps) {
     const user = useLocalUser();
+    const [photoUrl] = useState('');
     const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
     const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
@@ -55,7 +55,7 @@ export function AccountPopover({ sx, ...other }: AccountPopoverProps) {
                 }}
                 {...other}
             >
-                <Avatar src={_myAccount.photoURL} alt={user?.name} sx={{ width: 1, height: 1 }}>
+                <Avatar src={photoUrl} alt={user?.name} sx={{ width: 1, height: 1 }}>
                     {user?.name.charAt(0).toUpperCase()}
                 </Avatar>
             </IconButton>

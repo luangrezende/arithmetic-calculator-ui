@@ -282,6 +282,15 @@ export function OperationView() {
                                     </TableCell>
                                     <TableCell align="left">
                                         <TableSortLabel
+                                            active={orderBy === 'type'}
+                                            direction={order}
+                                            onClick={() => handleSort('type')}
+                                        >
+                                            Type
+                                        </TableSortLabel>
+                                    </TableCell>
+                                    <TableCell align="left">
+                                        <TableSortLabel
                                             active={orderBy === 'expression'}
                                             direction={order}
                                             onClick={() => handleSort('expression')}
@@ -339,6 +348,9 @@ export function OperationView() {
                                                 checked={selected.includes(record.id)}
                                                 onChange={() => handleSelect(record.id)}
                                             />
+                                        </TableCell>
+                                        <TableCell>
+                                            <b>{record.type}</b>
                                         </TableCell>
                                         <TableCell>{record.expression}</TableCell>
                                         <TableCell>

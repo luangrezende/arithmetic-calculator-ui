@@ -64,7 +64,7 @@ export function NewOperationForm({ onClose, onAddOperation }: NewOperationFormPr
             }
         } catch (error) {
             console.error('Error during operation submission:', error);
-            setErrorMessage('It is not a valid arithmetic operation.');
+            setErrorMessage('The provided expression is not a valid arithmetic operation.');
         } finally {
             setIsLoading(false);
         }

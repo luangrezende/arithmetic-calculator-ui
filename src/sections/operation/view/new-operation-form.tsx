@@ -51,20 +51,15 @@ export function NewOperationForm({ onClose, onAddOperation }: NewOperationFormPr
         setIsLoading(true);
 
         try {
-            const response = await addOperationRecord(bankAccount!.id, expression);
+            await addOperationRecord(bankAccount!.id, expression);
 
-            if (response.statusCode === 201) {
-                const profileResponse = await getUserProfile();
-                saveProfile(profileResponse.data);
-                fetchBalance();
-                onClose();
-                onAddOperation();
-            } else {
-                setErrorMessage('Failed to process the operation.');
-            }
+            const profileResponse = await getUserProfile();
+            saveProfile(profileResponse.data);
+            fetchBalance();
+            onClose();
+            onAddOperation();
         } catch (error) {
-            console.error('Error during operation submission:', error);
-            setErrorMessage('The provided expression is not a valid arithmetic operation.');
+            setErrorMessage(error);
         } finally {
             setIsLoading(false);
         }

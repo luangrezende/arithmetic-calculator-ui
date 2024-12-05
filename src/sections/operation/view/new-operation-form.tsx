@@ -2,8 +2,10 @@ import { useState } from 'react';
 
 import { Box, Alert, Button, MenuItem, TextField, CircularProgress } from '@mui/material';
 
-import { getProfileBankAccount } from 'src/utils/profile-manager';
+import { saveProfile, getProfileBankAccount } from 'src/utils/profile-manager';
 
+import { useBalance } from 'src/context/balance-context';
+import { getUserProfile } from 'src/services/api/auth-service';
 import { addOperationRecord } from 'src/services/api/operation-service';
 
 interface NewOperationFormProps {
@@ -25,6 +27,7 @@ export function NewOperationForm({ onClose, onAddOperation }: NewOperationFormPr
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [fieldError, setFieldError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const { fetchBalance } = useBalance();
     const bankAccount = getProfileBankAccount();
 
     const validateFields = () => {
@@ -51,6 +54,9 @@ export function NewOperationForm({ onClose, onAddOperation }: NewOperationFormPr
             const response = await addOperationRecord(bankAccount!.id, expression);
 
             if (response.statusCode === 201) {
+                const profileResponse = await getUserProfile();
+                saveProfile(profileResponse.data);
+                fetchBalance();
                 onClose();
                 onAddOperation();
             } else {
@@ -58,7 +64,7 @@ export function NewOperationForm({ onClose, onAddOperation }: NewOperationFormPr
             }
         } catch (error) {
             console.error('Error during operation submission:', error);
-            setErrorMessage('An error occurred while processing the operation.');
+            setErrorMessage('It is not a valid arithmetic operation.');
         } finally {
             setIsLoading(false);
         }

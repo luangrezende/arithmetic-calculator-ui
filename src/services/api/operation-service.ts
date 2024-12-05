@@ -1,36 +1,16 @@
-import type { OperationRecord } from 'src/models/operation-record';
-
 import { OPERATIONS_API_URL, OPERATIONS_ENDPOINTS } from 'src/config/api-config';
 
 import axiosInstance from '../axios/axios-interceptor';
 
-export interface PagedOperationResponse {
-    records: OperationRecord[];
-    total: number; 
-}
-
-export const addOperationRecord = async (
-    operationTypeId: string,
-    accountId: string,
-    value1: number | null | undefined,
-    value2: number | null | undefined
-): Promise<any> => {
+export const addOperationRecord = async (accountId: string, expression: string): Promise<any> => {
     try {
         const token = localStorage.getItem('token');
         if (!token) throw new Error('Token not found. Please log in again.');
 
         const payload: any = {
-            operationTypeId,
             accountId,
+            expression,
         };
-
-        if (value1 !== null && value1 !== undefined) {
-            payload.value1 = value1;
-        }
-
-        if (value2 !== null && value2 !== undefined) {
-            payload.value2 = value2;
-        }
 
         const response = await axiosInstance.post(
             `${OPERATIONS_API_URL}${OPERATIONS_ENDPOINTS.RECORDS}`,
@@ -77,16 +57,13 @@ export const deleteOperationRecords = async (ids: string[]): Promise<void> => {
         const token = localStorage.getItem('token');
         if (!token) throw new Error('Token not found. Please log in again.');
 
-        await axiosInstance.delete(
-            `${OPERATIONS_API_URL}${OPERATIONS_ENDPOINTS.RECORDS}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-                data: { ids },
-                validateStatus: (status) => status >= 200 && status < 300,
-            }
-        );
+        await axiosInstance.delete(`${OPERATIONS_API_URL}${OPERATIONS_ENDPOINTS.RECORDS}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            data: { ids },
+            validateStatus: (status) => status >= 200 && status < 300,
+        });
     } catch (error: any) {
         console.error('Error deleting operations:', error);
         throw error.response?.data || 'An error occurred while deleting operations.';
@@ -127,4 +104,3 @@ export const getPagedOperationRecords = async (
         throw error.response?.data || 'An error occurred while getting operations.';
     }
 };
-

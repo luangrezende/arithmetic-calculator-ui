@@ -24,8 +24,8 @@ import {
     InputAdornment,
     TableSortLabel,
     TablePagination,
-    DialogContentText,
     CircularProgress,
+    DialogContentText,
 } from '@mui/material';
 
 import { formatDate } from 'src/utils/format-time';
@@ -85,6 +85,7 @@ export function OperationView() {
             const data = await getPagedOperationRecords(page, rowsPerPage, debouncedSearchQuery);
             setOperations(data.records || []);
             setTotalRecords(data.total || 0);
+            setPage(data.page || 0);
         } catch (error) {
             console.error('Failed to fetch operations:', error);
         } finally {
@@ -281,27 +282,18 @@ export function OperationView() {
                                     </TableCell>
                                     <TableCell align="left">
                                         <TableSortLabel
-                                            active={orderBy === 'operationTypeDescription'}
+                                            active={orderBy === 'expression'}
                                             direction={order}
-                                            onClick={() => handleSort('operationTypeDescription')}
-                                        >
-                                            Type
-                                        </TableSortLabel>
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        <TableSortLabel
-                                            active={orderBy === 'operationValues'}
-                                            direction={order}
-                                            onClick={() => handleSort('operationValues')}
+                                            onClick={() => handleSort('expression')}
                                         >
                                             Operation
                                         </TableSortLabel>
                                     </TableCell>
                                     <TableCell align="left">
                                         <TableSortLabel
-                                            active={orderBy === 'operationResult'}
+                                            active={orderBy === 'result'}
                                             direction={order}
-                                            onClick={() => handleSort('operationResult')}
+                                            onClick={() => handleSort('result')}
                                         >
                                             Result
                                         </TableSortLabel>
@@ -348,29 +340,16 @@ export function OperationView() {
                                                 onChange={() => handleSelect(record.id)}
                                             />
                                         </TableCell>
+                                        <TableCell>{record.expression}</TableCell>
                                         <TableCell>
-                                            <Typography
-                                                variant="body2"
-                                                sx={{
-                                                    fontWeight: 'bold',
-                                                }}
-                                            >
-                                                {record.operationTypeDescription}
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell>{record.operationValues}</TableCell>
-                                        <TableCell>
-                                            <Tooltip title={record.operationResult} arrow>
+                                            <Tooltip title={record.result} arrow>
                                                 <Typography noWrap>
-                                                    {Number.isNaN(Number(record.operationResult))
-                                                        ? record.operationResult
-                                                        : formatLargeNumber(
-                                                              record.operationResult,
-                                                              {
-                                                                  notation: 'compact',
-                                                                  maximumFractionDigits: 2,
-                                                              }
-                                                          )}
+                                                    {Number.isNaN(Number(record.result))
+                                                        ? record.result
+                                                        : formatLargeNumber(record.result, {
+                                                              notation: 'compact',
+                                                              maximumFractionDigits: 2,
+                                                          })}
                                                 </Typography>
                                             </Tooltip>
                                         </TableCell>

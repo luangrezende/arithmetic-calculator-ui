@@ -263,145 +263,148 @@ export function OperationView() {
                         </Typography>
                     </Box>
                 ) : operations.length > 0 ? (
-                    <TableContainer>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell padding="checkbox">
-                                        <Checkbox
-                                            indeterminate={
-                                                selected.length > 0 &&
-                                                selected.length < operations.length
-                                            }
-                                            checked={
-                                                operations.length > 0 &&
-                                                selected.length === operations.length
-                                            }
-                                            onChange={handleSelectAll}
-                                        />
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        <TableSortLabel
-                                            active={orderBy === 'type'}
-                                            direction={order}
-                                            onClick={() => handleSort('type')}
-                                        >
-                                            Type
-                                        </TableSortLabel>
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        <TableSortLabel
-                                            active={orderBy === 'expression'}
-                                            direction={order}
-                                            onClick={() => handleSort('expression')}
-                                        >
-                                            Operation
-                                        </TableSortLabel>
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        <TableSortLabel
-                                            active={orderBy === 'result'}
-                                            direction={order}
-                                            onClick={() => handleSort('result')}
-                                        >
-                                            Result
-                                        </TableSortLabel>
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        <TableSortLabel
-                                            active={orderBy === 'cost'}
-                                            direction={order}
-                                            onClick={() => handleSort('cost')}
-                                        >
-                                            Cost
-                                        </TableSortLabel>
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        <TableSortLabel
-                                            active={orderBy === 'userBalance'}
-                                            direction={order}
-                                            onClick={() => handleSort('userBalance')}
-                                        >
-                                            Balance
-                                        </TableSortLabel>
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        <TableSortLabel
-                                            active={orderBy === 'createdAt'}
-                                            direction={order}
-                                            onClick={() => handleSort('createdAt')}
-                                        >
-                                            Date
-                                        </TableSortLabel>
-                                    </TableCell>
-                                </TableRow>
-                            </TableHead>
-
-                            <TableBody>
-                                {sortedOperations.map((record) => (
-                                    <TableRow
-                                        key={record.id}
-                                        selected={selected.includes(record.id)}
-                                    >
+                    <>
+                        <TableContainer>
+                            <Table stickyHeader>
+                                <TableHead>
+                                    <TableRow>
                                         <TableCell padding="checkbox">
                                             <Checkbox
-                                                checked={selected.includes(record.id)}
-                                                onChange={() => handleSelect(record.id)}
+                                                indeterminate={
+                                                    selected.length > 0 &&
+                                                    selected.length < operations.length
+                                                }
+                                                checked={
+                                                    operations.length > 0 &&
+                                                    selected.length === operations.length
+                                                }
+                                                onChange={handleSelectAll}
                                             />
                                         </TableCell>
-                                        <TableCell>
-                                            <b>{record.type}</b>
-                                        </TableCell>
-                                        <TableCell>{record.expression}</TableCell>
-                                        <TableCell>
-                                            <Tooltip title={record.result} arrow>
-                                                <Typography noWrap>
-                                                    {Number.isNaN(Number(record.result))
-                                                        ? record.result
-                                                        : formatLargeNumber(record.result, {
-                                                              notation: 'compact',
-                                                              maximumFractionDigits: 2,
-                                                          })}
-                                                </Typography>
-                                            </Tooltip>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Typography
-                                                variant="body2"
-                                                sx={{
-                                                    color: 'red',
-                                                    fontWeight: 'bold',
-                                                }}
+                                        <TableCell align="left">
+                                            <TableSortLabel
+                                                active={orderBy === 'type'}
+                                                direction={order}
+                                                onClick={() => handleSort('type')}
                                             >
-                                                -{formatCurrency(record.cost.toFixed(2))}
-                                            </Typography>
+                                                Type
+                                            </TableSortLabel>
                                         </TableCell>
-                                        <TableCell>
-                                            <Typography
-                                                variant="body2"
-                                                sx={{
-                                                    color: record.cost > 0 ? 'green' : 'red',
-                                                    fontWeight: 'bold',
-                                                }}
+                                        <TableCell align="left">
+                                            <TableSortLabel
+                                                active={orderBy === 'expression'}
+                                                direction={order}
+                                                onClick={() => handleSort('expression')}
                                             >
-                                                {formatCurrency(record.userBalance.toFixed(2))}
-                                            </Typography>
+                                                Operation
+                                            </TableSortLabel>
                                         </TableCell>
-                                        <TableCell>{formatDate(record.createdAt)}</TableCell>
+                                        <TableCell align="left">
+                                            <TableSortLabel
+                                                active={orderBy === 'result'}
+                                                direction={order}
+                                                onClick={() => handleSort('result')}
+                                            >
+                                                Result
+                                            </TableSortLabel>
+                                        </TableCell>
+                                        <TableCell align="left">
+                                            <TableSortLabel
+                                                active={orderBy === 'cost'}
+                                                direction={order}
+                                                onClick={() => handleSort('cost')}
+                                            >
+                                                Cost
+                                            </TableSortLabel>
+                                        </TableCell>
+                                        <TableCell align="left">
+                                            <TableSortLabel
+                                                active={orderBy === 'userBalance'}
+                                                direction={order}
+                                                onClick={() => handleSort('userBalance')}
+                                            >
+                                                Balance
+                                            </TableSortLabel>
+                                        </TableCell>
+                                        <TableCell align="left">
+                                            <TableSortLabel
+                                                active={orderBy === 'createdAt'}
+                                                direction={order}
+                                                onClick={() => handleSort('createdAt')}
+                                            >
+                                                Date
+                                            </TableSortLabel>
+                                        </TableCell>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                        <TablePagination
-                            rowsPerPageOptions={[5, 10, 25]}
-                            component="div"
-                            count={totalRecords}
-                            rowsPerPage={rowsPerPage}
-                            page={page}
-                            onPageChange={handleChangePage}
-                            onRowsPerPageChange={handleChangeRowsPerPage}
-                        />
-                    </TableContainer>
+                                </TableHead>
+                                <TableBody>
+                                    {sortedOperations.map((record) => (
+                                        <TableRow
+                                            key={record.id}
+                                            selected={selected.includes(record.id)}
+                                        >
+                                            <TableCell padding="checkbox">
+                                                <Checkbox
+                                                    checked={selected.includes(record.id)}
+                                                    onChange={() => handleSelect(record.id)}
+                                                />
+                                            </TableCell>
+                                            <TableCell>
+                                                <b>{record.type}</b>
+                                            </TableCell>
+                                            <TableCell>{record.expression}</TableCell>
+                                            <TableCell>
+                                                <Tooltip title={record.result} arrow>
+                                                    <Typography noWrap>
+                                                        {Number.isNaN(Number(record.result))
+                                                            ? record.result
+                                                            : formatLargeNumber(record.result, {
+                                                                  notation: 'compact',
+                                                                  maximumFractionDigits: 2,
+                                                              })}
+                                                    </Typography>
+                                                </Tooltip>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Typography
+                                                    variant="body2"
+                                                    sx={{
+                                                        color: 'red',
+                                                        fontWeight: 'bold',
+                                                    }}
+                                                >
+                                                    -{formatCurrency(record.cost.toFixed(2))}
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Typography
+                                                    variant="body2"
+                                                    sx={{
+                                                        color: record.cost > 0 ? 'green' : 'red',
+                                                        fontWeight: 'bold',
+                                                    }}
+                                                >
+                                                    {formatCurrency(record.userBalance.toFixed(2))}
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell>{formatDate(record.createdAt)}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        <Box>
+                            <TablePagination
+                                rowsPerPageOptions={[5, 10, 25]}
+                                component="div"
+                                count={totalRecords}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                onPageChange={handleChangePage}
+                                onRowsPerPageChange={handleChangeRowsPerPage}
+                            />
+                        </Box>
+                    </>
                 ) : (
                     <Box display="flex" justifyContent="center" alignItems="center" p={5}>
                         <Typography variant="h6" color="textSecondary">

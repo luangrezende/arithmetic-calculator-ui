@@ -1,3 +1,7 @@
+import type { Dashboard } from 'src/models/dashboard';
+
+import { useState, useEffect } from 'react';
+
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -6,12 +10,51 @@ import LinearProgress from '@mui/material/LinearProgress';
 
 import { useLocalUser } from 'src/hooks/use-local-user';
 
+import { formatCurrency } from 'src/utils/format-number';
+
 import { DashboardContent } from 'src/layouts/dashboard';
+import { getDashboardData } from 'src/services/api/operation-service';
 
 import { AnalyticsWidgetSummary } from '../analytics-widget-summary';
 
 export function OverviewAnalyticsView() {
     const user = useLocalUser();
+    const [dashboardData, setDashboardData] = useState<Dashboard | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const loadDashboardData = async () => {
+            try {
+                setLoading(true);
+                const data = await getDashboardData();
+                setDashboardData(data.data);
+            } catch (error) {
+                console.error('Failed to load dashboard data:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadDashboardData();
+    }, []);
+
+    if (loading) {
+        return (
+            <DashboardContent maxWidth="xl">
+                <Typography variant="h5">Loading...</Typography>
+            </DashboardContent>
+        );
+    }
+
+    if (!dashboardData) {
+        return (
+            <DashboardContent maxWidth="xl">
+                <Typography variant="h5" color="error">
+                    Failed to load data.
+                </Typography>
+            </DashboardContent>
+        );
+    }
 
     return (
         <DashboardContent maxWidth="xl">
@@ -24,29 +67,29 @@ export function OverviewAnalyticsView() {
                     <Paper elevation={3} sx={{ p: 3 }}>
                         <AnalyticsWidgetSummary
                             title="Operations"
-                            percent={0.1}
-                            total={22}
+                            percent={
+                                dashboardData.totalMonthlyOperations / dashboardData.totalOperations
+                            }
+                            total={dashboardData.totalOperations}
                             color="primary"
                             icon={<img alt="icon" src="/assets/icons/custom/calculator.svg" />}
                             chart={{
-                                categories: [
-                                    'Jan',
-                                    'Feb',
-                                    'Mar',
-                                    'Apr',
-                                    'May',
-                                    'Jun',
-                                    'Jul',
-                                    'Aug',
-                                ],
-                                series: [56, 47, 40, 62, 73, 30, 23, 54],
+                                categories: [],
+                                series: [],
                             }}
                         />
                         <Box sx={{ mt: 2 }}>
                             <Typography variant="body2" color="text.secondary">
                                 Monthly Target
                             </Typography>
-                            <LinearProgress variant="determinate" value={70} />
+                            <LinearProgress
+                                variant="determinate"
+                                value={
+                                    (dashboardData.totalMonthlyOperations /
+                                        dashboardData.totalOperations) *
+                                    100
+                                }
+                            />
                         </Box>
                     </Paper>
                 </Grid>
@@ -55,22 +98,16 @@ export function OverviewAnalyticsView() {
                     <Paper elevation={3} sx={{ p: 3 }}>
                         <AnalyticsWidgetSummary
                             title="Credit"
-                            percent={-0.2}
-                            total={25054}
+                            percent={
+                                (dashboardData.totalAnnualCashAdded - dashboardData.totalCredit) /
+                                dashboardData.totalAnnualCashAdded
+                            }
+                            total={dashboardData.totalCredit}
                             color="success"
                             icon={<img alt="icon" src="/assets/icons/custom/pound-banknote.svg" />}
                             chart={{
-                                categories: [
-                                    'Jan',
-                                    'Feb',
-                                    'Mar',
-                                    'Apr',
-                                    'May',
-                                    'Jun',
-                                    'Jul',
-                                    'Aug',
-                                ],
-                                series: [70, 50, 90, 60, 80, 40, 30, 70],
+                                categories: [],
+                                series: [],
                             }}
                         />
                         <Box sx={{ mt: 2 }}>
@@ -89,9 +126,25 @@ export function OverviewAnalyticsView() {
                 </Typography>
                 <Grid container spacing={3}>
                     {[
-                        { value: 55, label: 'Users created', color: 'primary.main' },
-                        { value: 4985, label: 'Total operations', color: 'primary.main' },
-                        { value: '$1.2M', label: 'Total cash added', color: 'success.main' },
+                        {
+                            value: dashboardData.totalPlatformOperations,
+                            label: 'Total platform operations',
+                            color: 'primary.main',
+                        },
+                        {
+                            value: formatCurrency(
+                                dashboardData.totalPlatformCashSpent.toFixed(2).toString()
+                            ),
+                            label: 'Total platform spent',
+                            color: 'error.main',
+                        },
+                        {
+                            value: formatCurrency(
+                                dashboardData.totalPlatformCashAdded.toFixed(2).toString()
+                            ),
+                            label: 'Total platform cash added',
+                            color: 'success.main',
+                        },
                     ].map((item, index) => (
                         <Grid xs={12} sm={6} md={4} key={index}>
                             <Paper elevation={2} sx={{ p: 3, textAlign: 'center' }}>

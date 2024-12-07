@@ -9,6 +9,7 @@ import Popover from '@mui/material/Popover';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+import CircularProgress from '@mui/material/CircularProgress';
 import { MenuItem, MenuList, menuItemClasses } from '@mui/material';
 
 import { useLocalUser } from 'src/hooks/use-local-user';
@@ -17,12 +18,11 @@ import { logout } from 'src/utils/auth-manager';
 
 import { logoutUser } from 'src/services/api/auth-service';
 
-export type AccountPopoverProps = IconButtonProps & {};
-
-export function AccountPopover({ sx, ...other }: AccountPopoverProps) {
+export function AccountPopover({ sx, ...other }: IconButtonProps) {
     const user = useLocalUser();
     const [photoUrl] = useState('');
     const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
+    const [loading, setLoading] = useState(false);
 
     const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
         setOpenPopover(event.currentTarget);
@@ -33,11 +33,14 @@ export function AccountPopover({ sx, ...other }: AccountPopoverProps) {
     }, []);
 
     const handleLogout = useCallback(async () => {
+        setLoading(true);
         try {
             await logoutUser();
             logout();
         } catch (error) {
             console.error(error);
+        } finally {
+            setLoading(false);
         }
     }, []);
 
@@ -84,39 +87,6 @@ export function AccountPopover({ sx, ...other }: AccountPopoverProps) {
 
                 <Divider sx={{ borderStyle: 'dashed' }} />
 
-                <MenuList
-                    disablePadding
-                    sx={{
-                        p: 1,
-                        gap: 0.5,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        [`& .${menuItemClasses.root}`]: {
-                            px: 1,
-                            gap: 2,
-                            borderRadius: 0.75,
-                            color: 'text.secondary',
-                            '&:hover': { color: 'text.primary' },
-                            [`&.${menuItemClasses.selected}`]: {
-                                color: 'text.primary',
-                                bgcolor: 'action.selected',
-                                fontWeight: 'fontWeightSemiBold',
-                            },
-                        },
-                    }}
-                >
-                    <MenuItem key="Profile" selected={false}>
-                        <img
-                            src="/assets/icons/navbar/ic-user.svg"
-                            alt="Visa"
-                            style={{ width: 25, height: 25 }}
-                        />
-                        Profile
-                    </MenuItem>
-                </MenuList>
-
-                <Divider sx={{ borderStyle: 'dashed' }} />
-
                 <Box sx={{ p: 1 }}>
                     <Button
                         fullWidth
@@ -124,8 +94,10 @@ export function AccountPopover({ sx, ...other }: AccountPopoverProps) {
                         size="medium"
                         variant="text"
                         onClick={handleLogout}
+                        disabled={loading}
+                        startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
                     >
-                        Logout
+                        {loading ? 'Logging out...' : 'Logout'}
                     </Button>
                 </Box>
             </Popover>

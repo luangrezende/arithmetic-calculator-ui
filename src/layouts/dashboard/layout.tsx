@@ -152,7 +152,7 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
                                         )}
                                     </Box>
                                 </Box>
-                                <NotificationsPopover data={_notifications} />
+                                <NotificationsPopover data={[]} />
                                 <AccountPopover />
                             </Box>
                         ),

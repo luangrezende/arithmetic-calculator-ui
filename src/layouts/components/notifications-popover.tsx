@@ -1,11 +1,8 @@
-import type { IconButtonProps } from '@mui/material/IconButton';
-
 import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import Badge from '@mui/material/Badge';
-import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
 import Tooltip from '@mui/material/Tooltip';
@@ -32,11 +29,11 @@ type NotificationItemProps = {
     postedAt: string | number | null;
 };
 
-export type NotificationsPopoverProps = IconButtonProps & {
+export type NotificationsPopoverProps = {
     data?: NotificationItemProps[];
 };
 
-export function NotificationsPopover({ data = [], sx, ...other }: NotificationsPopoverProps) {
+export function NotificationsPopover({ data = [] }: NotificationsPopoverProps) {
     const [notifications, setNotifications] = useState(data);
 
     const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
@@ -62,12 +59,7 @@ export function NotificationsPopover({ data = [], sx, ...other }: NotificationsP
 
     return (
         <>
-            <IconButton
-                color={openPopover ? 'primary' : 'default'}
-                onClick={handleOpenPopover}
-                sx={sx}
-                {...other}
-            >
+            <IconButton color={openPopover ? 'primary' : 'default'} onClick={handleOpenPopover}>
                 <Badge badgeContent={totalUnRead} color="error">
                     <Iconify width={24} icon="solar:bell-bing-bold-duotone" />
                 </Badge>
@@ -99,7 +91,7 @@ export function NotificationsPopover({ data = [], sx, ...other }: NotificationsP
                     </Box>
 
                     {totalUnRead > 0 && (
-                        <Tooltip title=" Mark all as read">
+                        <Tooltip title="Mark all as read">
                             <IconButton color="primary" onClick={handleMarkAllAsRead}>
                                 <Iconify icon="solar:check-read-outline" />
                             </IconButton>
@@ -110,30 +102,38 @@ export function NotificationsPopover({ data = [], sx, ...other }: NotificationsP
                 <Divider sx={{ borderStyle: 'dashed' }} />
 
                 <Scrollbar fillContent sx={{ minHeight: 240, maxHeight: { xs: 360, sm: 'none' } }}>
-                    <List
-                        disablePadding
-                        subheader={
-                            <ListSubheader
-                                disableSticky
-                                sx={{ py: 1, px: 2.5, typography: 'overline' }}
-                            >
-                                New
-                            </ListSubheader>
-                        }
-                    >
-                        {notifications.slice(0, 2).map((notification) => (
-                            <NotificationItem key={notification.id} notification={notification} />
-                        ))}
-                    </List>
+                    {notifications.length > 0 ? (
+                        <List
+                            disablePadding
+                            subheader={
+                                <ListSubheader
+                                    disableSticky
+                                    sx={{ py: 1, px: 2.5, typography: 'overline' }}
+                                >
+                                    New
+                                </ListSubheader>
+                            }
+                        >
+                            {notifications.map((notification) => (
+                                <NotificationItem
+                                    key={notification.id}
+                                    notification={notification}
+                                />
+                            ))}
+                        </List>
+                    ) : (
+                        <Box
+                            display="flex"
+                            justifyContent="center"
+                            alignItems="center"
+                            sx={{ minHeight: 240 }}
+                        >
+                            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                No notifications
+                            </Typography>
+                        </Box>
+                    )}
                 </Scrollbar>
-
-                <Divider sx={{ borderStyle: 'dashed' }} />
-
-                <Box sx={{ p: 1 }}>
-                    <Button fullWidth disableRipple color="inherit">
-                        View all
-                    </Button>
-                </Box>
             </Popover>
         </>
     );

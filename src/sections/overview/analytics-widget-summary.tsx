@@ -17,6 +17,7 @@ import { Chart, useChart } from 'src/components/chart';
 type Props = CardProps & {
     title: string;
     total: number;
+    isCurrency?: boolean;
     percent: number;
     color?: ColorType;
     icon: React.ReactNode;
@@ -31,6 +32,7 @@ export function AnalyticsWidgetSummary({
     icon,
     title,
     total,
+    isCurrency,
     chart,
     percent,
     color = 'primary',
@@ -110,7 +112,9 @@ export function AnalyticsWidgetSummary({
             >
                 <Box sx={{ flexGrow: 1, minWidth: 112 }}>
                     <Box sx={{ mb: 1, typography: 'subtitle2' }}>{title}</Box>
-                    <Box sx={{ typography: 'h4' }}>{formatLargeNumber(total)}</Box>
+                    <Box sx={{ typography: 'h4' }}>
+                        {isCurrency ? `$${formatLargeNumber(total)}` : formatLargeNumber(total)}
+                    </Box>
                 </Box>
 
                 <Chart

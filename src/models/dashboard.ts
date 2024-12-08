@@ -6,4 +6,5 @@ export interface Dashboard {
     totalPlatformOperations: number;
     totalPlatformCashSpent: number;
     totalPlatformCashAdded: number;
+    annualTarget: number;
 }

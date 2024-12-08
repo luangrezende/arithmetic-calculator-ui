@@ -109,12 +109,21 @@ export function OverviewAnalyticsView() {
                                 categories: [],
                                 series: [],
                             }}
+                            isCurrency
                         />
                         <Box sx={{ mt: 2 }}>
                             <Typography variant="body2" color="text.secondary">
                                 Annual Target
                             </Typography>
-                            <LinearProgress variant="determinate" value={45} color="success" />
+                            <LinearProgress
+                                variant="determinate"
+                                value={
+                                    (dashboardData.totalAnnualCashAdded /
+                                        dashboardData.annualTarget) *
+                                    100
+                                }
+                                color="success"
+                            />
                         </Box>
                     </Paper>
                 </Grid>
@@ -122,27 +131,27 @@ export function OverviewAnalyticsView() {
 
             <Box sx={{ mt: 5 }}>
                 <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
-                    Performance Highlights
+                    Platform Performance
                 </Typography>
                 <Grid container spacing={3}>
                     {[
                         {
                             value: dashboardData.totalPlatformOperations,
-                            label: 'Total platform operations',
+                            label: 'Total operations',
                             color: 'primary.main',
                         },
                         {
                             value: formatCurrency(
                                 dashboardData.totalPlatformCashSpent.toFixed(2).toString()
                             ),
-                            label: 'Total platform spent',
+                            label: 'Total spent',
                             color: 'error.main',
                         },
                         {
                             value: formatCurrency(
                                 dashboardData.totalPlatformCashAdded.toFixed(2).toString()
                             ),
-                            label: 'Total platform cash added',
+                            label: 'Total cash added',
                             color: 'success.main',
                         },
                     ].map((item, index) => (

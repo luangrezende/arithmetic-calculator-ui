@@ -65,7 +65,7 @@ export function formatLargeNumber(inputValue: InputNumberValue, options?: Option
 
     const fm = new Intl.NumberFormat(locale.code, {
         notation: 'compact',
-        maximumFractionDigits: 1,
+        maximumFractionDigits: 2,
         ...options,
     }).format(number);
 

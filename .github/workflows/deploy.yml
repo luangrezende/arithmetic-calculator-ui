@@ -1,9 +1,9 @@
-name: Deploy Frontend to AWS S3
+name: Deploy Frontend to AWS S3 + CloudFront
 
 on:
     push:
         branches:
-            - main
+            - master
 
 jobs:
     deploy:
@@ -16,21 +16,38 @@ jobs:
             - name: Setup Node.js
               uses: actions/setup-node@v3
               with:
-                  node-version: 16
+                  node-version: 18
+
+            - name: Cache dependencies
+              uses: actions/cache@v3
+              with:
+                  path: ~/.npm
+                  key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+                  restore-keys: |
+                      ${{ runner.os }}-node-
 
             - name: Install dependencies
-              run: npm install --legacy-peer-deps
+              run: npm ci
 
             - name: Build project
               run: npm run build
 
-            - name: Deploy to S3
-              uses: jakejarvis/s3-sync-action@v0.5.1
+            - name: Configure AWS credentials
+              uses: aws-actions/configure-aws-credentials@v2
               with:
-                  args: --delete
-              env:
-                  AWS_S3_BUCKET: arithmetic-calculator-ui
-                  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-                  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-                  AWS_REGION: us-east-1
-                  SOURCE_DIR: dist
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: us-east-1
+
+            - name: Deploy to S3
+              run: |
+                  aws s3 sync dist/ s3://${{ secrets.AWS_S3_BUCKET }} --delete --cache-control "public, max-age=31536000" --exclude "*.html" --exclude "service-worker.js"
+                  aws s3 sync dist/ s3://${{ secrets.AWS_S3_BUCKET }} --delete --cache-control "public, max-age=0, must-revalidate" --include "*.html" --include "service-worker.js"
+
+            - name: Configure S3 website hosting
+              run: |
+                  aws s3 website s3://${{ secrets.AWS_S3_BUCKET }} --index-document index.html --error-document index.html
+
+            - name: Invalidate CloudFront
+              run: |
+                  aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"

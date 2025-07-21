@@ -40,6 +40,10 @@ jobs:
 
             - name: Build project
               run: yarn build
+              env:
+                  VITE_USER_API_URL: ${{ secrets.VITE_USER_API_URL }}
+                  VITE_OPERATIONS_API_URL: ${{ secrets.VITE_OPERATIONS_API_URL }}
+                  VITE_API_ENVIRONMENT: production
 
             - name: Verify build output
               run: |

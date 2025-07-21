@@ -1,8 +1,9 @@
-export const USER_API_URL =
-    'https://hw830ty0zi.execute-api.us-east-1.amazonaws.com/develop/v1/user';
+// API Base URLs from environment variables
+export const USER_API_URL = import.meta.env.VITE_USER_API_URL || 'http://localhost:3001/v1/user';
+export const OPERATIONS_API_URL = import.meta.env.VITE_OPERATIONS_API_URL || 'http://localhost:3002/v1/operations';
 
-export const OPERATIONS_API_URL =
-    'https://03oa1im248.execute-api.us-east-1.amazonaws.com/develop/v1/operations';
+// API Environment
+export const API_ENVIRONMENT = import.meta.env.VITE_API_ENVIRONMENT || 'development';
 
 export const AUTH_ENDPOINTS = {
     LOGIN: '/auth/login',

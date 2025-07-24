@@ -9,7 +9,7 @@ export function FallbackLoader() {
                 sx={{
                     width: 1,
                     maxWidth: 320,
-                    bgcolor: (theme) => varAlpha(theme.vars.palette.text.primaryChannel, 0.16),
+                    bgcolor: (theme) => varAlpha('0 0 0', 0.16),
                     [`& .${linearProgressClasses.bar}`]: { bgcolor: 'text.primary' },
                 }}
             />

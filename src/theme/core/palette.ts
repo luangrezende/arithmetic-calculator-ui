@@ -94,11 +94,11 @@ export const background = {
 
 
 export const baseAction = {
-    hover: varAlpha(grey['500Channel'], 0.08),
-    selected: varAlpha(grey['500Channel'], 0.16),
-    focus: varAlpha(grey['500Channel'], 0.24),
-    disabled: varAlpha(grey['500Channel'], 0.8),
-    disabledBackground: varAlpha(grey['500Channel'], 0.24),
+    hover: varAlpha('100 116 139', 0.08),
+    selected: varAlpha('100 116 139', 0.16),
+    focus: varAlpha('100 116 139', 0.24),
+    disabled: varAlpha('100 116 139', 0.8),
+    disabledBackground: varAlpha('100 116 139', 0.24),
     hoverOpacity: 0.08,
     disabledOpacity: 0.48,
 };
@@ -119,7 +119,7 @@ export const basePalette = {
     error,
     grey,
     common,
-    divider: varAlpha(grey['500Channel'], 0.2),
+    divider: varAlpha('100 116 139', 0.2),
     action,
 };
 

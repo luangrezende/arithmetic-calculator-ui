@@ -29,7 +29,7 @@ export function ForgotPasswordForm({
         <AuthFormLayout>
             <AuthTitle
                 title="Forgot password"
-                subtitle="This is a develop env, this feature will not work."
+                subtitle="Enter your email address and we'll send you a link to reset your password."
                 actionText=""
                 onAction={onBackToSignIn}
             />

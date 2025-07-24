@@ -1,4 +1,4 @@
-import type { TypographyOptions } from '@mui/material/styles/createTypography';
+import type { TypographyStyleOptions } from '@mui/material/styles/createTypography';
 
 import { setFont, pxToRem, responsiveFontSizes } from '../styles/utils';
 
@@ -16,13 +16,13 @@ declare module '@mui/material/styles' {
     }
 }
 
-export const defaultFont = 'DM Sans Variable';
+export const defaultFont = 'Inter Variable';
 
 export const primaryFont = setFont(defaultFont);
 
-export const secondaryFont = setFont('Barlow');
+export const secondaryFont = setFont('Plus Jakarta Sans');
 
-export const typography: TypographyOptions = {
+export const typography: TypographyStyleOptions = {
     fontFamily: primaryFont,
     fontSecondaryFamily: secondaryFont,
     fontWeightLight: '300',
@@ -31,36 +31,36 @@ export const typography: TypographyOptions = {
     fontWeightSemiBold: '600',
     fontWeightBold: '700',
     h1: {
-        fontWeight: 800,
-        lineHeight: 80 / 64,
-        fontSize: pxToRem(40),
+        fontWeight: 700,
+        lineHeight: 1.2,
+        fontSize: pxToRem(48),
         fontFamily: secondaryFont,
         ...responsiveFontSizes({ sm: 52, md: 58, lg: 64 }),
     },
     h2: {
-        fontWeight: 800,
-        lineHeight: 64 / 48,
-        fontSize: pxToRem(32),
+        fontWeight: 700,
+        lineHeight: 1.3,
+        fontSize: pxToRem(36),
         fontFamily: secondaryFont,
         ...responsiveFontSizes({ sm: 40, md: 44, lg: 48 }),
     },
     h3: {
-        fontWeight: 700,
-        lineHeight: 1.5,
-        fontSize: pxToRem(24),
+        fontWeight: 600,
+        lineHeight: 1.4,
+        fontSize: pxToRem(28),
         fontFamily: secondaryFont,
         ...responsiveFontSizes({ sm: 26, md: 30, lg: 32 }),
     },
     h4: {
-        fontWeight: 700,
-        lineHeight: 1.5,
-        fontSize: pxToRem(20),
+        fontWeight: 600,
+        lineHeight: 1.4,
+        fontSize: pxToRem(24),
         ...responsiveFontSizes({ sm: 20, md: 24, lg: 24 }),
     },
     h5: {
-        fontWeight: 700,
+        fontWeight: 600,
         lineHeight: 1.5,
-        fontSize: pxToRem(18),
+        fontSize: pxToRem(20),
         ...responsiveFontSizes({ sm: 19, md: 20, lg: 20 }),
     },
     h6: {

@@ -25,7 +25,7 @@ export const addOperationRecord = async (accountId: string, expression: string):
 
         return response.data;
     } catch (error: any) {
-        console.log(error);
+        console.error('Error adding operation:', error);
         throw error.response.data.data.error || 'An error occurred while adding operation.';
     }
 };

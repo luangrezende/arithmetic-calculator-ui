@@ -7,7 +7,7 @@ import { varAlpha } from '../styles';
 const MuiBackdrop: Components<Theme>['MuiBackdrop'] = {
     styleOverrides: {
         root: ({ theme }) => ({
-            backgroundColor: varAlpha(theme.vars.palette.grey['900Channel'], 0.8),
+            backgroundColor: varAlpha('15 23 42', 0.8),
         }),
         invisible: {
             background: 'transparent',
@@ -21,11 +21,11 @@ const MuiButton: Components<Theme>['MuiButton'] = {
     },
     styleOverrides: {
         containedInherit: ({ theme }) => ({
-            color: theme.vars.palette.common.white,
-            backgroundColor: theme.vars.palette.grey[800],
+            color: theme.palette.common.white,
+            backgroundColor: theme.palette.grey[800],
             '&:hover': {
-                color: theme.vars.palette.common.white,
-                backgroundColor: theme.vars.palette.grey[800],
+                color: theme.palette.common.white,
+                backgroundColor: theme.palette.grey[800],
             },
         }),
         sizeLarge: {
@@ -39,8 +39,8 @@ const MuiCard: Components<Theme>['MuiCard'] = {
         root: ({ theme }) => ({
             zIndex: 0,
             position: 'relative',
-            boxShadow: theme.customShadows.card,
-            borderRadius: theme.shape.borderRadius * 2,
+            boxShadow: theme.customShadows?.card || `0 0 2px 0 ${varAlpha('100 116 139', 0.2)}, 0 12px 24px -4px ${varAlpha('100 116 139', 0.12)}`,
+            borderRadius: theme.spacing(3),
         }),
     },
 };
@@ -60,7 +60,7 @@ const MuiCardHeader: Components<Theme>['MuiCardHeader'] = {
 const MuiOutlinedInput: Components<Theme>['MuiOutlinedInput'] = {
     styleOverrides: {
         notchedOutline: ({ theme }) => ({
-            borderColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.2),
+            borderColor: varAlpha('100 116 139', 0.2),
         }),
     },
 };
@@ -72,7 +72,7 @@ const MuiPaper: Components<Theme>['MuiPaper'] = {
     styleOverrides: {
         root: { backgroundImage: 'none' },
         outlined: ({ theme }) => ({
-            borderColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.16),
+            borderColor: varAlpha('100 116 139', 0.16),
         }),
     },
 };
@@ -81,9 +81,9 @@ const MuiTableCell: Components<Theme>['MuiTableCell'] = {
     styleOverrides: {
         head: ({ theme }) => ({
             fontSize: theme.typography.pxToRem(14),
-            color: theme.vars.palette.text.secondary,
+            color: theme.palette.text.secondary,
             fontWeight: theme.typography.fontWeightSemiBold,
-            backgroundColor: theme.vars.palette.background.neutral,
+            backgroundColor: theme.palette.background.default,
         }),
     },
 };

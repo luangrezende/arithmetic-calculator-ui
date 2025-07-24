@@ -23,31 +23,31 @@ export const StyledLabel = styled(Box)(({
              * @variant filled
              */
             ...(variant === 'filled' && {
-                color: theme.vars.palette.common.white,
-                backgroundColor: theme.vars.palette.text.primary,
-                [stylesMode.dark]: { color: theme.vars.palette.grey[800] },
+                color: theme.palette.common.white,
+                backgroundColor: theme.palette.text.primary,
+                [stylesMode.dark]: { color: theme.palette.grey[800] },
             }),
             /**
              * @variant outlined
              */
             ...(variant === 'outlined' && {
                 backgroundColor: 'transparent',
-                color: theme.vars.palette.text.primary,
-                border: `2px solid ${theme.vars.palette.text.primary}`,
+                color: theme.palette.text.primary,
+                border: `2px solid ${theme.palette.text.primary}`,
             }),
             /**
              * @variant soft
              */
             ...(variant === 'soft' && {
-                color: theme.vars.palette.text.secondary,
-                backgroundColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.16),
+                color: theme.palette.text.secondary,
+                backgroundColor: varAlpha('100 116 139', 0.16),
             }),
             /**
              * @variant inverted
              */
             ...(variant === 'inverted' && {
-                color: theme.vars.palette.grey[800],
-                backgroundColor: theme.vars.palette.grey[300],
+                color: theme.palette.grey[800],
+                backgroundColor: theme.palette.grey[300],
             }),
         }),
     };
@@ -58,31 +58,31 @@ export const StyledLabel = styled(Box)(({
              * @variant filled
              */
             ...(variant === 'filled' && {
-                color: theme.vars.palette[color].contrastText,
-                backgroundColor: theme.vars.palette[color].main,
+                color: theme.palette[color].contrastText,
+                backgroundColor: theme.palette[color].main,
             }),
             /**
              * @variant outlined
              */
             ...(variant === 'outlined' && {
                 backgroundColor: 'transparent',
-                color: theme.vars.palette[color].main,
-                border: `2px solid ${theme.vars.palette[color].main}`,
+                color: theme.palette[color].main,
+                border: `2px solid ${theme.palette[color].main}`,
             }),
             /**
              * @variant soft
              */
             ...(variant === 'soft' && {
-                color: theme.vars.palette[color].dark,
-                backgroundColor: varAlpha(theme.vars.palette[color].mainChannel, 0.16),
-                [stylesMode.dark]: { color: theme.vars.palette[color].light },
+                color: theme.palette[color].dark,
+                backgroundColor: varAlpha('37 99 235', 0.16),
+                [stylesMode.dark]: { color: theme.palette[color].light },
             }),
             /**
              * @variant inverted
              */
             ...(variant === 'inverted' && {
-                color: theme.vars.palette[color].darker,
-                backgroundColor: theme.vars.palette[color].lighter,
+                color: theme.palette[color].darker,
+                backgroundColor: theme.palette[color].lighter,
             }),
         }),
     };
@@ -99,7 +99,7 @@ export const StyledLabel = styled(Box)(({
         padding: theme.spacing(0, 0.75),
         fontSize: theme.typography.pxToRem(12),
         fontWeight: theme.typography.fontWeightBold,
-        borderRadius: theme.shape.borderRadius * 0.75,
+        borderRadius: theme.spacing(1),
         transition: theme.transitions.create('all', {
             duration: theme.transitions.duration.shorter,
         }),

@@ -15,7 +15,7 @@ export const registerUser = async (name: string, username: string, password: str
             { name, username, password, confirmPassword },
             { validateStatus: (status) => status >= 200 && status < 300 }
         );
-        console.log(response);
+        return response.data;
     } catch (error: any) {
         console.error('Error registering user:', error);
         throw error.response?.data?.data?.error || 'An error occurred during registration.';
@@ -39,8 +39,8 @@ export const loginUser = () => async (username: string, password: string) => {
         saveTokens(token, refreshToken);
 
         try {
-            const userResult = await getUserProfile();
-            saveProfile(userResult.data);
+            const userProfile = await getUserProfile();
+            saveProfile(userProfile.data);
         } catch (error: any) {
             console.error('Error fetching user profile:', error);
             throw new Error('Failed to load user profile. Please try again.');

@@ -87,7 +87,7 @@ export function AnalyticsWidgetSummary({
         <Card
             sx={{
                 ...bgGradient({
-                    color: `135deg, ${varAlpha(theme.vars.palette[color].lighterChannel, 0.48)}, ${varAlpha(theme.vars.palette[color].lightChannel, 0.48)}`,
+                    color: `135deg, ${varAlpha('37 99 235', 0.48)}, ${varAlpha('107 182 255', 0.48)}`,
                 }),
                 p: 3,
                 boxShadow: 'none',

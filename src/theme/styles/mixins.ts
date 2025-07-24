@@ -21,7 +21,7 @@ export const hideScrollY: CSSObject = {
 
 /**
  * Usage:
- * ...textGradient(`to right, ${theme.vars.palette.text.primary}, ${alpha(theme.vars.palette.text.primary, 0.2)}`
+ * ...textGradient(`to right, ${theme.palette.text.primary}, ${alpha(theme.palette.text.primary, 0.2)}`
  */
 export function textGradient(color: string): CSSObject {
     return {
@@ -36,7 +36,7 @@ export function textGradient(color: string): CSSObject {
 
 /**
  * Usage:
- * ...bgGradient({ color: `to right, ${theme.vars.palette.grey[900]} 25%, ${varAlpha(theme.vars.palette.primary.darkerChannel, 0.88)}`, imgUrl: '/assets/background/overlay.png' }),
+ * ...bgGradient({ color: `to right, ${theme.palette.grey[900]} 25%, ${varAlpha('37 99 235', 0.88)}`, imgUrl: '/assets/background/overlay.png' }),
  */
 export type BgGradientProps = {
     color: string;
@@ -57,7 +57,7 @@ export function bgGradient({ color, imgUrl }: BgGradientProps): CSSObject {
 
 /**
  * Usage:
- * ...bgBlur({ color: `varAlpha(theme.vars.palette.background.paperChannel, 0.8)`, imgUrl: '/assets/background/overlay.png', blur: 6 }),
+ * ...bgBlur({ color: `varAlpha('255 255 255', 0.8)`, imgUrl: '/assets/background/overlay.png', blur: 6 }),
  */
 export type BgBlurProps = {
     color: string;

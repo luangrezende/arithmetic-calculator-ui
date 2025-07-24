@@ -2,9 +2,8 @@ import { useState } from 'react';
 
 import { Box, Alert, Button, MenuItem, TextField, CircularProgress } from '@mui/material';
 
-import { saveProfile, getProfileBankAccount } from 'src/utils/profile-manager';
-
 import { useBalance } from 'src/context/balance-context';
+import { useNotifications } from 'src/context/notifications-context';
 import { getUserProfile } from 'src/services/api/auth-service';
 import { addOperationRecord } from 'src/services/api/operation-service';
 
@@ -28,7 +27,7 @@ export function NewOperationForm({ onClose, onAddOperation }: NewOperationFormPr
     const [fieldError, setFieldError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const { fetchBalance } = useBalance();
-    const bankAccount = getProfileBankAccount();
+    const { addOperationNotification } = useNotifications();
 
     const validateFields = () => {
         if (!operationType) {
@@ -51,10 +50,22 @@ export function NewOperationForm({ onClose, onAddOperation }: NewOperationFormPr
         setIsLoading(true);
 
         try {
-            await addOperationRecord(bankAccount!.id, expression);
+            const userProfile = await getUserProfile();
+            const accountId = userProfile.data?.accounts?.[0]?.id;
+            
+            if (!accountId) {
+                throw new Error('No account found');
+            }
 
-            const profileResponse = await getUserProfile();
-            saveProfile(profileResponse.data);
+            const result = await addOperationRecord(accountId, expression);
+            
+            // Adicionar notificação de operação
+            const operationCost = result.data?.operationCost || 1; // Fallback para 1 se não retornar o custo
+            addOperationNotification(
+                operationType?.description || 'Unknown Operation',
+                operationCost
+            );
+
             fetchBalance();
             onClose();
             onAddOperation();

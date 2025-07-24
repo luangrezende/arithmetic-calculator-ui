@@ -6,7 +6,6 @@ export const parseOperationRecords = (data: any): OperationRecord[] | null => {
     }
 
     try {
-        console.log(data);
         const operationRecords: OperationRecord[] = data.records;
         return operationRecords;
     } catch (error) {

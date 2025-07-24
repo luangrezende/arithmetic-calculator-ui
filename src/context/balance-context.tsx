@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 import { useMemo, useState, useContext, useCallback, createContext } from 'react';
 
-import { getProfileBankAccount } from 'src/utils/profile-manager';
+import { getUserProfile } from 'src/services/api/auth-service';
 
 interface BalanceContextProps {
     balance: number | null;
@@ -18,8 +18,9 @@ export const BalanceProvider = ({ children }: { children: ReactNode }) => {
 
     const fetchBalance = useCallback(async () => {
         try {
-            const bankAccount = getProfileBankAccount();
-            setBalance(bankAccount?.balance || 0);
+            const userProfile = await getUserProfile();
+            const userBalance = userProfile.data?.accounts?.[0]?.balance || 0;
+            setBalance(userBalance);
             setIsBalanceLoaded(true);
         } catch (error) {
             console.error('Failed to fetch balance:', error);

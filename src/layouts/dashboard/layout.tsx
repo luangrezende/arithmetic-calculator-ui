@@ -16,6 +16,7 @@ import { useAuthContext } from 'src/context/auth-context';
 
 import { AlertSnackbar } from 'src/components/alert-snackbar';
 import { NavMobile, NavDesktop } from 'src/components/navigation';
+import { ThemeToggle } from 'src/components/theme-toggle';
 
 import { Main } from './main';
 import { layoutClasses } from '../classes';
@@ -152,7 +153,8 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
                                         )}
                                     </Box>
                                 </Box>
-                                <NotificationsPopover data={[]} />
+                                <ThemeToggle />
+                                <NotificationsPopover />
                                 <AccountPopover />
                             </Box>
                         ),

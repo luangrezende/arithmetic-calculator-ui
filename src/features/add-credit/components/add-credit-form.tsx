@@ -3,7 +3,6 @@ import { useRef, useState } from 'react';
 import { Box, Button, CircularProgress } from '@mui/material';
 
 import { parseAmount } from 'src/utils/format-number';
-import { saveProfile, getProfileBankAccount } from 'src/utils/profile-manager';
 
 import { useBalance } from 'src/context/balance-context';
 import { addCredit } from 'src/services/api/balance-service';
@@ -17,7 +16,6 @@ import type { AddCreditFormProps } from '../types/add-credit.types';
 
 export function AddCreditForm({ onClose, onOpenSnackBar }: AddCreditFormProps) {
     const [isLoading, setIsLoading] = useState(false);
-    const bankAccount = getProfileBankAccount();
     const [form, setForm] = useState({ amount: '' });
 
     const onFieldChange = (field: string, value: string) => {
@@ -38,10 +36,15 @@ export function AddCreditForm({ onClose, onOpenSnackBar }: AddCreditFormProps) {
         setIsLoading(true);
 
         try {
-            const response = await addCredit(amount!, bankAccount!.id);
+            const userProfile = await getUserProfile();
+            const accountId = userProfile.data?.accounts?.[0]?.id;
+            
+            if (!accountId) {
+                throw new Error('No account found');
+            }
+
+            const response = await addCredit(amount!, accountId);
             if (response.statusCode === 200) {
-                const profileResponse = await getUserProfile();
-                saveProfile(profileResponse.data);
                 onClose();
                 onOpenSnackBar('success');
             } else {

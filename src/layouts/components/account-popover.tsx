@@ -1,6 +1,7 @@
 import type { IconButtonProps } from '@mui/material/IconButton';
 
 import { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -20,6 +21,7 @@ import { logoutUser } from 'src/services/api/auth-service';
 
 export function AccountPopover({ sx, ...other }: IconButtonProps) {
     const user = useLocalUser();
+    const navigate = useNavigate();
     const [photoUrl] = useState('');
     const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
     const [loading, setLoading] = useState(false);
@@ -53,7 +55,7 @@ export function AccountPopover({ sx, ...other }: IconButtonProps) {
                     width: 40,
                     height: 40,
                     background: (theme) =>
-                        `conic-gradient(${theme.vars.palette.primary.light}, ${theme.vars.palette.warning.light}, ${theme.vars.palette.primary.light})`,
+                        `conic-gradient(${theme.palette.primary.light}, ${theme.palette.warning.light}, ${theme.palette.primary.light})`,
                     ...sx,
                 }}
                 {...other}

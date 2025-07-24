@@ -39,7 +39,11 @@ export function HeaderSection({
 
     const toolbarStyles = {
         default: {
-            ...bgBlur({ color: varAlpha(theme.vars.palette.background.defaultChannel, 0.8) }),
+            ...bgBlur({ 
+                color: theme.palette.mode === 'dark' 
+                    ? varAlpha('15 23 42', 0.8) 
+                    : varAlpha('255 255 255', 0.8) 
+            }),
             minHeight: 'auto',
             height: 'var(--layout-header-mobile-height)',
             transition: theme.transitions.create(['height', 'background-color'], {

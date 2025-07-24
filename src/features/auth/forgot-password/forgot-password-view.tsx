@@ -29,8 +29,6 @@ export default function ForgotPasswordView() {
     };
 
     const handleForgotPassword = async () => {
-        console.log(form.email);
-
         try {
             setLoading(true);
             setSnackbar({

@@ -1,8 +1,6 @@
 import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
-import { varAlpha } from 'src/theme/styles';
-
 import { NavContent } from './nav-content';
 
 import type { NavDesktopProps } from './nav.types';
@@ -25,9 +23,8 @@ export function NavDesktop({ sx, data, slots, layoutQuery }: NavDesktopProps) {
                 bgcolor: isDark ? theme.palette.background.paper : 'var(--layout-nav-bg)',
                 zIndex: 'var(--layout-nav-zIndex)',
                 width: 'var(--layout-nav-vertical-width)',
-                borderRight: `1px solid ${isDark 
-                    ? varAlpha('100 116 139', 0.05) 
-                    : 'var(--layout-nav-border-color)'}`,
+                boxShadow: 'none',
+                border: 'none',
                 [theme.breakpoints.up(layoutQuery)]: {
                     display: 'flex',
                 },

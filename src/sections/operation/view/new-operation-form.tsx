@@ -1,11 +1,12 @@
 import { useState } from 'react';
 
-import { Box, Alert, Button, MenuItem, TextField, CircularProgress } from '@mui/material';
-
 import { useBalance } from 'src/context/balance-context';
 import { useNotifications } from 'src/context/notifications-context';
 import { getUserProfile } from 'src/services/api/auth-service';
 import { addOperationRecord } from 'src/services/api/operation-service';
+
+import { ModernButton } from 'src/components/modern-button';
+import { ModernInput } from 'src/components/modern-input';
 
 interface NewOperationFormProps {
     onClose: () => void;
@@ -91,54 +92,74 @@ export function NewOperationForm({ onClose, onAddOperation }: NewOperationFormPr
     };
 
     return (
-        <Box component="form" display="flex" flexDirection="column" gap={2}>
-            <TextField
-                select
-                label="Operation"
-                value={operationType?.id || ''}
-                onChange={(e) => handleOperationChange(e.target.value)}
-                required
-                fullWidth
-            >
-                {operationOptions.map((option) => (
-                    <MenuItem key={option.id} value={option.id}>
-                        {option.description}
-                    </MenuItem>
-                ))}
-            </TextField>
+        <div className="flex flex-col gap-4">
+            <div>
+                {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+                <label id="operation-label" htmlFor="operation-select" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Operation
+                </label>
+                <select
+                    id="operation-select"
+                    aria-labelledby="operation-label"
+                    value={operationType?.id || ''}
+                    onChange={(e) => handleOperationChange(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    required
+                >
+                    <option value="">Select an operation</option>
+                    {operationOptions.map((option) => (
+                        <option key={option.id} value={option.id}>
+                            {option.description}
+                        </option>
+                    ))}
+                </select>
+            </div>
 
             {operationType?.description === 'Arithmetic Operation' && (
-                <TextField
-                    label="Expression"
-                    value={expression}
-                    onChange={(e) => setExpression(e.target.value)}
-                    error={!!fieldError}
-                    helperText={fieldError}
-                    required
-                    fullWidth
-                />
+                <div>
+                    <ModernInput
+                        label="Expression"
+                        value={expression}
+                        onChange={(e) => setExpression(e.target.value)}
+                        error={fieldError || undefined}
+                        required
+                        className="w-full"
+                    />
+                    {fieldError && (
+                        <p className="text-sm text-red-600 dark:text-red-400 mt-1">{fieldError}</p>
+                    )}
+                </div>
             )}
 
             {operationType?.description === 'Random String' && (
-                <Alert severity="info">A new random string will be generated automatically.</Alert>
+                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg text-blue-800 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-300">
+                    A new random string will be generated automatically.
+                </div>
             )}
 
-            {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+            {errorMessage && (
+                <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-300">
+                    {errorMessage}
+                </div>
+            )}
 
-            <Box display="flex" justifyContent="flex-end" gap={2}>
-                <Button onClick={onClose} variant="outlined" disabled={isLoading}>
-                    Cancel
-                </Button>
-                <Button
-                    onClick={handleSubmit}
-                    variant="contained"
-                    color="primary"
+            <div className="flex justify-end gap-2">
+                <ModernButton
+                    variant="outline"
+                    onClick={onClose}
                     disabled={isLoading}
-                    startIcon={isLoading ? <CircularProgress size={16} color="inherit" /> : null}
+                >
+                    Cancel
+                </ModernButton>
+                <ModernButton
+                    variant="primary"
+                    onClick={handleSubmit}
+                    disabled={isLoading}
+                    loading={isLoading}
                 >
                     {isLoading ? 'Processing...' : 'Submit'}
-                </Button>
-            </Box>
-        </Box>
+                </ModernButton>
+            </div>
+        </div>
     );
 }

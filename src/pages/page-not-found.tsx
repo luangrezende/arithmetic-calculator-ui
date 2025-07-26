@@ -1,19 +1,13 @@
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 
-import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import { useTheme } from '@mui/material/styles';
-
 import { CONFIG } from 'src/config-global';
-import { varAlpha } from 'src/theme/styles';
+
 import { ModernButton } from 'src/components/modern-button';
 import { ModernCard } from 'src/components/modern-card';
 
 export default function NotFoundPage() {
     const navigate = useNavigate();
-    const theme = useTheme();
 
     const handleGoHome = () => {
         navigate('/');
@@ -29,90 +23,42 @@ export default function NotFoundPage() {
                 <title>404 - Page Not Found | {CONFIG.appName}</title>
             </Helmet>
 
-            <Box
-                sx={{
-                    minHeight: '100vh',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    background: `linear-gradient(135deg, ${theme.palette.background.default} 0%, ${varAlpha('37 99 235', 0.05)} 100%)`,
-                    p: 3,
-                }}
-            >
+            <div className="min-h-screen flex items-center justify-center bg-blue-50 dark:bg-blue-900 p-3">
                 <ModernCard
-                    glassy
-                    sx={{
-                        maxWidth: 500,
-                        textAlign: 'center',
-                        p: { xs: 4, md: 6 },
-                    }}
+                    className="max-w-lg text-center p-8"
                 >
-                    <Box
-                        sx={{
-                            mb: 4,
-                            fontSize: { xs: 80, md: 120 },
-                            fontWeight: 'bold',
-                            background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
-                            backgroundClip: 'text',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            lineHeight: 1,
-                        }}
-                    >
+                    <div className="mb-4 text-8xl md:text-9xl font-bold text-primary-500 dark:text-primary-400 leading-none">
                         404
-                    </Box>
+                    </div>
 
-                    <Typography
-                        variant="h4"
-                        sx={{
-                            mb: 2,
-                            fontWeight: 600,
-                            color: 'text.primary',
-                        }}
-                    >
+                    <h1 className="text-2xl md:text-4xl font-semibold text-gray-900 dark:text-white mb-2">
                         Page Not Found
-                    </Typography>
+                    </h1>
 
-                    <Typography
-                        variant="body1"
-                        sx={{
-                            mb: 4,
-                            color: 'text.secondary',
-                            lineHeight: 1.6,
-                        }}
-                    >
+                    <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
                         The page you&apos;re looking for doesn&apos;t exist or has been moved. 
                         Don&apos;t worry, let&apos;s get you back on track.
-                    </Typography>
+                    </p>
 
-                    <Stack
-                        direction={{ xs: 'column', sm: 'row' }}
-                        spacing={2}
-                        justifyContent="center"
-                    >
+                    <div className="flex flex-col sm:flex-row gap-2 justify-center">
                         <ModernButton
-                            variant="contained"
-                            gradient
+                            variant="primary"
                             onClick={handleGoHome}
-                            sx={{
-                                minWidth: 140,
-                            }}
+                            className="min-w-36"
                         >
                             Go to Home
                         </ModernButton>
 
                         <ModernButton
-                            variant="outlined"
+                            variant="outline"
                             onClick={handleGoBack}
-                            sx={{
-                                minWidth: 140,
-                            }}
+                            className="min-w-36"
                         >
                             Go Back
                         </ModernButton>
-                    </Stack>
+                    </div>
                 </ModernCard>
-            </Box>
+            </div>
         </>
     );
 }

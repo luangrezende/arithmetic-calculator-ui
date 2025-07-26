@@ -1,20 +1,14 @@
-import type { CardProps } from '@mui/material/Card';
 import type { ColorType } from 'src/theme/core/palette';
 import type { ChartOptions } from 'src/components/chart';
 
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import { useTheme } from '@mui/material/styles';
-
 import { fNumber, fPercent, formatLargeNumber } from 'src/utils/format-number';
-
-import { varAlpha, bgGradient } from 'src/theme/styles';
 
 import { Iconify } from 'src/components/iconify';
 import { SvgColor } from 'src/components/svg-color';
 import { Chart, useChart } from 'src/components/chart';
+import { ModernCard } from 'src/components/modern-card';
 
-type Props = CardProps & {
+type Props = {
     title: string;
     total: number;
     isCurrency?: boolean;
@@ -26,6 +20,7 @@ type Props = CardProps & {
         categories: string[];
         options?: ChartOptions;
     };
+    className?: string;
 };
 
 export function AnalyticsWidgetSummary({
@@ -36,12 +31,9 @@ export function AnalyticsWidgetSummary({
     chart,
     percent,
     color = 'primary',
-    sx,
-    ...other
+    className,
 }: Props) {
-    const theme = useTheme();
-
-    const chartColors = [theme.palette[color].dark];
+    const chartColors = ['#1e40af']; // Blue-700
 
     const chartOptions = useChart({
         chart: { sparkline: { enabled: true } },
@@ -62,60 +54,35 @@ export function AnalyticsWidgetSummary({
     });
 
     const renderTrending = (
-        <Box
-            sx={{
-                top: 16,
-                gap: 0.5,
-                right: 16,
-                display: 'flex',
-                position: 'absolute',
-                alignItems: 'center',
-            }}
-        >
+        <div className="absolute top-4 right-4 flex items-center gap-2">
             <Iconify
                 width={20}
                 icon={percent < 0 ? 'eva:trending-down-fill' : 'eva:trending-up-fill'}
+                sx={{ color: percent < 0 ? 'error.main' : 'success.main' }}
             />
-            <Box component="span" sx={{ typography: 'subtitle2' }}>
+            <span className="text-sm font-semibold">
                 {percent > 0 && '+'}
                 {fPercent(percent)}
-            </Box>
-        </Box>
+            </span>
+        </div>
     );
 
     return (
-        <Card
-            sx={{
-                ...bgGradient({
-                    color: `135deg, ${varAlpha('37 99 235', 0.48)}, ${varAlpha('107 182 255', 0.48)}`,
-                }),
-                p: 3,
-                boxShadow: 'none',
-                position: 'relative',
-                color: `${color}.darker`,
-                backgroundColor: 'common.white',
-                ...sx,
-            }}
-            {...other}
+        <ModernCard 
+            className={`relative p-6 ${className}`}
+            hoverable
         >
-            <Box sx={{ width: 48, height: 48, mb: 3 }}>{icon}</Box>
+            <div className="w-12 h-12 mb-6">{icon}</div>
 
             {renderTrending}
 
-            <Box
-                sx={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    alignItems: 'flex-end',
-                    justifyContent: 'flex-end',
-                }}
-            >
-                <Box sx={{ flexGrow: 1, minWidth: 112 }}>
-                    <Box sx={{ mb: 1, typography: 'subtitle2' }}>{title}</Box>
-                    <Box sx={{ typography: 'h4' }}>
+            <div className="flex flex-wrap items-end justify-end">
+                <div className="flex-grow min-w-28">
+                    <div className="mb-2 text-sm font-medium text-gray-600 dark:text-gray-300">{title}</div>
+                    <div className="text-2xl font-bold text-gray-900 dark:text-white">
                         {isCurrency ? `$${formatLargeNumber(total)}` : formatLargeNumber(total)}
-                    </Box>
-                </Box>
+                    </div>
+                </div>
 
                 <Chart
                     type="line"
@@ -124,21 +91,12 @@ export function AnalyticsWidgetSummary({
                     width={84}
                     height={56}
                 />
-            </Box>
+            </div>
 
             <SvgColor
                 src="/assets/background/shape-square.svg"
-                sx={{
-                    top: 0,
-                    left: -20,
-                    width: 240,
-                    zIndex: -1,
-                    height: 240,
-                    opacity: 0.24,
-                    position: 'absolute',
-                    color: `${color}.main`,
-                }}
+                className="absolute top-0 -left-5 w-60 h-60 opacity-10 text-blue-500 -z-10"
             />
-        </Card>
+        </ModernCard>
     );
 }

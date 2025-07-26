@@ -2,7 +2,7 @@ import { useRef } from 'react';
 
 import { Box } from '@mui/material';
 
-import { LoadingButton } from 'src/components/button/loading-button';
+import { ModernButton } from 'src/components/modern-button';
 
 import { AuthInputField } from '../shared';
 import { AuthTitle } from '../shared/title';
@@ -70,17 +70,16 @@ export function SignInForm({
 
                 {error && <ErrorMessage message={error} />}
 
-                <LoadingButton
+                <ModernButton
                     fullWidth
-                    size="large"
-                    color="inherit"
-                    variant="contained"
+                    size="lg"
+                    variant="primary"
                     onClick={handleSubmit}
                     loading={loading}
                     disabled={loginSuccess}
                 >
                     Sign in
-                </LoadingButton>
+                </ModernButton>
             </AuthFormLayout>
         </Box>
     );

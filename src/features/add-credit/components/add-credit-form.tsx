@@ -1,14 +1,14 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 
-import { Box, Button, CircularProgress } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 
 import { parseAmount } from 'src/utils/format-number';
 
-import { useBalance } from 'src/context/balance-context';
 import { addCredit } from 'src/services/api/balance-service';
 import { getUserProfile } from 'src/services/api/auth-service';
 
-import { InputField } from 'src/components/input-field.tsx/input-field';
+import { ModernInput } from 'src/components/modern-input';
+import { ModernButton } from 'src/components/modern-button';
 
 import { CardDetails } from './card-details';
 
@@ -22,12 +22,10 @@ export function AddCreditForm({ onClose, onOpenSnackBar }: AddCreditFormProps) {
         setForm((prev) => ({ ...prev, [field]: value }));
     };
 
-    const amountRef = useRef<{ validateFields: () => boolean }>(null);
-
     const handleSubmit = async () => {
-        const isAmountValid = amountRef.current?.validateFields();
-
-        if (!isAmountValid) {
+        // Validação simples
+        if (!form.amount || parseFloat(form.amount) <= 0) {
+            onOpenSnackBar?.('error');
             return;
         }
 
@@ -61,30 +59,33 @@ export function AddCreditForm({ onClose, onOpenSnackBar }: AddCreditFormProps) {
     return (
         <Box>
             <CardDetails />
-            <InputField
-                loading={isLoading}
-                ref={amountRef}
+            <ModernInput
                 name="amount"
                 label="Amount"
                 value={form.amount}
-                type="amount"
-                isRequired
-                onChange={(value) => onFieldChange('amount', value)}
+                type="number"
+                required
+                onChange={(e) => onFieldChange('amount', e.target.value)}
             />
 
             <Box display="flex" justifyContent="flex-end" gap={2} sx={{ mt: 2 }}>
-                <Button onClick={onClose} variant="outlined" disabled={isLoading}>
+                <ModernButton onClick={onClose} variant="outline" disabled={isLoading}>
                     Cancel
-                </Button>
-                <Button
+                </ModernButton>
+                <ModernButton
                     onClick={handleSubmit}
-                    variant="contained"
-                    color="primary"
+                    variant="primary"
                     disabled={isLoading}
-                    startIcon={isLoading ? <CircularProgress size={16} color="inherit" /> : null}
                 >
-                    {isLoading ? 'Adding...' : 'Add'}
-                </Button>
+                    {isLoading ? (
+                        <>
+                            <CircularProgress size={16} color="inherit" sx={{ mr: 1 }} />
+                            Adding...
+                        </>
+                    ) : (
+                        'Add'
+                    )}
+                </ModernButton>
             </Box>
         </Box>
     );

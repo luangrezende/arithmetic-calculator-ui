@@ -1,72 +1,91 @@
-import type { TextFieldProps } from '@mui/material/TextField';
+import type { InputHTMLAttributes } from 'react';
 import { forwardRef } from 'react';
-import TextField from '@mui/material/TextField';
-import { styled } from '@mui/material/styles';
-import { varAlpha } from 'src/theme/styles';
+import { cn } from 'src/utils/cn';
 
-export interface ModernInputProps extends Omit<TextFieldProps, 'glassy' | 'rounded'> {
-    glassy?: boolean;
+export interface ModernInputProps extends InputHTMLAttributes<HTMLInputElement> {
+    label?: string;
+    error?: string;
     rounded?: boolean;
+    variant?: 'default' | 'filled' | 'ghost';
+    inputSize?: 'sm' | 'md' | 'lg';
 }
 
-const StyledTextField = styled(TextField)<ModernInputProps>(({ theme, glassy, rounded }) => ({
-    '& .MuiOutlinedInput-root': {
-        borderRadius: rounded ? theme.spacing(4) : theme.spacing(1.5),
-        transition: theme.transitions.create([
-            'border-color',
-            'background-color',
-            'box-shadow'
-        ], {
-            duration: theme.transitions.duration.short,
-        }),
+const ModernInput = forwardRef<HTMLInputElement, ModernInputProps>(
+    ({ 
+        className,
+        label,
+        error,
+        rounded = false,
+        variant = 'default',
+        inputSize = 'md',
+        id,
+        ...props 
+    }, ref) => {
+        const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
         
-        ...(glassy && {
-            background: varAlpha('255 255 255', 0.8),
-            backdropFilter: 'blur(10px)',
-        }),
-        
-        '&:hover': {
-            boxShadow: `0 4px 12px ${varAlpha('100 116 139', 0.1)}`,
-            
-            '& .MuiOutlinedInput-notchedOutline': {
-                borderColor: varAlpha('37 99 235', 0.4),
-            },
-        },
-        
-        '&.Mui-focused': {
-            boxShadow: `0 0 0 3px ${varAlpha('37 99 235', 0.1)}`,
-            
-            '& .MuiOutlinedInput-notchedOutline': {
-                borderColor: theme.palette.primary.main,
-                borderWidth: 2,
-            },
-        },
-        
-        '& .MuiOutlinedInput-notchedOutline': {
-            borderColor: varAlpha('203 213 225', 0.3),
-            transition: theme.transitions.create(['border-color'], {
-                duration: theme.transitions.duration.short,
-            }),
-        },
-    },
-    
-    '& .MuiInputLabel-root': {
-        '&.Mui-focused': {
-            color: theme.palette.primary.main,
-            fontWeight: 500,
-        },
-    },
-}));
+        const baseClasses = [
+            'w-full transition-all duration-200 focus:outline-none focus:ring-2',
+            'disabled:opacity-50 disabled:cursor-not-allowed'
+        ];
 
-export const ModernInput = forwardRef<HTMLDivElement, ModernInputProps>(
-    ({ glassy = false, rounded = false, ...props }, ref) => (
-        <StyledTextField
-            ref={ref}
-            glassy={glassy}
-            rounded={rounded}
-            {...props}
-        />
-    )
+        const sizeClasses = {
+            sm: 'px-3 py-1.5 text-sm',
+            md: 'px-3 py-2 text-base',
+            lg: 'px-4 py-3 text-lg'
+        };
+
+        const variantClasses = {
+            default: [
+                'bg-white focus:ring-primary-500',
+                error ? 'focus:ring-red-500' : ''
+            ],
+            filled: [
+                'bg-gray-50 focus:bg-white focus:ring-primary-500',
+                error ? 'focus:ring-red-500' : ''
+            ],
+            ghost: [
+                'bg-transparent focus:bg-white focus:ring-primary-500',
+                error ? 'focus:ring-red-500' : ''
+            ]
+        };
+
+        const roundedClasses = rounded ? 'rounded-full' : 'rounded-md';
+
+        return (
+            <div className="space-y-1">
+                {label && (
+                    <label 
+                        htmlFor={inputId}
+                        className={cn(
+                            'block text-sm font-medium',
+                            error ? 'text-red-700' : 'text-gray-700'
+                        )}
+                    >
+                        {label}
+                    </label>
+                )}
+                
+                <input
+                    ref={ref}
+                    id={inputId}
+                    className={cn(
+                        baseClasses,
+                        sizeClasses[inputSize],
+                        variantClasses[variant],
+                        roundedClasses,
+                        className
+                    )}
+                    {...props}
+                />
+                
+                {error && (
+                    <p className="text-sm text-red-600">{error}</p>
+                )}
+            </div>
+        );
+    }
 );
 
 ModernInput.displayName = 'ModernInput';
+
+export default ModernInput;

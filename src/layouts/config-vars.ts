@@ -7,9 +7,6 @@ export const baseVars = (theme: Theme) => {
     
     return {
         '--layout-nav-bg': isDark ? theme.palette.background.paper : theme.palette.common.white,
-        '--layout-nav-border-color': isDark 
-            ? varAlpha('100 116 139', 0.05) 
-            : varAlpha('100 116 139', 0.08),
         '--layout-nav-zIndex': 1101,
         '--layout-nav-mobile-width': '320px',
         '--layout-nav-item-height': '44px',
@@ -21,7 +18,6 @@ export const baseVars = (theme: Theme) => {
         '--layout-nav-item-hover-bg': isDark 
             ? varAlpha('107 182 255', 0.16) 
             : varAlpha('37 99 235', 0.16),
-        '--layout-header-blur': '8px',
         '--layout-header-zIndex': 1100,
         '--layout-header-mobile-height': '64px',
         '--layout-header-desktop-height': '72px',

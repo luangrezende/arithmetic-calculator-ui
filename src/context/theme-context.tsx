@@ -38,6 +38,14 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
         }
     }, []);
 
+    useEffect(() => {
+        if (mode === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    }, [mode]);
+
     const toggleTheme = useCallback(() => {
         const newMode = mode === 'light' ? 'dark' : 'light';
         setMode(newMode);
@@ -153,9 +161,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
                             : varAlpha('255 255 255', 0.8),
                         backdropFilter: 'blur(10px)',
                         borderRadius: 12,
-                        border: `1px solid ${mode === 'dark' 
-                            ? varAlpha('100 116 139', 0.1)
-                            : varAlpha('100 116 139', 0.2)}`,
+                        border: 'none',
                     },
                 },
             },

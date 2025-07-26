@@ -1,4 +1,4 @@
-import type { TypographyStyleOptions } from '@mui/material/styles/createTypography';
+import type { TypographyStyle } from '@mui/material/styles';
 
 import { setFont, pxToRem, responsiveFontSizes } from '../styles/utils';
 
@@ -22,7 +22,7 @@ export const primaryFont = setFont(defaultFont);
 
 export const secondaryFont = setFont('Plus Jakarta Sans');
 
-export const typography: TypographyStyleOptions = {
+export const typography = {
     fontFamily: primaryFont,
     fontSecondaryFamily: secondaryFont,
     fontWeightLight: '300',

@@ -8,9 +8,11 @@ const MuiBackdrop: Components<Theme>['MuiBackdrop'] = {
     styleOverrides: {
         root: ({ theme }) => ({
             backgroundColor: varAlpha('15 23 42', 0.8),
+            border: 'none',
         }),
         invisible: {
             background: 'transparent',
+            border: 'none',
         },
     },
 };
@@ -57,10 +59,86 @@ const MuiCardHeader: Components<Theme>['MuiCardHeader'] = {
     },
 };
 
+const MuiAppBar: Components<Theme>['MuiAppBar'] = {
+    styleOverrides: {
+        root: {
+            boxShadow: 'none',
+            border: 'none',
+            borderBottom: 'none',
+        },
+    },
+};
+
+const MuiDrawer: Components<Theme>['MuiDrawer'] = {
+    styleOverrides: {
+        paper: {
+            boxShadow: 'none !important',
+            border: 'none !important',
+            borderWidth: '0 !important',
+            borderStyle: 'none !important',
+            borderColor: 'transparent !important',
+            borderRight: 'none !important',
+            borderLeft: 'none !important',
+            borderTop: 'none !important',
+            borderBottom: 'none !important',
+        },
+        root: {
+            '& .MuiPaper-root': {
+                boxShadow: 'none !important',
+                border: 'none !important',
+                borderWidth: '0 !important',
+                borderStyle: 'none !important',
+                borderColor: 'transparent !important',
+            },
+            '& .MuiDrawer-paper': {
+                boxShadow: 'none !important',
+                border: 'none !important',
+                borderWidth: '0 !important',
+                borderStyle: 'none !important',
+                borderColor: 'transparent !important',
+            },
+        },
+    },
+};
+
+const MuiTextField: Components<Theme>['MuiTextField'] = {
+    styleOverrides: {
+        root: {
+            '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                    border: 'none',
+                },
+                '&:hover fieldset': {
+                    border: 'none',
+                },
+                '&.Mui-focused fieldset': {
+                    border: 'none',
+                },
+            },
+        },
+    },
+};
+
+const MuiSelect: Components<Theme>['MuiSelect'] = {
+    styleOverrides: {
+        outlined: {
+            '& .MuiOutlinedInput-notchedOutline': {
+                border: 'none',
+            },
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+                border: 'none',
+            },
+            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                border: 'none',
+            },
+        },
+    },
+};
+
 const MuiOutlinedInput: Components<Theme>['MuiOutlinedInput'] = {
     styleOverrides: {
         notchedOutline: ({ theme }) => ({
-            borderColor: varAlpha('100 116 139', 0.2),
+            border: 'none',
         }),
     },
 };
@@ -72,7 +150,7 @@ const MuiPaper: Components<Theme>['MuiPaper'] = {
     styleOverrides: {
         root: { backgroundImage: 'none' },
         outlined: ({ theme }) => ({
-            borderColor: varAlpha('100 116 139', 0.16),
+            border: 'none',
         }),
     },
 };
@@ -159,10 +237,14 @@ export const components = {
     MuiPaper,
     MuiRadio,
     MuiButton,
+    MuiAppBar,
+    MuiDrawer,
+    MuiSelect,
     MuiBackdrop,
     MuiMenuItem,
     MuiCheckbox,
     MuiTableCell,
+    MuiTextField,
     MuiCardHeader,
     MuiOutlinedInput,
     MuiFormControlLabel,

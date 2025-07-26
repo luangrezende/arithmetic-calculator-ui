@@ -4,7 +4,6 @@ import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Popover from '@mui/material/Popover';
 import Divider from '@mui/material/Divider';
@@ -12,6 +11,8 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import CircularProgress from '@mui/material/CircularProgress';
 import { MenuItem, MenuList, menuItemClasses } from '@mui/material';
+
+import { ModernButton } from 'src/components/modern-button';
 
 import { useLocalUser } from 'src/hooks/use-local-user';
 
@@ -90,17 +91,21 @@ export function AccountPopover({ sx, ...other }: IconButtonProps) {
                 <Divider sx={{ borderStyle: 'dashed' }} />
 
                 <Box sx={{ p: 1 }}>
-                    <Button
-                        fullWidth
-                        color="error"
-                        size="medium"
-                        variant="text"
+                    <ModernButton
+                        variant="secondary"
                         onClick={handleLogout}
                         disabled={loading}
-                        startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+                        className="w-full bg-red-500 hover:bg-red-600 text-white disabled:bg-gray-400"
                     >
-                        {loading ? 'Logging out...' : 'Logout'}
-                    </Button>
+                        {loading ? (
+                            <>
+                                <CircularProgress size={20} color="inherit" sx={{ mr: 1 }} />
+                                Logging out...
+                            </>
+                        ) : (
+                            'Logout'
+                        )}
+                    </ModernButton>
                 </Box>
             </Popover>
         </>

@@ -2,26 +2,16 @@ import type { Dashboard } from 'src/models/dashboard';
 
 import { useState, useEffect } from 'react';
 
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
-import LinearProgress from '@mui/material/LinearProgress';
-import { useTheme } from '@mui/material/styles';
-
 import { useLocalUser } from 'src/hooks/use-local-user';
 import { fCurrency } from 'src/utils/format-number';
-import { varAlpha } from 'src/theme/styles';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 import { getDashboardData } from 'src/services/api/operation-service';
 import { ModernCard } from 'src/components/modern-card';
 import { ResponsiveGrid } from 'src/components/responsive-grid';
 
-import { AnalyticsWidgetSummary } from '../analytics-widget-summary';
-
 export function OverviewAnalyticsView() {
     const user = useLocalUser();
-    const theme = useTheme();
     const [dashboardData, setDashboardData] = useState<Dashboard | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -44,16 +34,11 @@ export function OverviewAnalyticsView() {
     if (loading) {
         return (
             <DashboardContent maxWidth="xl">
-                <Box
-                    sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        minHeight: 400,
-                    }}
-                >
-                    <LinearProgress sx={{ width: '50%', maxWidth: 400 }} />
-                </Box>
+                <div className="flex items-center justify-center min-h-96">
+                    <div className="w-full max-w-md">
+                        <div className="h-1 bg-primary-500 rounded animate-pulse" />
+                    </div>
+                </div>
             </DashboardContent>
         );
     }
@@ -61,111 +46,87 @@ export function OverviewAnalyticsView() {
     if (!dashboardData) {
         return (
             <DashboardContent maxWidth="xl">
-                <Typography variant="h6" color="text.secondary" sx={{ textAlign: 'center', py: 4 }}>
-                    No data available
-                </Typography>
+                <div className="text-center py-8">
+                    <h2 className="text-xl text-gray-600 dark:text-gray-400">No data available</h2>
+                </div>
             </DashboardContent>
         );
     }
 
     return (
         <DashboardContent maxWidth="xl">
-            <Box
-                sx={{
-                    mb: { xs: 3, md: 5 },
-                    p: { xs: 2, md: 3 },
-                    borderRadius: 2,
-                    background: `linear-gradient(135deg, ${varAlpha('37 99 235', 0.1)} 0%, ${varAlpha('124 58 237', 0.05)} 100%)`,
-                }}
-            >
-                <Typography 
-                    variant="h3" 
-                    sx={{ 
-                        fontWeight: 600,
-                        mb: 1,
-                        background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
-                        backgroundClip: 'text',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                    }}
-                >
+            <div className="mb-6 p-4 md:p-6 rounded-2xl bg-blue-50 dark:bg-blue-900/20">
+                <h1 className="text-3xl font-semibold mb-2 text-primary-600 dark:text-primary-400">
                     Hi, {user?.name?.split(' ')[0]}
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
+                </h1>
+                <p className="text-gray-600 dark:text-gray-300">
                     Welcome back to your arithmetic calculator dashboard
-                </Typography>
-            </Box>
+                </p>
+            </div>
 
             <ResponsiveGrid
                 columns={{ xs: 1, md: 2 }}
                 gap={3}
                 sx={{ mb: 4 }}
             >
-                <ModernCard hoverable gradient>
-                    <Box sx={{ p: 3 }}>
-                        <Box sx={{ mb: 3 }}>
-                            <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
+                <ModernCard hoverable padding="none">
+                    <div className="p-6">
+                        <div className="mb-4">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
                                 Operations
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                Total calculations performed
-                            </Typography>
-                        </Box>
+                            </h3>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                        Total calculations performed
+                    </div>
+                        </div>
                         
-                        <Typography variant="h3" sx={{ fontWeight: 700, mb: 2, color: theme.palette.primary.main }}>
+                        <div className="text-3xl font-bold text-primary-600 dark:text-primary-400 mb-4">
                             {dashboardData.totalOperations.toLocaleString()}
-                        </Typography>
+                        </div>
                         
-                        <Box sx={{ mb: 2 }}>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                                <Typography variant="body2" color="text.secondary">
+                        <div className="mb-4">
+                            <div className="flex justify-between items-center mb-2">
+                                <span className="text-sm text-gray-600 dark:text-gray-400">
                                     Monthly Progress
-                                </Typography>
-                                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                </span>
+                                <span className="text-sm font-semibold text-gray-900 dark:text-white">
                                     {dashboardData.totalMonthlyOperations}/{dashboardData.totalOperations}
-                                </Typography>
-                            </Box>
-                            <LinearProgress
-                                variant="determinate"
-                                value={Math.min((dashboardData.totalMonthlyOperations / dashboardData.totalOperations) * 100, 100)}
-                                sx={{ 
-                                    height: 8, 
-                                    borderRadius: 4,
-                                    backgroundColor: varAlpha('37 99 235', 0.1),
-                                    '& .MuiLinearProgress-bar': {
-                                        borderRadius: 4,
-                                        background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
-                                    },
-                                }}
-                            />
-                        </Box>
-                    </Box>
+                                </span>
+                            </div>
+                            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                <div 
+                                    className="bg-primary-500 h-2 rounded-full transition-all duration-300" 
+                                    style={{ width: `${Math.min((dashboardData.totalMonthlyOperations / dashboardData.totalOperations) * 100, 100)}%` }}
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </ModernCard>
 
-                <ModernCard hoverable gradient>
-                    <Box sx={{ p: 3 }}>
-                        <Box sx={{ mb: 3 }}>
-                            <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
+                <ModernCard hoverable padding="none">
+                    <div className="p-6">
+                        <div className="mb-4">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
                                 Total Credit
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
+                            </h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
                                 Available balance
-                            </Typography>
-                        </Box>
+                            </p>
+                        </div>
                         
-                        <Typography variant="h3" sx={{ fontWeight: 700, mb: 2, color: theme.palette.success.main }}>
+                        <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-4">
                             {fCurrency(dashboardData.totalCredit)}
-                        </Typography>
+                        </div>
                         
-                        <Box sx={{ mb: 2 }}>
-                            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                        <div>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                                 Annual Cash Added
-                            </Typography>
-                            <Typography variant="h6" sx={{ fontWeight: 600, color: theme.palette.success.dark }}>
+                            </p>
+                            <div className="text-xl font-semibold text-green-700 dark:text-green-300">
                                 {fCurrency(dashboardData.totalAnnualCashAdded)}
-                            </Typography>
-                        </Box>
-                    </Box>
+                            </div>
+                        </div>
+                    </div>
                 </ModernCard>
             </ResponsiveGrid>
 
@@ -173,117 +134,103 @@ export function OverviewAnalyticsView() {
                 columns={{ xs: 1, md: 2, lg: 3 }}
                 gap={3}
             >
-                <ModernCard glassy interactive>
-                    <Box sx={{ p: 3 }}>
-                        <Box sx={{ mb: 3 }}>
-                            <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
+                <ModernCard hoverable padding="none">
+                    <div className="p-6">
+                        <div className="mb-4">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
                                 Platform Overview
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
+                            </h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
                                 Global operations count
-                            </Typography>
-                        </Box>
+                            </p>
+                        </div>
                         
-                        <Typography variant="h3" sx={{ fontWeight: 700, mb: 2, color: theme.palette.info.main }}>
+                        <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-4">
                             {dashboardData.totalPlatformOperations.toLocaleString()}
-                        </Typography>
+                        </div>
                         
-                        <Box sx={{ mb: 2 }}>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                                <Typography variant="body2" color="text.secondary">
+                        <div>
+                            <div className="flex justify-between items-center mb-2">
+                                <span className="text-sm text-gray-600 dark:text-gray-400">
                                     Target Progress
-                                </Typography>
-                                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                </span>
+                                <span className="text-sm font-semibold text-gray-900 dark:text-white">
                                     {Math.min(Math.round((dashboardData.totalPlatformOperations / 1000) * 100), 100)}%
-                                </Typography>
-                            </Box>
-                            <LinearProgress
-                                variant="determinate"
-                                value={Math.min((dashboardData.totalPlatformOperations / 1000) * 100, 100)}
-                                sx={{ 
-                                    height: 8, 
-                                    borderRadius: 4,
-                                    backgroundColor: varAlpha('0 184 217', 0.1),
-                                    '& .MuiLinearProgress-bar': {
-                                        borderRadius: 4,
-                                        background: `linear-gradient(90deg, ${theme.palette.info.main}, ${theme.palette.info.light})`,
-                                    },
-                                }}
-                            />
-                        </Box>
-                    </Box>
+                                </span>
+                            </div>
+                            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                <div 
+                                    className="bg-blue-500 h-2 rounded-full transition-all duration-300" 
+                                    style={{ width: `${Math.min((dashboardData.totalPlatformOperations / 1000) * 100, 100)}%` }}
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </ModernCard>
 
-                <ModernCard glassy interactive>
-                    <Box sx={{ p: 3 }}>
-                        <Box sx={{ mb: 3 }}>
-                            <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
+                <ModernCard hoverable padding="none">
+                    <div className="p-6">
+                        <div className="mb-4">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
                                 Platform Finances
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
+                            </h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
                                 Revenue & expenses overview
-                            </Typography>
-                        </Box>
+                            </p>
+                        </div>
                         
-                        <Box sx={{ mb: 2 }}>
-                            <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                        <div className="mb-4">
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                                 Cash Spent
-                            </Typography>
-                            <Typography variant="h4" sx={{ fontWeight: 700, color: theme.palette.error.main, mb: 2 }}>
+                            </p>
+                            <div className="text-2xl font-bold text-red-600 dark:text-red-400 mb-4">
                                 {fCurrency(dashboardData.totalPlatformCashSpent)}
-                            </Typography>
-                        </Box>
+                            </div>
+                        </div>
                         
-                        <Box sx={{ mb: 2 }}>
-                            <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                        <div>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                                 Cash Added
-                            </Typography>
-                            <Typography variant="h4" sx={{ fontWeight: 700, color: theme.palette.success.main }}>
+                            </p>
+                            <div className="text-2xl font-bold text-green-600 dark:text-green-400">
                                 {fCurrency(dashboardData.totalPlatformCashAdded)}
-                            </Typography>
-                        </Box>
-                    </Box>
+                            </div>
+                        </div>
+                    </div>
                 </ModernCard>
 
-                <ModernCard glassy interactive>
-                    <Box sx={{ p: 3 }}>
-                        <Box sx={{ mb: 3 }}>
-                            <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
+                <ModernCard hoverable padding="none">
+                    <div className="p-6">
+                        <div className="mb-4">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
                                 Annual Target
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
+                            </h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
                                 Yearly goal progress
-                            </Typography>
-                        </Box>
+                            </p>
+                        </div>
                         
-                        <Typography variant="h3" sx={{ fontWeight: 700, mb: 2, color: theme.palette.warning.main }}>
+                        <div className="text-3xl font-bold text-amber-600 dark:text-amber-400 mb-4">
                             {fCurrency(dashboardData.annualTarget)}
-                        </Typography>
+                        </div>
                         
-                        <Box sx={{ mb: 2 }}>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                                <Typography variant="body2" color="text.secondary">
+                        <div>
+                            <div className="flex justify-between items-center mb-2">
+                                <span className="text-sm text-gray-600 dark:text-gray-400">
                                     Progress to Goal
-                                </Typography>
-                                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                </span>
+                                <span className="text-sm font-semibold text-gray-900 dark:text-white">
                                     {Math.min(Math.round((dashboardData.totalOperations / dashboardData.annualTarget) * 100), 100)}%
-                                </Typography>
-                            </Box>
-                            <LinearProgress
-                                variant="determinate"
-                                value={Math.min((dashboardData.totalOperations / dashboardData.annualTarget) * 100, 100)}
-                                sx={{ 
-                                    height: 8, 
-                                    borderRadius: 4,
-                                    backgroundColor: varAlpha('245 158 11', 0.1),
-                                    '& .MuiLinearProgress-bar': {
-                                        borderRadius: 4,
-                                        background: `linear-gradient(90deg, ${theme.palette.warning.main}, ${theme.palette.warning.light})`,
-                                    },
-                                }}
-                            />
-                        </Box>
-                    </Box>
+                                </span>
+                            </div>
+                            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                <div 
+                                    className="bg-amber-500 h-2 rounded-full transition-all duration-300" 
+                                    style={{ width: `${Math.min((dashboardData.totalOperations / dashboardData.annualTarget) * 100, 100)}%` }}
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </ModernCard>
             </ResponsiveGrid>
         </DashboardContent>

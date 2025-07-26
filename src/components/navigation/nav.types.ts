@@ -18,4 +18,12 @@ export type NavContentProps = {
 
 export type NavDesktopProps = NavContentProps & { layoutQuery: Breakpoint };
 
-export type NavMobileProps = NavContentProps & { open: boolean; onClose: () => void };
+export type NavMobileProps = {
+    data: NavItem[];
+    slots?: {
+        topArea?: React.ReactNode;
+        bottomArea?: React.ReactNode;
+    };
+    open: boolean;
+    onClose: () => void;
+};

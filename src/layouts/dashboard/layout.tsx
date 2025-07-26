@@ -126,10 +126,6 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
                                                     : 'grey.300'
                                                 : 'grey.300',
                                             cursor: isBalanceLoaded ? 'pointer' : 'default',
-                                            boxShadow: 1,
-                                            '&:hover': {
-                                                boxShadow: isBalanceLoaded ? 3 : 1,
-                                            },
                                         }}
                                         onClick={isBalanceLoaded ? handleOpenModal : undefined}
                                     >

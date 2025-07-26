@@ -9,8 +9,6 @@ import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
 import { useTheme } from '@mui/material/styles';
 
-import { bgBlur, varAlpha } from 'src/theme/styles';
-
 import { layoutClasses } from '../classes';
 
 export type HeaderSectionProps = AppBarProps & {
@@ -39,11 +37,9 @@ export function HeaderSection({
 
     const toolbarStyles = {
         default: {
-            ...bgBlur({ 
-                color: theme.palette.mode === 'dark' 
-                    ? varAlpha('15 23 42', 0.8) 
-                    : varAlpha('255 255 255', 0.8) 
-            }),
+            backgroundColor: theme.palette.mode === 'dark' 
+                ? theme.palette.background.paper 
+                : theme.palette.common.white,
             minHeight: 'auto',
             height: 'var(--layout-header-mobile-height)',
             transition: theme.transitions.create(['height', 'background-color'], {
@@ -61,11 +57,13 @@ export function HeaderSection({
 
     return (
         <AppBar
-            position="sticky"
+            position="static"
             color="transparent"
             className={layoutClasses.header}
             sx={{
                 boxShadow: 'none',
+                border: 'none',
+                borderBottom: 'none',
                 zIndex: 'var(--layout-header-zIndex)',
                 ...sx,
             }}

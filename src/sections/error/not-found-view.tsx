@@ -1,9 +1,9 @@
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
 import { RouterLink } from 'src/routes/components';
+import { ModernButton } from 'src/components/modern-button';
 
 import { SimpleLayout } from 'src/layouts/simple';
 
@@ -31,15 +31,14 @@ export function NotFoundView() {
                     The page you’re looking for doesn’t exist.
                 </Typography>
 
-                <Button
-                    component={RouterLink}
-                    href="/"
-                    size="medium"
-                    variant="contained"
-                    color="primary"
-                >
-                    Go Home
-                </Button>
+                <RouterLink href="/">
+                    <ModernButton
+                        variant="primary"
+                        size="md"
+                    >
+                        Go Home
+                    </ModernButton>
+                </RouterLink>
             </Container>
         </SimpleLayout>
     );

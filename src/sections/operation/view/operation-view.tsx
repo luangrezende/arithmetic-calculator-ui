@@ -4,10 +4,8 @@ import { useMemo, useState, useEffect, useCallback } from 'react';
 
 import {
     Box,
-    Card,
     Table,
     Modal,
-    Button,
     Dialog,
     Tooltip,
     TableRow,
@@ -27,6 +25,9 @@ import {
     CircularProgress,
     DialogContentText,
 } from '@mui/material';
+
+import { ModernCard } from 'src/components/modern-card';
+import { ModernButton } from 'src/components/modern-button';
 
 import { formatDate } from 'src/utils/format-time';
 import { formatCurrency, formatLargeNumber } from 'src/utils/format-number';
@@ -225,17 +226,10 @@ export function OperationView() {
                         ),
                     }}
                 />
-                <Button
-                    variant="contained"
-                    color="primary"
+                <ModernButton
+                    variant="primary"
                     onClick={handleOpenModal}
-                    sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        minWidth: { xs: '40px', sm: 'auto' },
-                        padding: { xs: '8px', sm: '10px 16px' },
-                    }}
+                    className="flex items-center justify-center min-w-[40px] sm:min-w-auto px-2 sm:px-4 py-2"
                 >
                     <Iconify
                         icon="mingcute:add-line"
@@ -244,18 +238,13 @@ export function OperationView() {
                             mr: { xs: 0, sm: 1 },
                         }}
                     />
-                    <Typography
-                        variant="button"
-                        sx={{
-                            display: { xs: 'none', sm: 'inline' },
-                        }}
-                    >
+                    <span className="hidden sm:inline">
                         New operation
-                    </Typography>
-                </Button>
+                    </span>
+                </ModernButton>
             </Box>
 
-            <Card>
+            <ModernCard className="overflow-hidden">
                 {loading ? (
                     <Box display="flex" justifyContent="center" alignItems="center" p={5}>
                         <Typography variant="h6" color="textSecondary">
@@ -412,14 +401,12 @@ export function OperationView() {
                         </Typography>
                     </Box>
                 )}
-            </Card>
+            </ModernCard>
 
             {selected.length > 0 && (
                 <Box display="flex" justifyContent="flex-end" my={2}>
-                    <Button
-                        variant="contained"
-                        color="error"
-                        startIcon={<Iconify icon="tabler:trash" width={20} />}
+                    <ModernButton
+                        variant="secondary"
                         onClick={() => {
                             if (selected.length > 0) {
                                 handleOpenConfirmDelete();
@@ -431,9 +418,11 @@ export function OperationView() {
                                 });
                             }
                         }}
+                        className="bg-red-500 hover:bg-red-600 text-white"
                     >
+                        <Iconify icon="tabler:trash" width={20} sx={{ mr: 1 }} />
                         Delete Selected
-                    </Button>
+                    </ModernButton>
                 </Box>
             )}
 
@@ -451,26 +440,30 @@ export function OperationView() {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button
+                    <ModernButton
                         onClick={handleCloseConfirmDelete}
-                        color="primary"
+                        variant="ghost"
                         disabled={isDeleting}
                     >
                         Cancel
-                    </Button>
-                    <Button
+                    </ModernButton>
+                    <ModernButton
                         onClick={() => {
                             deleteRecords(selected);
                         }}
-                        color="error"
-                        variant="contained"
+                        variant="secondary"
                         disabled={isDeleting}
-                        startIcon={
-                            isDeleting ? <CircularProgress size={16} color="inherit" /> : null
-                        }
+                        className="bg-red-500 hover:bg-red-600 text-white disabled:bg-gray-400"
                     >
-                        {isDeleting ? 'Deleting...' : 'Confirm'}
-                    </Button>
+                        {isDeleting ? (
+                            <>
+                                <CircularProgress size={16} color="inherit" sx={{ mr: 1 }} />
+                                Deleting...
+                            </>
+                        ) : (
+                            'Confirm'
+                        )}
+                    </ModernButton>
                 </DialogActions>
             </Dialog>
 

@@ -1,18 +1,15 @@
 import { useEffect } from 'react';
 
-import { Drawer, drawerClasses } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
-
 import { usePathname } from 'src/routes/hooks';
+
+import { ModernDrawer } from 'src/components/modern-drawer';
 
 import { NavContent } from './nav-content';
 
 import type { NavMobileProps } from './nav.types';
 
-export function NavMobile({ sx, data, open, slots, onClose }: NavMobileProps) {
+export function NavMobile({ data, open, slots, onClose }: NavMobileProps) {
     const pathname = usePathname();
-    const theme = useTheme();
-    const isDark = theme.palette.mode === 'dark';
 
     useEffect(() => {
         if (open) {
@@ -22,21 +19,8 @@ export function NavMobile({ sx, data, open, slots, onClose }: NavMobileProps) {
     }, [pathname]);
 
     return (
-        <Drawer
-            open={open}
-            onClose={onClose}
-            sx={{
-                [`& .${drawerClasses.paper}`]: {
-                    pt: 2.5,
-                    px: 2.5,
-                    overflow: 'unset',
-                    bgcolor: isDark ? theme.palette.background.paper : 'var(--layout-nav-bg)',
-                    width: 'var(--layout-nav-mobile-width)',
-                    ...sx,
-                },
-            }}
-        >
+        <ModernDrawer open={open} onClose={onClose}>
             <NavContent data={data} slots={slots} />
-        </Drawer>
+        </ModernDrawer>
     );
 }

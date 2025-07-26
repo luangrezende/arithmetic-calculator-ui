@@ -14,7 +14,7 @@ export function ThemeToggle() {
                 p: 1.5,
                 borderRadius: 2,
                 bgcolor: 'background.paper',
-                border: `1px solid ${theme.palette.divider}`,
+                border: 'none',
                 transition: theme.transitions.create(['background-color', 'transform'], {
                     duration: theme.transitions.duration.short,
                 }),

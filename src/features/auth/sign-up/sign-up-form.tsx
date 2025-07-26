@@ -6,7 +6,7 @@ import { AuthTitle } from 'src/features/auth/shared/title';
 import { ErrorMessage } from 'src/features/auth/shared/error-message';
 import { AuthFormLayout } from 'src/features/auth/shared/auth-form-layout';
 
-import { LoadingButton } from 'src/components/button/loading-button';
+import { ModernButton } from 'src/components/modern-button';
 
 import { AuthInputField } from '../shared';
 import { PasswordStrengthIndicator } from '../shared/password-strength-indicator';
@@ -104,17 +104,16 @@ export function SignUpForm({
 
                 {error && <ErrorMessage message={error} />}
 
-                <LoadingButton
+                <ModernButton
                     fullWidth
-                    size="large"
-                    color="inherit"
-                    variant="contained"
+                    size="lg"
+                    variant="primary"
                     onClick={handleSubmit}
                     loading={loading}
                     disabled={registerSuccess}
                 >
                     Sign up
-                </LoadingButton>
+                </ModernButton>
             </AuthFormLayout>
         </Box>
     );

@@ -1,8 +1,8 @@
 {
     "compilerOptions": {
         "baseUrl": ".",
-        "target": "ESNext",
-        "lib": ["DOM", "DOM.Iterable", "ESNext"],
+        "target": "ES2022",
+        "lib": ["DOM", "DOM.Iterable", "ES2022"],
         "strict": true,
         "noEmit": true,
         "allowJs": true,
@@ -15,11 +15,12 @@
         "isolatedModules": true,
         "strictNullChecks": true,
         "resolveJsonModule": true,
-        "moduleResolution": "Node",
+        "moduleResolution": "bundler",
         "noFallthroughCasesInSwitch": true,
         "useUnknownInCatchVariables": false,
         "allowSyntheticDefaultImports": true,
-        "forceConsistentCasingInFileNames": true
+        "forceConsistentCasingInFileNames": true,
+        "noPropertyAccessFromIndexSignature": false
     },
     "include": ["src"],
     "exclude": ["node_modules"],

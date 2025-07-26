@@ -1,9 +1,10 @@
 name: Deploy Frontend to AWS S3 + CloudFront
 
 on:
-    push:
-        branches:
-            - master
+  # push:
+  #   branches:
+  #     - master
+  workflow_dispatch:
 
 jobs:
     deploy:

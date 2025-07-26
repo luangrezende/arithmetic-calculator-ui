@@ -55,6 +55,7 @@ export function HeaderSection({
             <div
                 className={`
                     h-[var(--layout-header-mobile-height)]
+                    md:h-[var(--layout-header-desktop-height)]
                     lg:h-[var(--layout-header-desktop-height)]
                     transition-all duration-200
                     ${slotProps?.toolbar?.className || ''}
@@ -62,18 +63,23 @@ export function HeaderSection({
             >
                 <div
                     className={`
-                        h-full flex items-center
+                        h-full flex items-center justify-between
+                        px-4 sm:px-6 lg:px-8
                         ${slotProps?.container?.maxWidth === false ? '' : 'max-w-7xl mx-auto'}
                         ${slotProps?.container?.className || ''}
                     `}
                 >
-                    {slots?.leftArea}
+                    <div className="flex items-center flex-shrink-0">
+                        {slots?.leftArea}
+                    </div>
 
-                    <div className="flex flex-1 justify-center">
+                    <div className="flex flex-1 justify-center px-4">
                         {slots?.centerArea}
                     </div>
 
-                    {slots?.rightArea}
+                    <div className="flex items-center flex-shrink-0">
+                        {slots?.rightArea}
+                    </div>
                 </div>
             </div>
 

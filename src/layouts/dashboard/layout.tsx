@@ -61,7 +61,7 @@ export function DashboardLayout({ className, children, header }: DashboardLayout
                     slotProps={{
                         container: {
                             maxWidth: false,
-                            className: 'px-0 lg:px-5',
+                            className: 'px-4 sm:px-6 lg:px-8',
                         },
                     }}
                     className={header?.className}
@@ -70,7 +70,7 @@ export function DashboardLayout({ className, children, header }: DashboardLayout
                             <>
                                 <MenuButton
                                     onClick={() => setNavOpen(true)}
-                                    className="ml-1 lg:hidden"
+                                    className="lg:hidden mr-2"
                                 />
                                 <NavMobile
                                     data={navData}
@@ -80,10 +80,10 @@ export function DashboardLayout({ className, children, header }: DashboardLayout
                             </>
                         ),
                         rightArea: (
-                            <div className="flex items-center gap-4">
-                                <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
+                                <div className="flex items-center">
                                     <div
-                                        className={`flex items-center justify-center px-4 py-2 rounded-lg cursor-pointer transition-colors ${
+                                        className={`flex items-center justify-center px-3 sm:px-4 py-2 rounded-lg cursor-pointer transition-all duration-200 ease-out hover:scale-105 active:scale-95 hover:shadow-sm text-sm sm:text-base ${
                                             isBalanceLoaded
                                                 ? balance || -1 > 0
                                                     ? 'bg-emerald-100 dark:bg-emerald-900/30 hover:bg-emerald-200 dark:hover:bg-emerald-900/50'
@@ -102,7 +102,7 @@ export function DashboardLayout({ className, children, header }: DashboardLayout
                                         aria-label="Add credit"
                                     >
                                         {isBalanceLoaded ? (
-                                            <span className={`text-lg font-bold ${
+                                            <span className={`text-base sm:text-lg font-bold ${
                                                 balance || -1 > 0
                                                     ? 'text-emerald-700 dark:text-emerald-300'
                                                     : 'text-slate-600 dark:text-slate-400'
@@ -112,7 +112,7 @@ export function DashboardLayout({ className, children, header }: DashboardLayout
                                                 )}
                                             </span>
                                         ) : (
-                                            <div className="w-6 h-6 border-2 border-slate-400 dark:border-slate-500 border-t-transparent rounded-full animate-spin" />
+                                            <div className="w-5 h-5 sm:w-6 sm:h-6 border-2 border-slate-400 dark:border-slate-500 border-t-transparent rounded-full animate-spin" />
                                         )}
                                     </div>
                                 </div>
@@ -128,9 +128,9 @@ export function DashboardLayout({ className, children, header }: DashboardLayout
         footerSection={null}
         cssVars={{
             '--layout-nav-vertical-width': '240px',
-            '--layout-dashboard-content-pt': '8px',
-            '--layout-dashboard-content-pb': '64px',
-            '--layout-dashboard-content-px': '40px',
+            '--layout-dashboard-content-pt': '6px',
+            '--layout-dashboard-content-pb': '48px',
+            '--layout-dashboard-content-px': '24px',
         }}
         sx={{
             [`& .${layoutClasses.hasSidebar}`]: {

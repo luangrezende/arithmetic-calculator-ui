@@ -18,7 +18,7 @@ export const useLayoutVars = () => {
             ? 'rgba(107, 182, 255, 0.16)' 
             : 'rgba(37, 99, 235, 0.16)',
         '--layout-header-zIndex': '1100',
-        '--layout-header-mobile-height': '64px',
+        '--layout-header-mobile-height': '60px',
         '--layout-header-desktop-height': '72px',
     };
 };

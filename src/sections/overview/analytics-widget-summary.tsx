@@ -34,7 +34,7 @@ export function AnalyticsWidgetSummary({
     color = 'primary',
     className,
 }: Props) {
-    const chartColors = ['#1e40af']; // Blue-700
+    const chartColors = ['#1e40af'];
 
     const chartOptions = useChart({
         chart: { sparkline: { enabled: true } },

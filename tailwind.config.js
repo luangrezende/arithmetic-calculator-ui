@@ -6,14 +6,12 @@ export default {
   ],
   darkMode: 'class',
   safelist: [
-    // Garante que as classes dinâmicas sejam sempre geradas
     'bg-primary-50', 'bg-primary-100', 'bg-primary-500', 'bg-primary-600', 'bg-primary-700',
     'text-primary-500', 'text-primary-600', 'text-primary-700',
     'border-primary-500', 'border-primary-600', 'border-primary-700',
     'ring-primary-500', 'focus:ring-primary-500',
     'shadow-primary-glow', 'shadow-button', 'shadow-button-hover',
     'min-h-9', 'min-h-12', 'min-h-14',
-    // Grid classes for responsive grids
     'grid-cols-1', 'grid-cols-2', 'grid-cols-3',
     'sm:grid-cols-1', 'sm:grid-cols-2', 'sm:grid-cols-3',
     'md:grid-cols-1', 'md:grid-cols-2', 'md:grid-cols-3',
@@ -122,25 +120,21 @@ export default {
         'primary-glow': '0 0 20px rgb(2 132 199 / 0.25)',
       },
       backgroundImage: {
-        // Gradientes removidos para manter design consistente
       },
       backdropBlur: {
         'xs': '2px',
       },
       minHeight: {
-        '9': '2.25rem',   // 36px - para size sm
-        '12': '3rem',     // 48px - para size md  
-        '14': '3.5rem',   // 56px - para size lg
+        '9': '2.25rem',
+        '12': '3rem',
+        '14': '3.5rem',
       },
       transitionProperty: {
         'transform-opacity': 'transform, opacity',
       },
       animation: {
-        'fade-in': 'fadeIn 0.5s ease-in-out',
+        'fade-in': 'fadeIn 0.3s ease-out',
         'slide-up': 'slideUp 0.3s ease-out',
-        'bounce-subtle': 'bounceSubtle 2s infinite',
-        'breathe': 'breathe 3s ease-in-out infinite',
-        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       keyframes: {
         fadeIn: {
@@ -151,14 +145,6 @@ export default {
           '0%': { transform: 'translateY(100%)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
-        bounceSubtle: {
-          '0%, 100%': { transform: 'translateY(-2%)' },
-          '50%': { transform: 'translateY(0)' },
-        },
-        breathe: {
-          '0%, 100%': { transform: 'scale(1)', opacity: '1' },
-          '50%': { transform: 'scale(1.02)', opacity: '0.95' },
-        }
       }
     },
   },

@@ -60,8 +60,7 @@ export function NewOperationForm({ onClose, onAddOperation }: NewOperationFormPr
 
             const result = await addOperationRecord(accountId, expression);
             
-            // Adicionar notificação de operação
-            const operationCost = result.data?.operationCost || 1; // Fallback para 1 se não retornar o custo
+            const operationCost = result.data?.operationRecord?.cost || 1;
             addOperationNotification(
                 operationType?.description || 'Unknown Operation',
                 operationCost
@@ -95,12 +94,12 @@ export function NewOperationForm({ onClose, onAddOperation }: NewOperationFormPr
         <div className="flex flex-col gap-4">
             <div>
                 {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-                <label id="operation-label" htmlFor="operation-select" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label htmlFor="operation-select" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Operation
                 </label>
                 <select
                     id="operation-select"
-                    aria-labelledby="operation-label"
+                    name="operation-select"
                     value={operationType?.id || ''}
                     onChange={(e) => handleOperationChange(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"

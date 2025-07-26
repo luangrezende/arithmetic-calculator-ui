@@ -16,7 +16,7 @@ export interface ResponsiveGridProps {
     minChildWidth?: string;
     className?: string;
     style?: CSSProperties;
-    sx?: any; // Keep for backward compatibility
+    sx?: any;
 }
 
 export const ResponsiveGrid = forwardRef<HTMLDivElement, ResponsiveGridProps>(
@@ -31,7 +31,6 @@ export const ResponsiveGrid = forwardRef<HTMLDivElement, ResponsiveGridProps>(
         sx,
         ...props 
     }, ref) => {
-        // Generate grid classes based on columns
         const gridColsClasses = [];
         if (columns.xs) gridColsClasses.push(`grid-cols-${columns.xs}`);
         if (columns.sm) gridColsClasses.push(`sm:grid-cols-${columns.sm}`);
@@ -39,7 +38,6 @@ export const ResponsiveGrid = forwardRef<HTMLDivElement, ResponsiveGridProps>(
         if (columns.lg) gridColsClasses.push(`lg:grid-cols-${columns.lg}`);
         if (columns.xl) gridColsClasses.push(`xl:grid-cols-${columns.xl}`);
 
-        // Map gap to Tailwind classes
         const gapClassMap: Record<number, string> = {
             1: 'gap-1',
             2: 'gap-2', 
@@ -58,7 +56,6 @@ export const ResponsiveGrid = forwardRef<HTMLDivElement, ResponsiveGridProps>(
             ...style
         };
 
-        // Apply sx styles for backward compatibility with MUI
         if (sx) {
             if (sx.mb) {
                 gridStyle.marginBottom = `${sx.mb * 8}px`;

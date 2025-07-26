@@ -1,10 +1,5 @@
 import type { CSSObject } from '@mui/material/styles';
 
-/**
- * Usage:
- * ...hideScrollX,
- * ...hideScrollY,
- */
 export const hideScrollX: CSSObject = {
     msOverflowStyle: 'none',
     scrollbarWidth: 'none',
@@ -19,10 +14,6 @@ export const hideScrollY: CSSObject = {
     '&::-webkit-scrollbar': { display: 'none' },
 };
 
-/**
- * Usage:
- * ...textGradient(`to right, ${theme.palette.text.primary}, ${alpha(theme.palette.text.primary, 0.2)}`
- */
 export function textGradient(color: string): CSSObject {
     return {
         background: `linear-gradient(${color})`,
@@ -34,10 +25,6 @@ export function textGradient(color: string): CSSObject {
     };
 }
 
-/**
- * Usage:
- * ...bgGradient({ color: `to right, ${theme.palette.grey[900]} 25%, ${varAlpha('37 99 235', 0.88)}`, imgUrl: '/assets/background/overlay.png' }),
- */
 export type BgGradientProps = {
     color: string;
     imgUrl?: string;
@@ -54,11 +41,6 @@ export function bgGradient({ color, imgUrl }: BgGradientProps): CSSObject {
     }
     return { background: `linear-gradient(${color})` };
 }
-
-/**
- * Usage:
- * ...bgBlur({ color: `varAlpha('255 255 255', 0.8)`, imgUrl: '/assets/background/overlay.png', blur: 6 }),
- */
 export type BgBlurProps = {
     color: string;
     blur?: number;

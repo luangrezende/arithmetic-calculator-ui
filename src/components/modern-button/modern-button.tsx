@@ -28,10 +28,10 @@ const ModernButton = forwardRef<HTMLButtonElement, ModernButtonProps>(
     }, ref) => {
         
         const baseClasses = [
-            'inline-flex items-center justify-center font-semibold transition-all duration-200',
+            'inline-flex items-center justify-center font-semibold transition-all duration-200 ease-out',
             'focus:outline-none focus:ring-2 focus:ring-offset-2',
-            'disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none',
-            !disabled && 'hover:-translate-y-0.5 active:translate-y-0'
+            'disabled:opacity-50 disabled:cursor-not-allowed',
+            !disabled && 'hover:shadow-md hover:-translate-y-0.5 active:translate-y-0'
         ];
 
         const sizeClasses = {

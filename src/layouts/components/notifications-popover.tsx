@@ -50,8 +50,13 @@ export function NotificationsPopover() {
             <IconButton 
                 onClick={handleOpenPopover}
                 sx={{
+                    transition: 'all 0.2s ease-out',
                     '&:hover': {
                         backgroundColor: 'action.hover',
+                        transform: 'scale(1.05)',
+                    },
+                    '&:active': {
+                        transform: 'scale(0.95)',
                     },
                 }}
                 className={`${openPopover 
@@ -79,7 +84,8 @@ export function NotificationsPopover() {
                 slotProps={{
                     paper: {
                         sx: {
-                            width: 360,
+                            width: { xs: 320, sm: 360 },
+                            maxWidth: '90vw',
                             overflow: 'hidden',
                             display: 'flex',
                             flexDirection: 'column',
@@ -185,7 +191,6 @@ function NotificationItem({ notification }: { notification: OperationNotificatio
         if (operation.toLowerCase().includes('random')) {
             return { icon: 'solar:shuffle-outline', color: 'purple' };
         }
-        // Default for arithmetic operations
         return { icon: 'solar:calculator-minimalistic-outline', color: 'primary.main' };
     };
 

@@ -21,7 +21,6 @@ const NotificationsContext = createContext<NotificationsContextProps | undefined
 
 export const NotificationsProvider = ({ children }: { children: ReactNode }) => {
     const [notifications, setNotifications] = useState<OperationNotification[]>(() => {
-        // Carregar notificações do localStorage na inicialização
         const saved = localStorage.getItem('operation-notifications');
         return saved ? JSON.parse(saved) : [];
     });
@@ -42,7 +41,6 @@ export const NotificationsProvider = ({ children }: { children: ReactNode }) => 
 
         setNotifications(prev => {
             const updated = [newNotification, ...prev];
-            // Manter apenas as últimas 50 notificações
             const limited = updated.slice(0, 50);
             saveToLocalStorage(limited);
             return limited;

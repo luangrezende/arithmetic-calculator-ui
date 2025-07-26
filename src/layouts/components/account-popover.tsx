@@ -43,7 +43,7 @@ export function AccountPopover({ className }: AccountPopoverProps) {
             <button
                 type="button"
                 onClick={handleOpenPopover}
-                className={`w-10 h-10 p-0.5 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-200 ${className}`}
+                className={`w-10 h-10 p-0.5 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-200 ease-out hover:scale-105 active:scale-95 hover:shadow-md ${className}`}
             >
                 <div className="w-full h-full rounded-full bg-white dark:bg-slate-800 flex items-center justify-center overflow-hidden">
                     {photoUrl ? (
@@ -74,7 +74,7 @@ export function AccountPopover({ className }: AccountPopoverProps) {
                         tabIndex={0}
                         aria-label="Close popover"
                     />
-                    <div className="absolute right-0 top-full mt-2 w-48 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-xl shadow-lg border border-slate-200/50 dark:border-slate-700/50 z-50">
+                    <div className="absolute right-0 top-full mt-2 w-48 sm:w-52 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-xl shadow-lg border border-slate-200/50 dark:border-slate-700/50 z-50">
                         <div className="p-4 pb-3">
                             <h3 className="font-medium text-slate-900 dark:text-slate-100 truncate">
                                 {user?.name}

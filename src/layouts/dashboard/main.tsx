@@ -37,7 +37,7 @@ export function DashboardContent({
 
     const paddingClass = disablePadding 
         ? 'p-0' 
-        : 'pt-8 pb-[--layout-dashboard-content-pb] lg:px-[--layout-dashboard-content-px]';
+        : 'pt-6 sm:pt-8 pb-16 sm:pb-20 lg:pb-[--layout-dashboard-content-pb] px-4 sm:px-6 lg:px-[--layout-dashboard-content-px]';
 
     return (
         <div

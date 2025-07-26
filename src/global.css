@@ -47,4 +47,10 @@
   .layout__has__sidebar {
     @apply lg:pl-[var(--layout-nav-vertical-width)];
   }
+  
+  @media (max-width: 640px) {
+    .layout__main__content {
+      @apply min-h-0;
+    }
+  }
 }

@@ -14,16 +14,15 @@ export function MenuButton({ className = '', onClick, ...other }: MenuButtonProp
                 text-gray-600 dark:text-gray-300
                 hover:bg-gray-100 dark:hover:bg-gray-700
                 focus:outline-none
-                transition-all duration-200 ease-in-out
-                transform hover:scale-105 active:scale-95
-                group
+                transition-all duration-200 ease-out
+                hover:scale-105 active:scale-95
                 ${className}
             `}
             onClick={onClick}
             {...other}
         >
             <svg 
-                className="w-5 h-5 transition-transform duration-200 group-hover:rotate-3" 
+                className="w-5 h-5 transition-transform duration-200 hover:rotate-3" 
                 fill="currentColor" 
                 viewBox="0 0 24 24"
             >

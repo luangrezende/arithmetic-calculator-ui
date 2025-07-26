@@ -1,4 +1,3 @@
-// API Base URLs from environment variables
 export const USER_API_URL = import.meta.env.VITE_USER_API_URL || 'http://localhost:3001/v1/user';
 export const OPERATIONS_API_URL = import.meta.env.VITE_OPERATIONS_API_URL || 'http://localhost:3002/v1/operations';
 

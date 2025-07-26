@@ -1,6 +1,6 @@
-import type { ReactNode} from 'react';
+import type { ReactNode } from 'react';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 export interface ModernDrawerProps {
@@ -11,6 +11,23 @@ export interface ModernDrawerProps {
 }
 
 export function ModernDrawer({ open, onClose, children, className = '' }: ModernDrawerProps) {
+    const [isVisible, setIsVisible] = useState(false);
+    const [isAnimating, setIsAnimating] = useState(false);
+
+    useEffect(() => {
+        if (open) {
+            setIsVisible(true);
+            setIsAnimating(true);
+        } else if (isVisible) {
+            setIsAnimating(false);
+            const timer = setTimeout(() => {
+                setIsVisible(false);
+            }, 300);
+            return () => clearTimeout(timer);
+        }
+        return undefined;
+    }, [open, isVisible]);
+
     useEffect(() => {
         const handleEscape = (event: KeyboardEvent) => {
             if (event.key === 'Escape' && open) {
@@ -31,38 +48,34 @@ export function ModernDrawer({ open, onClose, children, className = '' }: Modern
         };
     }, [open, onClose]);
 
+    if (!isVisible) return null;
+
     return createPortal(
         <>
-            {/* Backdrop */}
             <div
                 className={`
                     fixed inset-0 bg-black/50 dark:bg-black/70 z-[1200] 
-                    transition-all duration-300 ease-out
-                    ${open ? 'opacity-100 visible' : 'opacity-0 invisible'}
+                    transition-opacity duration-300 ease-out
+                    ${isAnimating ? 'opacity-100' : 'opacity-0'}
                 `}
                 onClick={onClose}
                 role="presentation"
             />
             
-            {/* Drawer */}
             <div
                 className={`
                     fixed top-0 left-0 h-full w-72
-                    z-[1300] transform transition-all duration-300 ease-out
-                    pt-6 px-4 overflow-y-auto overflow-x-hidden
+                    z-[1300] overflow-y-auto overflow-x-hidden
+                    pt-6 px-4
                     bg-white dark:bg-gray-900 text-gray-900 dark:text-white
-                    ${open ? 'translate-x-0' : '-translate-x-full'}
+                    transform transition-transform duration-300 ease-out
+                    ${isAnimating ? 'translate-x-0' : '-translate-x-full'}
                     ${className}
                 `}
                 role="dialog"
                 aria-modal="true"
             >
-                <div className={`
-                    transition-all duration-300 ease-out delay-100
-                    ${open ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
-                `}>
-                    {children}
-                </div>
+                {children}
             </div>
         </>,
         document.body

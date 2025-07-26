@@ -15,8 +15,7 @@ export function NavMobile({ data, open, slots, onClose }: NavMobileProps) {
         if (open) {
             onClose();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [pathname]);
+    }, [pathname, onClose, open]);
 
     return (
         <ModernDrawer open={open} onClose={onClose}>

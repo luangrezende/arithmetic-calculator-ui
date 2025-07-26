@@ -19,8 +19,7 @@ export function NavDesktop({ data, slots, layoutQuery }: NavDesktopProps) {
                 backdrop-blur-md border-r
                 z-[1200] w-[--layout-nav-vertical-width]
                 lg:flex
-                transition-all duration-300 ease-in-out
-                animate-in slide-in-from-left-4 fade-in duration-500
+                transition-all duration-200 ease-out
             `}
             style={{
                 width: 'var(--layout-nav-vertical-width)',

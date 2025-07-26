@@ -21,7 +21,6 @@ export function AddCreditForm({ onClose, onOpenSnackBar }: AddCreditFormProps) {
     };
 
     const handleSubmit = async () => {
-        // Validação simples
         if (!form.amount || parseFloat(form.amount) <= 0) {
             onOpenSnackBar?.('error');
             return;

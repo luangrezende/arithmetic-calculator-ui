@@ -42,19 +42,19 @@ const ModernButton = forwardRef<HTMLButtonElement, ModernButtonProps>(
 
         const variantClasses = {
             primary: [
-                'bg-primary-600 hover:bg-primary-700',
+                'bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600',
                 'text-white shadow-button hover:shadow-button-hover focus:ring-primary-500'
             ],
             secondary: [
-                'bg-gray-200 hover:bg-gray-300 text-gray-900',
+                'bg-gray-200 hover:bg-gray-300 text-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-100',
                 'shadow-sm hover:shadow-button focus:ring-gray-500'
             ],
             outline: [
-                'text-primary-600 hover:bg-primary-50',
-                'hover:text-primary-700 focus:ring-primary-500'
+                'text-primary-600 hover:bg-primary-50 dark:text-primary-400 dark:hover:bg-primary-900/20',
+                'hover:text-primary-700 dark:hover:text-primary-300 focus:ring-primary-500'
             ],
             ghost: [
-                'text-gray-700 hover:bg-gray-100 hover:text-gray-900',
+                'text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-100',
                 'focus:ring-gray-500'
             ]
         };

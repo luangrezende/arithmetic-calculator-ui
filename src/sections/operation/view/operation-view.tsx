@@ -13,23 +13,24 @@ import {
     TableBody,
     TableCell,
     TableHead,
-    TextField,
     Typography,
     DialogTitle,
     DialogContent,
     DialogActions,
     TableContainer,
-    InputAdornment,
     TableSortLabel,
     TablePagination,
     CircularProgress,
     DialogContentText,
 } from '@mui/material';
 
+import { ModernInput } from 'src/components/modern-input';
+
 import { formatDate } from 'src/utils/format-time';
 import { formatCurrency, formatLargeNumber } from 'src/utils/format-number';
 
 import { DashboardContent } from 'src/layouts/dashboard';
+import { useToast } from 'src/contexts/toast-context';
 import {
     deleteOperationRecords,
     getPagedOperationRecords,
@@ -38,7 +39,6 @@ import {
 import { Iconify } from 'src/components/iconify';
 import { ModernCard } from 'src/components/modern-card';
 import { ModernButton } from 'src/components/modern-button';
-import { AlertSnackbar } from 'src/components/alert-snackbar';
 
 import { NewOperationForm } from './new-operation-form';
 
@@ -73,11 +73,7 @@ export function OperationView() {
     const [selected, setSelected] = useState<string[]>([]);
     const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
     const [openModal, setOpenModal] = useState(false);
-    const [snackbar, setSnackbar] = useState({
-        open: false,
-        message: '',
-        severity: 'success' as 'success' | 'error',
-    });
+    const { showToast } = useToast();
 
     const fetchPagedOperations = useCallback(async () => {
         setLoading(true);
@@ -113,45 +109,29 @@ export function OperationView() {
 
     const handleOpenConfirmDelete = useCallback(() => {
         if (selected.length === 0) {
-            setSnackbar({
-                open: true,
-                message: 'No records selected for deletion.',
-                severity: 'error',
-            });
+            showToast('No records selected for deletion.', 'warning');
             return;
         }
         setConfirmDeleteOpen(true);
-    }, [selected]);
+    }, [selected, showToast]);
 
     const deleteRecords = async (ids: string[]) => {
         if (!ids.length) {
-            setSnackbar({
-                open: true,
-                message: 'No records selected for deletion.',
-                severity: 'error',
-            });
+            showToast('No records selected for deletion.', 'warning');
             return;
         }
 
         setIsDeleting(true);
         try {
             await deleteOperationRecords(ids);
-            setSnackbar({
-                open: true,
-                message: 'Selected records were successfully deleted.',
-                severity: 'success',
-            });
+            showToast('Selected records were successfully deleted.', 'success');
 
             setSelected([]);
             fetchPagedOperations();
             handleCloseConfirmDelete();
         } catch (error) {
             console.error('Failed to delete records:', error);
-            setSnackbar({
-                open: true,
-                message: 'Failed to delete selected records.',
-                severity: 'error',
-            });
+            showToast('Failed to delete selected records.', 'danger');
         } finally {
             setIsDeleting(false);
         }
@@ -168,11 +148,7 @@ export function OperationView() {
     };
 
     const handleNewOperation = () => {
-        setSnackbar({
-            open: true,
-            message: 'Operation was successfully added.',
-            severity: 'success',
-        });
+        showToast('Operation was successfully added.', 'success');
         fetchPagedOperations();
     };
 
@@ -207,24 +183,18 @@ export function OperationView() {
                 <Typography variant="h4" flexGrow={1}>
                     Operations
                 </Typography>
-                <TextField
-                    size="small"
-                    variant="outlined"
-                    placeholder="Search"
-                    value={searchQuery}
-                    onChange={handleSearchChange}
-                    sx={{
-                        mr: { xs: 1, sm: 2 },
-                        width: { xs: '150px', sm: 'auto' },
-                    }}
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <Iconify icon="mdi:magnify" width={20} />
-                            </InputAdornment>
-                        ),
-                    }}
-                />
+                <div className="relative mr-2 w-150px sm:w-auto">
+                    <ModernInput
+                        placeholder="Search"
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                        className="pl-10"
+                        inputSize="sm"
+                    />
+                    <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 pointer-events-none">
+                        <Iconify icon="mdi:magnify" width={16} />
+                    </div>
+                </div>
                 <ModernButton
                     variant="primary"
                     onClick={handleOpenModal}
@@ -405,19 +375,15 @@ export function OperationView() {
             {selected.length > 0 && (
                 <Box display="flex" justifyContent="flex-end" my={2}>
                     <ModernButton
-                        variant="secondary"
+                        variant="outline"
                         onClick={() => {
                             if (selected.length > 0) {
                                 handleOpenConfirmDelete();
                             } else {
-                                setSnackbar({
-                                    open: true,
-                                    message: 'Please select at least one record to delete.',
-                                    severity: 'error',
-                                });
+                                showToast('Please select at least one record to delete.', 'warning');
                             }
                         }}
-                        className="bg-red-500 hover:bg-red-600 text-white"
+                        className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/20 dark:hover:border-red-700"
                     >
                         <Iconify icon="tabler:trash" width={20} sx={{ mr: 1 }} />
                         Delete Selected
@@ -477,13 +443,6 @@ export function OperationView() {
                     />
                 </Box>
             </Modal>
-
-            <AlertSnackbar
-                open={snackbar.open}
-                message={snackbar.message}
-                onClose={() => setSnackbar({ ...snackbar, open: false })}
-                severity={snackbar.severity}
-            />
         </DashboardContent>
     );
 }

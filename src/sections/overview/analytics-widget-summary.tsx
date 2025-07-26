@@ -1,4 +1,3 @@
-import type { ColorType } from 'src/theme/core/palette';
 import type { ChartOptions } from 'src/components/chart';
 
 import { fNumber, fPercent, formatLargeNumber } from 'src/utils/format-number';
@@ -7,6 +6,8 @@ import { Iconify } from 'src/components/iconify';
 import { SvgColor } from 'src/components/svg-color';
 import { Chart, useChart } from 'src/components/chart';
 import { ModernCard } from 'src/components/modern-card';
+
+type ColorType = 'primary' | 'secondary' | 'info' | 'success' | 'warning' | 'error';
 
 type Props = {
     title: string;

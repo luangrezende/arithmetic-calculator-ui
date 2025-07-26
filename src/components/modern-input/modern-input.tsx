@@ -26,8 +26,9 @@ const ModernInput = forwardRef<HTMLInputElement, ModernInputProps>(
         const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
         
         const baseClasses = [
-            'w-full transition-all duration-200 focus:outline-none focus:ring-2',
-            'disabled:opacity-50 disabled:cursor-not-allowed'
+            'w-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 border-0',
+            'disabled:opacity-50 disabled:cursor-not-allowed',
+            'placeholder-gray-400 dark:placeholder-gray-500'
         ];
 
         const sizeClasses = {
@@ -38,15 +39,15 @@ const ModernInput = forwardRef<HTMLInputElement, ModernInputProps>(
 
         const variantClasses = {
             default: [
-                'bg-white focus:ring-primary-500',
+                'bg-white dark:bg-slate-800 focus:ring-primary-500 text-gray-900 dark:text-white',
                 error ? 'focus:ring-red-500' : ''
             ],
             filled: [
-                'bg-gray-50 focus:bg-white focus:ring-primary-500',
+                'bg-gray-50 dark:bg-slate-700 focus:bg-white dark:focus:bg-slate-800 focus:ring-primary-500 text-gray-900 dark:text-white',
                 error ? 'focus:ring-red-500' : ''
             ],
             ghost: [
-                'bg-transparent focus:bg-white focus:ring-primary-500',
+                'bg-transparent focus:bg-white dark:focus:bg-slate-800 focus:ring-primary-500 text-gray-900 dark:text-white',
                 error ? 'focus:ring-red-500' : ''
             ]
         };
@@ -60,7 +61,7 @@ const ModernInput = forwardRef<HTMLInputElement, ModernInputProps>(
                         htmlFor={inputId}
                         className={cn(
                             'block text-sm font-medium',
-                            error ? 'text-red-700' : 'text-gray-700'
+                            error ? 'text-red-700 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'
                         )}
                     >
                         {label}
@@ -81,7 +82,7 @@ const ModernInput = forwardRef<HTMLInputElement, ModernInputProps>(
                 />
                 
                 {error && (
-                    <p className="text-sm text-red-600">{error}</p>
+                    <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
                 )}
             </div>
         );

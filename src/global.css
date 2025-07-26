@@ -1,12 +1,50 @@
-@import '@fontsource-variable/dm-sans';
-@import '@fontsource/barlow/400.css';
-@import '@fontsource/barlow/500.css';
-@import '@fontsource/barlow/600.css';
-@import '@fontsource/barlow/700.css';
-@import '@fontsource/barlow/800.css';
 @import './components/scrollbar/styles.css';
 @import './components/chart/styles.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+  
+  .dark {
+    color-scheme: dark;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply transition-colors duration-200;
+  }
+}
+
+@layer components {
+  .layout__root {
+    @apply min-h-screen;
+  }
+  
+  .layout__main {
+    @apply flex flex-1 flex-col;
+  }
+  
+  .layout__main__content {
+    @apply flex flex-1 flex-col;
+  }
+  
+  .layout__header {
+    @apply shrink-0;
+  }
+  
+  .layout__has__sidebar {
+    @apply lg:pl-[var(--layout-nav-vertical-width)];
+  }
+}

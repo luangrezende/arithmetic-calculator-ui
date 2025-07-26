@@ -21,6 +21,8 @@ export function ModernDrawer({ open, onClose, children, className = '' }: Modern
         if (open) {
             document.addEventListener('keydown', handleEscape);
             document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
         }
 
         return () => {
@@ -29,13 +31,15 @@ export function ModernDrawer({ open, onClose, children, className = '' }: Modern
         };
     }, [open, onClose]);
 
-    if (!open) return null;
-
     return createPortal(
         <>
             {/* Backdrop */}
             <div
-                className="fixed inset-0 bg-black/50 dark:bg-black/70 z-[1200] transition-opacity duration-300"
+                className={`
+                    fixed inset-0 bg-black/50 dark:bg-black/70 z-[1200] 
+                    transition-all duration-300 ease-out
+                    ${open ? 'opacity-100 visible' : 'opacity-0 invisible'}
+                `}
                 onClick={onClose}
                 role="presentation"
             />
@@ -43,16 +47,22 @@ export function ModernDrawer({ open, onClose, children, className = '' }: Modern
             {/* Drawer */}
             <div
                 className={`
-                    fixed top-0 left-0 h-full w-80
-                    z-[1300] transform transition-transform duration-300 ease-out
-                    pt-10 px-10 overflow-y-auto overflow-x-hidden
+                    fixed top-0 left-0 h-full w-72
+                    z-[1300] transform transition-all duration-300 ease-out
+                    pt-6 px-4 overflow-y-auto overflow-x-hidden
                     bg-white dark:bg-gray-900 text-gray-900 dark:text-white
+                    ${open ? 'translate-x-0' : '-translate-x-full'}
                     ${className}
                 `}
                 role="dialog"
                 aria-modal="true"
             >
-                {children}
+                <div className={`
+                    transition-all duration-300 ease-out delay-100
+                    ${open ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
+                `}>
+                    {children}
+                </div>
             </div>
         </>,
         document.body

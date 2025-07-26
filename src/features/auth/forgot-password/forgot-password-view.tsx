@@ -2,23 +2,18 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { getTokens } from 'src/utils/auth-manager';
-
-import { AlertSnackbar } from 'src/components/alert-snackbar';
+import { useToast } from 'src/contexts/toast-context';
 
 import { ForgotPasswordForm } from './forgot-password-form';
 
 export default function ForgotPasswordView() {
     const navigate = useNavigate();
     const { token } = getTokens();
+    const { showToast } = useToast();
 
     const [form, setForm] = useState({ email: '' });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [snackbar, setSnackbar] = useState({
-        open: false,
-        message: '',
-        severity: 'success' as 'success' | 'error',
-    });
 
     useEffect(() => {
         if (token) navigate('/');
@@ -31,12 +26,10 @@ export default function ForgotPasswordView() {
     const handleForgotPassword = async () => {
         try {
             setLoading(true);
-            setSnackbar({
-                open: true,
-                message:
-                    'If an account is associated with this email, you will receive a password reset email shortly.',
-                severity: 'success',
-            });
+            showToast(
+                'If an account is associated with this email, you will receive a password reset email shortly.',
+                'success'
+            );
 
             setError(null);
 
@@ -60,12 +53,6 @@ export default function ForgotPasswordView() {
                 loading={loading}
                 error={error}
                 onBackToSignIn={handleCancel}
-            />
-            <AlertSnackbar
-                open={snackbar.open}
-                message={snackbar.message}
-                onClose={() => setSnackbar({ ...snackbar, open: false })}
-                severity={snackbar.severity}
             />
         </>
     );

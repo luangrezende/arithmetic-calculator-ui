@@ -1,11 +1,9 @@
-import type { BoxProps } from '@mui/material/Box';
+import type { ReactNode, CSSProperties } from 'react';
 
 import { forwardRef } from 'react';
 
-import Box from '@mui/material/Box';
-import { styled } from '@mui/material/styles';
-
-export interface ResponsiveGridProps extends BoxProps {
+export interface ResponsiveGridProps {
+    children: ReactNode;
     columns?: {
         xs?: number;
         sm?: number;
@@ -16,63 +14,82 @@ export interface ResponsiveGridProps extends BoxProps {
     gap?: number;
     autoFit?: boolean;
     minChildWidth?: string;
+    className?: string;
+    style?: CSSProperties;
+    sx?: any; // Keep for backward compatibility
 }
-
-interface StyledGridProps {
-    $columns?: ResponsiveGridProps['columns'];
-    $gap?: number;
-    $autoFit?: boolean;
-    $minChildWidth?: string;
-}
-
-const StyledGrid = styled(Box)<StyledGridProps>(({ 
-    theme, 
-    $columns, 
-    $gap = 3, 
-    $autoFit, 
-    $minChildWidth = '280px' 
-}) => ({
-    display: 'grid',
-    gap: theme.spacing($gap),
-    
-    ...($autoFit && {
-        gridTemplateColumns: `repeat(auto-fit, minmax(${$minChildWidth}, 1fr))`,
-    }),
-    
-    ...(!$autoFit && $columns && {
-        gridTemplateColumns: `repeat(${$columns.xs || 1}, 1fr)`,
-        
-        [theme.breakpoints.up('sm')]: {
-            gridTemplateColumns: `repeat(${$columns.sm || $columns.xs || 1}, 1fr)`,
-        },
-        
-        [theme.breakpoints.up('md')]: {
-            gridTemplateColumns: `repeat(${$columns.md || $columns.sm || $columns.xs || 1}, 1fr)`,
-        },
-        
-        [theme.breakpoints.up('lg')]: {
-            gridTemplateColumns: `repeat(${$columns.lg || $columns.md || $columns.sm || $columns.xs || 1}, 1fr)`,
-        },
-        
-        [theme.breakpoints.up('xl')]: {
-            gridTemplateColumns: `repeat(${$columns.xl || $columns.lg || $columns.md || $columns.sm || $columns.xs || 1}, 1fr)`,
-        },
-    }),
-}));
 
 export const ResponsiveGrid = forwardRef<HTMLDivElement, ResponsiveGridProps>(
-    ({ children, columns, gap, autoFit, minChildWidth, ...props }, ref) => (
-        <StyledGrid
-            ref={ref}
-            $columns={columns}
-            $gap={gap}
-            $autoFit={autoFit}
-            $minChildWidth={minChildWidth}
-            {...props}
-        >
-            {children}
-        </StyledGrid>
-    )
+    ({ 
+        children, 
+        columns = { xs: 1, md: 2, lg: 3 }, 
+        gap = 3, 
+        autoFit = false, 
+        minChildWidth = '280px',
+        className = '',
+        style = {},
+        sx,
+        ...props 
+    }, ref) => {
+        // Generate grid classes based on columns
+        const gridColsClasses = [];
+        if (columns.xs) gridColsClasses.push(`grid-cols-${columns.xs}`);
+        if (columns.sm) gridColsClasses.push(`sm:grid-cols-${columns.sm}`);
+        if (columns.md) gridColsClasses.push(`md:grid-cols-${columns.md}`);
+        if (columns.lg) gridColsClasses.push(`lg:grid-cols-${columns.lg}`);
+        if (columns.xl) gridColsClasses.push(`xl:grid-cols-${columns.xl}`);
+
+        // Map gap to Tailwind classes
+        const gapClassMap: Record<number, string> = {
+            1: 'gap-1',
+            2: 'gap-2', 
+            3: 'gap-3',
+            4: 'gap-4',
+            5: 'gap-5',
+            6: 'gap-6',
+        };
+        const gapClass = gapClassMap[gap] || 'gap-3';
+
+        const gridStyle: CSSProperties = {
+            display: 'grid',
+            ...(autoFit && {
+                gridTemplateColumns: `repeat(auto-fit, minmax(${minChildWidth}, 1fr))`,
+            }),
+            ...style
+        };
+
+        // Apply sx styles for backward compatibility with MUI
+        if (sx) {
+            if (sx.mb) {
+                gridStyle.marginBottom = `${sx.mb * 8}px`;
+            }
+            if (sx.mt) {
+                gridStyle.marginTop = `${sx.mt * 8}px`;
+            }
+            if (sx.mx) {
+                gridStyle.marginLeft = `${sx.mx * 8}px`;
+                gridStyle.marginRight = `${sx.mx * 8}px`;
+            }
+            if (sx.my) {
+                gridStyle.marginTop = `${sx.my * 8}px`;
+                gridStyle.marginBottom = `${sx.my * 8}px`;
+            }
+            if (sx.p) {
+                gridStyle.padding = `${sx.p * 8}px`;
+            }
+        }
+
+        return (
+            <div
+                ref={ref}
+                className={`grid ${autoFit ? '' : gridColsClasses.join(' ')} ${gapClass} ${className}`}
+                style={gridStyle}
+                {...props}
+            >
+                {children}
+            </div>
+        );
+    }
 );
 
 ResponsiveGrid.displayName = 'ResponsiveGrid';

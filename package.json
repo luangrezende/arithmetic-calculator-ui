@@ -24,11 +24,8 @@
     },
     "packageManager": "yarn@1.22.22",
     "dependencies": {
-        "@emotion/cache": "^11.13.1",
         "@emotion/react": "^11.13.5",
         "@emotion/styled": "^11.13.5",
-        "@fontsource-variable/dm-sans": "^5.0.7",
-        "@fontsource/barlow": "^5.0.14",
         "@iconify/react": "^5.0.2",
         "@mui/lab": "^5.0.0-alpha.173",
         "@mui/material": "^7.2.0",
@@ -36,14 +33,14 @@
         "axios": "^1.11.0",
         "clsx": "^2.1.1",
         "dayjs": "^1.11.13",
-        "history": "^5.3.0",
         "react": "^18.3.1",
         "react-apexcharts": "^1.4.1",
         "react-dom": "^18.3.1",
         "react-helmet-async": "^2.0.5",
         "react-router-dom": "^7.7.1",
         "simplebar-react": "^3.2.6",
-        "tailwind-merge": "^3.3.1"
+        "tailwind-merge": "^3.3.1",
+        "tailwindcss-animate": "^1.0.7"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.10",
@@ -67,9 +64,7 @@
         "eslint-plugin-react": "^7.35.0",
         "eslint-plugin-react-hooks": "^4.6.2",
         "eslint-plugin-unused-imports": "^3.2.0",
-        "postcss": "^8.5.6",
         "prettier": "^3.3.3",
-        "rollup-plugin-visualizer": "^6.0.3",
         "tailwindcss": "^3.4.17",
         "typescript": "^5.8.3",
         "vite": "^7.0.6",

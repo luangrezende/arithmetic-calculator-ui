@@ -58,16 +58,16 @@ export function OverviewAnalyticsView() {
     return (
         <DashboardContent maxWidth="xl">
             <div className="mb-6 p-4 md:p-6 rounded-2xl bg-blue-50 dark:bg-blue-900/20">
-                <h1 className="text-3xl font-semibold mb-2 text-primary-600 dark:text-primary-400">
+                <h1 className="text-2xl font-semibold mb-2 text-primary-600 dark:text-primary-400">
                     Hi, {user?.name?.split(' ')[0]}
                 </h1>
-                <p className="text-gray-600 dark:text-gray-300">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                     Welcome back to your arithmetic calculator dashboard
                 </p>
             </div>
 
             <ResponsiveGrid
-                columns={{ xs: 1, md: 2 }}
+                columns={{ xs: 1, sm: 2, md: 2, lg: 2 }}
                 gap={3}
                 sx={{ mb: 4 }}
             >
@@ -77,11 +77,11 @@ export function OverviewAnalyticsView() {
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
                                 Operations
                             </h3>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                    <div className="text-xs text-gray-600 dark:text-gray-400">
                         Total calculations performed
                     </div>
                         </div>
-                        
+
                         <div className="text-3xl font-bold text-primary-600 dark:text-primary-400 mb-4">
                             {dashboardData.totalOperations.toLocaleString()}
                         </div>
@@ -92,7 +92,7 @@ export function OverviewAnalyticsView() {
                                     Monthly Progress
                                 </span>
                                 <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                                    {dashboardData.totalMonthlyOperations}/{dashboardData.totalOperations}
+                                    {Math.min(Math.round((dashboardData.totalMonthlyOperations / dashboardData.totalOperations) * 100), 100)}%
                                 </span>
                             </div>
                             <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
@@ -111,7 +111,7 @@ export function OverviewAnalyticsView() {
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
                                 Total Credit
                             </h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                            <p className="text-xs text-gray-600 dark:text-gray-400">
                                 Available balance
                             </p>
                         </div>
@@ -121,10 +121,10 @@ export function OverviewAnalyticsView() {
                         </div>
                         
                         <div>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
                                 Annual Cash Added
                             </p>
-                            <div className="text-xl font-semibold text-green-700 dark:text-green-300">
+                            <div className="text-lg font-semibold text-green-700 dark:text-green-300">
                                 {fCurrency(dashboardData.totalAnnualCashAdded)}
                             </div>
                         </div>
@@ -133,7 +133,7 @@ export function OverviewAnalyticsView() {
             </ResponsiveGrid>
 
             <ResponsiveGrid
-                columns={{ xs: 1, md: 2, lg: 3 }}
+                columns={{ xs: 1, sm: 2, md: 3, lg: 3 }}
                 gap={3}
             >
                 <ModernCard hoverable padding="none">
@@ -142,12 +142,12 @@ export function OverviewAnalyticsView() {
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
                                 Platform Overview
                             </h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                            <p className="text-xs text-gray-600 dark:text-gray-400">
                                 Global operations count
                             </p>
                         </div>
                         
-                        <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-4">
+                        <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-4">
                             {dashboardData.totalPlatformOperations.toLocaleString()}
                         </div>
                         

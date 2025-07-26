@@ -1,14 +1,4 @@
-import type { IconButtonProps } from '@mui/material/IconButton';
-
 import { useState, useCallback } from 'react';
-
-import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
-import Popover from '@mui/material/Popover';
-import Divider from '@mui/material/Divider';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import CircularProgress from '@mui/material/CircularProgress';
 
 import { useLocalUser } from 'src/hooks/use-local-user';
 
@@ -18,18 +8,22 @@ import { logoutUser } from 'src/services/api/auth-service';
 
 import { ModernButton } from 'src/components/modern-button';
 
-export function AccountPopover({ sx, ...other }: IconButtonProps) {
+interface AccountPopoverProps {
+    className?: string;
+}
+
+export function AccountPopover({ className }: AccountPopoverProps) {
     const user = useLocalUser();
     const [photoUrl] = useState('');
-    const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
+    const [openPopover, setOpenPopover] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-        setOpenPopover(event.currentTarget);
+    const handleOpenPopover = useCallback(() => {
+        setOpenPopover(true);
     }, []);
 
     const handleClosePopover = useCallback(() => {
-        setOpenPopover(null);
+        setOpenPopover(false);
     }, []);
 
     const handleLogout = useCallback(async () => {
@@ -45,66 +39,73 @@ export function AccountPopover({ sx, ...other }: IconButtonProps) {
     }, []);
 
     return (
-        <>
-            <IconButton
+        <div className="relative">
+            <button
+                type="button"
                 onClick={handleOpenPopover}
-                sx={{
-                    p: '2px',
-                    width: 40,
-                    height: 40,
-                    background: (theme) =>
-                        `conic-gradient(${theme.palette.primary.light}, ${theme.palette.warning.light}, ${theme.palette.primary.light})`,
-                    ...sx,
-                }}
-                {...other}
+                className={`w-10 h-10 p-0.5 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-200 ${className}`}
             >
-                <Avatar src={photoUrl} alt={user?.name} sx={{ width: 1, height: 1 }}>
-                    {user?.name.charAt(0).toUpperCase()}
-                </Avatar>
-            </IconButton>
+                <div className="w-full h-full rounded-full bg-white dark:bg-slate-800 flex items-center justify-center overflow-hidden">
+                    {photoUrl ? (
+                        <img
+                            src={photoUrl}
+                            alt={user?.name}
+                            className="w-full h-full object-cover"
+                        />
+                    ) : (
+                        <span className="text-lg font-semibold text-slate-700 dark:text-slate-200">
+                            {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                        </span>
+                    )}
+                </div>
+            </button>
 
-            <Popover
-                open={!!openPopover}
-                anchorEl={openPopover}
-                onClose={handleClosePopover}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                slotProps={{
-                    paper: {
-                        sx: { width: 200 },
-                    },
-                }}
-            >
-                <Box sx={{ p: 2, pb: 1.5 }}>
-                    <Typography variant="subtitle2" noWrap>
-                        {user?.name}
-                    </Typography>
+            {openPopover && (
+                <>
+                    <div
+                        className="fixed inset-0 z-40"
+                        onClick={handleClosePopover}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Escape') {
+                                handleClosePopover();
+                            }
+                        }}
+                        role="button"
+                        tabIndex={0}
+                        aria-label="Close popover"
+                    />
+                    <div className="absolute right-0 top-full mt-2 w-48 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-xl shadow-lg border border-slate-200/50 dark:border-slate-700/50 z-50">
+                        <div className="p-4 pb-3">
+                            <h3 className="font-medium text-slate-900 dark:text-slate-100 truncate">
+                                {user?.name}
+                            </h3>
+                            <p className="text-sm text-slate-600 dark:text-slate-400 truncate">
+                                {user?.username}
+                            </p>
+                        </div>
 
-                    <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-                        {user?.username}
-                    </Typography>
-                </Box>
+                        <div className="border-t border-dashed border-slate-200 dark:border-slate-700" />
 
-                <Divider sx={{ borderStyle: 'dashed' }} />
-
-                <Box sx={{ p: 1 }}>
-                    <ModernButton
-                        variant="secondary"
-                        onClick={handleLogout}
-                        disabled={loading}
-                        className="w-full bg-red-500 hover:bg-red-600 text-white disabled:bg-gray-400"
-                    >
-                        {loading ? (
-                            <>
-                                <CircularProgress size={20} color="inherit" sx={{ mr: 1 }} />
-                                Logging out...
-                            </>
-                        ) : (
-                            'Logout'
-                        )}
-                    </ModernButton>
-                </Box>
-            </Popover>
-        </>
+                        <div className="p-2">
+                            <ModernButton
+                                variant="outline"
+                                onClick={handleLogout}
+                                disabled={loading}
+                                className="w-full text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/20 dark:hover:border-red-700 flex items-center justify-center gap-2"
+                            >
+                                {loading ? (
+                                    <>
+                                        <div className="w-5 h-5 border-2 border-red-600/30 border-t-red-600 dark:border-red-400/30 dark:border-t-red-400 rounded-full animate-spin" />
+                                        Logging out...
+                                    </>
+                                ) : (
+                                    'Logout'
+                                )}
+                            </ModernButton>
+                        </div>
+                    </div>
+                </>
+            )}
+        </div>
     );
 }

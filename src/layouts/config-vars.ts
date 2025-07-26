@@ -1,25 +1,41 @@
-import type { Theme } from '@mui/material/styles';
+import { useThemeMode } from 'src/context/theme-context';
 
-import { varAlpha } from 'src/theme/styles';
-
-export const baseVars = (theme: Theme) => {
-    const isDark = theme.palette.mode === 'dark';
+export const useLayoutVars = () => {
+    const { mode } = useThemeMode();
+    const isDark = mode === 'dark';
     
     return {
-        '--layout-nav-bg': isDark ? theme.palette.background.paper : theme.palette.common.white,
-        '--layout-nav-zIndex': 1101,
+        '--layout-nav-bg': isDark ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+        '--layout-nav-zIndex': '1101',
         '--layout-nav-mobile-width': '320px',
         '--layout-nav-item-height': '44px',
-        '--layout-nav-item-color': theme.palette.text.secondary,
-        '--layout-nav-item-active-color': theme.palette.primary.main,
+        '--layout-nav-item-color': isDark ? 'rgb(148, 163, 184)' : 'rgb(100, 116, 139)',
+        '--layout-nav-item-active-color': isDark ? 'rgb(107, 182, 255)' : 'rgb(37, 99, 235)',
         '--layout-nav-item-active-bg': isDark 
-            ? varAlpha('107 182 255', 0.08) 
-            : varAlpha('37 99 235', 0.08),
+            ? 'rgba(107, 182, 255, 0.08)' 
+            : 'rgba(37, 99, 235, 0.08)',
         '--layout-nav-item-hover-bg': isDark 
-            ? varAlpha('107 182 255', 0.16) 
-            : varAlpha('37 99 235', 0.16),
-        '--layout-header-zIndex': 1100,
+            ? 'rgba(107, 182, 255, 0.16)' 
+            : 'rgba(37, 99, 235, 0.16)',
+        '--layout-header-zIndex': '1100',
         '--layout-header-mobile-height': '64px',
         '--layout-header-desktop-height': '72px',
     };
 };
+
+export const getLayoutClasses = () => ({
+    nav: 'bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm',
+    header: 'bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm',
+    main: 'bg-slate-50 dark:bg-slate-900',
+    paper: 'bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl',
+    text: {
+        primary: 'text-slate-900 dark:text-slate-100',
+        secondary: 'text-slate-600 dark:text-slate-400',
+    },
+    colors: {
+        primary: 'text-blue-600 dark:text-blue-400',
+        success: 'text-emerald-600 dark:text-emerald-400',
+        warning: 'text-yellow-600 dark:text-yellow-400',
+        error: 'text-red-600 dark:text-red-400',
+    },
+});

@@ -1,18 +1,12 @@
 import type { Breakpoint } from '@mui/material/styles';
-import type { AppBarProps } from '@mui/material/AppBar';
-import type { ToolbarProps } from '@mui/material/Toolbar';
-import type { ContainerProps } from '@mui/material/Container';
 
-import Box from '@mui/material/Box';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Container from '@mui/material/Container';
-import { useTheme } from '@mui/material/styles';
+import { useThemeMode } from 'src/context/theme-context';
 
 import { layoutClasses } from '../classes';
 
-export type HeaderSectionProps = AppBarProps & {
+export type HeaderSectionProps = {
     layoutQuery: Breakpoint;
+    className?: string;
     slots?: {
         leftArea?: React.ReactNode;
         rightArea?: React.ReactNode;
@@ -21,84 +15,69 @@ export type HeaderSectionProps = AppBarProps & {
         bottomArea?: React.ReactNode;
     };
     slotProps?: {
-        toolbar?: ToolbarProps;
-        container?: ContainerProps;
+        toolbar?: {
+            className?: string;
+        };
+        container?: {
+            maxWidth?: boolean;
+            className?: string;
+        };
     };
 };
 
 export function HeaderSection({
-    sx,
     slots,
     slotProps,
     layoutQuery = 'md',
-    ...other
+    className = '',
 }: HeaderSectionProps) {
-    const theme = useTheme();
-
-    const toolbarStyles = {
-        default: {
-            backgroundColor: theme.palette.mode === 'dark' 
-                ? theme.palette.background.paper 
-                : theme.palette.common.white,
-            minHeight: 'auto',
-            height: 'var(--layout-header-mobile-height)',
-            transition: theme.transitions.create(['height', 'background-color'], {
-                easing: theme.transitions.easing.easeInOut,
-                duration: theme.transitions.duration.shorter,
-            }),
-            [theme.breakpoints.up('sm')]: {
-                minHeight: 'auto',
-            },
-            [theme.breakpoints.up(layoutQuery)]: {
-                height: 'var(--layout-header-desktop-height)',
-            },
-        },
-    };
+    const { mode } = useThemeMode();
 
     return (
-        <AppBar
-            position="static"
-            color="transparent"
-            className={layoutClasses.header}
-            sx={{
-                boxShadow: 'none',
-                border: 'none',
-                borderBottom: 'none',
+        <header
+            className={`
+                relative
+                ${mode === 'dark' 
+                    ? 'bg-slate-900/95 border-slate-700/50' 
+                    : 'bg-white/95 border-slate-200/50'
+                }
+                backdrop-blur-md border-b
+                transition-all duration-200 ease-in-out
+                ${layoutClasses.header}
+                ${className}
+            `}
+            style={{
                 zIndex: 'var(--layout-header-zIndex)',
-                ...sx,
             }}
-            {...other}
         >
             {slots?.topArea}
 
-            <Toolbar
-                disableGutters
-                {...slotProps?.toolbar}
-                sx={{
-                    ...toolbarStyles.default,
-                    ...slotProps?.toolbar?.sx,
-                }}
+            <div
+                className={`
+                    h-[var(--layout-header-mobile-height)]
+                    lg:h-[var(--layout-header-desktop-height)]
+                    transition-all duration-200
+                    ${slotProps?.toolbar?.className || ''}
+                `}
             >
-                <Container
-                    {...slotProps?.container}
-                    sx={{
-                        height: 1,
-                        display: 'flex',
-                        alignItems: 'center',
-                        ...slotProps?.container?.sx,
-                    }}
+                <div
+                    className={`
+                        h-full flex items-center
+                        ${slotProps?.container?.maxWidth === false ? '' : 'max-w-7xl mx-auto'}
+                        ${slotProps?.container?.className || ''}
+                    `}
                 >
                     {slots?.leftArea}
 
-                    <Box sx={{ display: 'flex', flex: '1 1 auto', justifyContent: 'center' }}>
+                    <div className="flex flex-1 justify-center">
                         {slots?.centerArea}
-                    </Box>
+                    </div>
 
                     {slots?.rightArea}
-                </Container>
-            </Toolbar>
+                </div>
+            </div>
 
             {slots?.bottomArea}
-        </AppBar>
+        </header>
     );
 }

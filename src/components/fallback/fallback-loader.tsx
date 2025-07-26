@@ -1,18 +1,9 @@
-import { Box, LinearProgress, linearProgressClasses } from '@mui/material';
-
-import { varAlpha } from 'src/theme/styles';
-
 export function FallbackLoader() {
     return (
-        <Box display="flex" alignItems="center" justifyContent="center" flex="1 1 auto">
-            <LinearProgress
-                sx={{
-                    width: 1,
-                    maxWidth: 320,
-                    bgcolor: (theme) => varAlpha('0 0 0', 0.16),
-                    [`& .${linearProgressClasses.bar}`]: { bgcolor: 'text.primary' },
-                }}
-            />
-        </Box>
+        <div className="flex items-center justify-center flex-1">
+            <div className="w-full max-w-80 h-1 bg-black/16 dark:bg-white/16 rounded-full overflow-hidden">
+                <div className="h-full bg-slate-900 dark:bg-slate-100 rounded-full animate-pulse w-1/3" />
+            </div>
+        </div>
     );
 }

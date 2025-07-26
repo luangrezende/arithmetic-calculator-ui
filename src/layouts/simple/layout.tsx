@@ -1,7 +1,3 @@
-import type { Theme, SxProps, Breakpoint } from '@mui/material/styles';
-
-import Alert from '@mui/material/Alert';
-
 import { Logo } from 'src/components/logo';
 
 import { Main, CompactContent } from './main';
@@ -9,31 +5,31 @@ import { LayoutSection } from '../core/layout-section';
 import { HeaderSection } from '../core/header-section';
 
 export type SimpleLayoutProps = {
-    sx?: SxProps<Theme>;
+    className?: string;
     children: React.ReactNode;
     header?: {
-        sx?: SxProps<Theme>;
+        className?: string;
     };
     content?: {
         compact?: boolean;
     };
 };
 
-export function SimpleLayout({ sx, children, header, content }: SimpleLayoutProps) {
-    const layoutQuery: Breakpoint = 'md';
-
+export function SimpleLayout({ className, children, header, content }: SimpleLayoutProps) {
     return (
         <LayoutSection
             headerSection={
                 <HeaderSection
-                    layoutQuery={layoutQuery}
+                    layoutQuery="md"
                     slotProps={{ container: { maxWidth: false } }}
-                    sx={header?.sx}
+                    className={header?.className}
                     slots={{
                         topArea: (
-                            <Alert severity="info" sx={{ display: 'none', borderRadius: 0 }}>
-                                This is an info Alert.
-                            </Alert>
+                            <div className="hidden bg-blue-50 dark:bg-blue-900/30 border-b border-blue-200 dark:border-blue-800 px-4 py-2">
+                                <div className="text-sm text-blue-700 dark:text-blue-300">
+                                    This is an info Alert.
+                                </div>
+                            </div>
                         ),
                         leftArea: <Logo />,
                     }}
@@ -43,11 +39,10 @@ export function SimpleLayout({ sx, children, header, content }: SimpleLayoutProp
             cssVars={{
                 '--layout-simple-content-compact-width': '448px',
             }}
-            sx={sx}
         >
             <Main>
                 {content?.compact ? (
-                    <CompactContent layoutQuery={layoutQuery}>{children}</CompactContent>
+                    <CompactContent layoutQuery="md">{children}</CompactContent>
                 ) : (
                     children
                 )}

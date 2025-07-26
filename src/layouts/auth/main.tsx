@@ -1,54 +1,30 @@
-import type { BoxProps } from '@mui/material/Box';
-import type { Breakpoint } from '@mui/material/styles';
-
-import Box from '@mui/material/Box';
-import { useTheme } from '@mui/material/styles';
-
 import { layoutClasses } from 'src/layouts/classes';
 
-type MainProps = BoxProps & {
-    layoutQuery: Breakpoint;
-};
+interface MainProps {
+    children: React.ReactNode;
+    className?: string;
+    layoutQuery: 'sm' | 'md' | 'lg' | 'xl';
+}
 
-export function Main({ sx, children, layoutQuery, ...other }: MainProps) {
-    const theme = useTheme();
+export function Main({ children, className, layoutQuery }: MainProps) {
+    const queryClass = {
+        sm: 'sm:justify-center sm:p-0 sm:py-10',
+        md: 'md:justify-center md:p-0 md:py-10', 
+        lg: 'lg:justify-center lg:p-0 lg:py-10',
+        xl: 'xl:justify-center xl:p-0 xl:py-10',
+    }[layoutQuery];
 
     const renderContent = (
-        <Box
-            sx={{
-                py: 5,
-                px: 3,
-                width: 1,
-                borderRadius: 2,
-                display: 'flex',
-                flexDirection: 'column',
-                bgcolor: 'background.default',
-                maxWidth: 'var(--layout-auth-content-width)',
-            }}
-        >
+        <div className="py-10 px-6 w-full rounded-xl flex flex-col bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm max-w-md">
             {children}
-        </Box>
+        </div>
     );
 
     return (
-        <Box
-            component="main"
-            className={layoutClasses.main}
-            sx={{
-                display: 'flex',
-                flex: '1 1 auto',
-                alignItems: 'center',
-                flexDirection: 'column',
-                p: theme.spacing(3, 2, 10, 2),
-                [theme.breakpoints.up(layoutQuery)]: {
-                    justifyContent: 'center',
-                    p: theme.spacing(10, 0, 10, 0),
-                },
-                ...sx,
-            }}
-            {...other}
+        <main
+            className={`${layoutClasses.main} flex flex-1 items-center flex-col p-6 pb-20 ${queryClass} ${className}`}
         >
             {renderContent}
-        </Box>
+        </main>
     );
 }

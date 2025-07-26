@@ -13,6 +13,12 @@ export default {
     'ring-primary-500', 'focus:ring-primary-500',
     'shadow-primary-glow', 'shadow-button', 'shadow-button-hover',
     'min-h-9', 'min-h-12', 'min-h-14',
+    // Grid classes for responsive grids
+    'grid-cols-1', 'grid-cols-2', 'grid-cols-3',
+    'sm:grid-cols-1', 'sm:grid-cols-2', 'sm:grid-cols-3',
+    'md:grid-cols-1', 'md:grid-cols-2', 'md:grid-cols-3',
+    'lg:grid-cols-1', 'lg:grid-cols-2', 'lg:grid-cols-3',
+    'xl:grid-cols-1', 'xl:grid-cols-2', 'xl:grid-cols-3',
   ],
   theme: {
     extend: {
@@ -133,6 +139,8 @@ export default {
         'fade-in': 'fadeIn 0.5s ease-in-out',
         'slide-up': 'slideUp 0.3s ease-out',
         'bounce-subtle': 'bounceSubtle 2s infinite',
+        'breathe': 'breathe 3s ease-in-out infinite',
+        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       keyframes: {
         fadeIn: {
@@ -147,11 +155,16 @@ export default {
           '0%, 100%': { transform: 'translateY(-2%)' },
           '50%': { transform: 'translateY(0)' },
         },
+        breathe: {
+          '0%, 100%': { transform: 'scale(1)', opacity: '1' },
+          '50%': { transform: 'scale(1.02)', opacity: '0.95' },
+        }
       }
     },
   },
   plugins: [
     require('@tailwindcss/forms'),
     require('@tailwindcss/typography'),
+    require('tailwindcss-animate'),
   ],
 }

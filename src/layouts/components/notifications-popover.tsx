@@ -47,9 +47,26 @@ export function NotificationsPopover() {
 
     return (
         <>
-            <IconButton color={openPopover ? 'primary' : 'default'} onClick={handleOpenPopover}>
+            <IconButton 
+                onClick={handleOpenPopover}
+                sx={{
+                    '&:hover': {
+                        backgroundColor: 'action.hover',
+                    },
+                }}
+                className={`${openPopover 
+                    ? 'text-primary-600 dark:text-primary-400' 
+                    : 'text-gray-700 dark:text-gray-300'
+                } transition-colors`}
+            >
                 <Badge badgeContent={totalUnRead} color="error">
-                    <Iconify width={24} icon="solar:bell-bing-bold-duotone" />
+                    <Iconify 
+                        icon="solar:bell-bing-bold"
+                        width={24}
+                        sx={{
+                            color: 'inherit',
+                        }}
+                    />
                 </Badge>
             </IconButton>
 
@@ -66,6 +83,10 @@ export function NotificationsPopover() {
                             overflow: 'hidden',
                             display: 'flex',
                             flexDirection: 'column',
+                            bgcolor: 'background.paper',
+                            border: '1px solid',
+                            borderColor: 'divider',
+                            boxShadow: (theme) => theme.customShadows?.z20 || '0 20px 40px -4px rgba(0, 0, 0, 0.1)',
                         },
                     },
                 }}
@@ -145,6 +166,31 @@ function NotificationItem({ notification }: { notification: OperationNotificatio
         }
     };
 
+    const getOperationIcon = (operation: string) => {
+        if (operation.toLowerCase().includes('addition')) {
+            return { icon: 'solar:add-circle-outline', color: 'success.main' };
+        }
+        if (operation.toLowerCase().includes('subtraction')) {
+            return { icon: 'solar:minus-circle-outline', color: 'warning.main' };
+        }
+        if (operation.toLowerCase().includes('multiplication')) {
+            return { icon: 'solar:close-circle-outline', color: 'info.main' };
+        }
+        if (operation.toLowerCase().includes('division')) {
+            return { icon: 'solar:divide-outline', color: 'secondary.main' };
+        }
+        if (operation.toLowerCase().includes('square')) {
+            return { icon: 'solar:calculator-outline', color: 'primary.main' };
+        }
+        if (operation.toLowerCase().includes('random')) {
+            return { icon: 'solar:shuffle-outline', color: 'purple' };
+        }
+        // Default for arithmetic operations
+        return { icon: 'solar:calculator-minimalistic-outline', color: 'primary.main' };
+    };
+
+    const { icon, color } = getOperationIcon(notification.operation);
+
     return (
         <ListItemButton
             onClick={handleClick}
@@ -159,18 +205,31 @@ function NotificationItem({ notification }: { notification: OperationNotificatio
         >
             <ListItemAvatar>
                 <Avatar sx={{ 
-                    bgcolor: 'error.main',
-                    color: 'error.contrastText'
+                    bgcolor: color,
+                    color: 'white',
+                    width: 40,
+                    height: 40
                 }}>
-                    <Iconify icon="solar:wallet-money-outline" width={20} />
+                    <Iconify icon={icon} width={20} />
                 </Avatar>
             </ListItemAvatar>
             <ListItemText
-                primary={`Operation: ${notification.operation}`}
+                primary={
+                    <div className="flex items-center gap-2">
+                        <span>{`Operation: ${notification.operation}`}</span>
+                        {notification.isUnRead && (
+                            <div className="w-2 h-2 bg-primary-500 rounded-full" />
+                        )}
+                    </div>
+                }
                 secondary={
-                    <>
-                        {`Cost: ${fCurrency(notification.amount)} • ${fToNow(notification.createdAt)}`}
-                    </>
+                    <div className="flex items-center gap-1 mt-1">
+                        <Iconify icon="solar:wallet-money-outline" width={14} />
+                        <span>{`Cost: ${fCurrency(notification.amount)}`}</span>
+                        <span className="mx-1">•</span>
+                        <Iconify icon="solar:clock-circle-outline" width={14} />
+                        <span>{fToNow(notification.createdAt)}</span>
+                    </div>
                 }
                 primaryTypographyProps={{
                     variant: 'subtitle2',
@@ -180,12 +239,6 @@ function NotificationItem({ notification }: { notification: OperationNotificatio
                     variant: 'body2',
                     color: 'text.secondary',
                     component: 'div',
-                    sx: { 
-                        mt: 0.5,
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 0.5
-                    }
                 }}
             />
         </ListItemButton>

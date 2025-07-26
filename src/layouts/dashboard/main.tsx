@@ -1,73 +1,49 @@
-import type { BoxProps } from '@mui/material/Box';
-import type { Breakpoint } from '@mui/material/styles';
-import type { ContainerProps } from '@mui/material/Container';
-
-import Box from '@mui/material/Box';
-import { useTheme } from '@mui/material/styles';
-import Container from '@mui/material/Container';
-
 import { layoutClasses } from 'src/layouts/classes';
 
-export function Main({ children, sx, ...other }: BoxProps) {
+interface MainProps {
+    children: React.ReactNode;
+    className?: string;
+}
+
+interface DashboardContentProps {
+    children: React.ReactNode;
+    className?: string;
+    disablePadding?: boolean;
+    maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | false;
+}
+
+export function Main({ children, className }: MainProps) {
     return (
-        <Box
-            component="main"
-            className={layoutClasses.main}
-            sx={{
-                display: 'flex',
-                flex: '1 1 auto',
-                flexDirection: 'column',
-                ...sx,
-            }}
-            {...other}
+        <main
+            className={`${layoutClasses.main} flex flex-1 flex-col ${className}`}
         >
             {children}
-        </Box>
+        </main>
     );
 }
 
-type DashboardContentProps = ContainerProps & {
-    disablePadding?: boolean;
-};
-
 export function DashboardContent({
-    sx,
     children,
+    className,
     disablePadding,
     maxWidth = 'xl',
-    ...other
 }: DashboardContentProps) {
-    const theme = useTheme();
+    const maxWidthClass = maxWidth ? {
+        sm: 'max-w-3xl',
+        md: 'max-w-5xl',
+        lg: 'max-w-7xl',
+        xl: 'max-w-screen-xl',
+    }[maxWidth] : '';
 
-    const layoutQuery: Breakpoint = 'lg';
+    const paddingClass = disablePadding 
+        ? 'p-0' 
+        : 'pt-8 pb-[--layout-dashboard-content-pb] lg:px-[--layout-dashboard-content-px]';
 
     return (
-        <Container
-            className={layoutClasses.content}
-            maxWidth={maxWidth || false}
-            sx={{
-                display: 'flex',
-                flex: '1 1 auto',
-                flexDirection: 'column',
-                pt: 'var(--layout-dashboard-content-pt)',
-                pb: 'var(--layout-dashboard-content-pb)',
-                [theme.breakpoints.up(layoutQuery)]: {
-                    px: 'var(--layout-dashboard-content-px)',
-                },
-                ...(disablePadding && {
-                    p: {
-                        xs: 0,
-                        sm: 0,
-                        md: 0,
-                        lg: 0,
-                        xl: 0,
-                    },
-                }),
-                ...sx,
-            }}
-            {...other}
+        <div
+            className={`${layoutClasses.content} ${maxWidthClass} mx-auto flex flex-1 flex-col w-full ${paddingClass} ${className || ''}`}
         >
             {children}
-        </Container>
+        </div>
     );
 }

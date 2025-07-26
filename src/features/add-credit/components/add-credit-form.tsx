@@ -10,8 +10,6 @@ import { getUserProfile } from 'src/services/api/auth-service';
 import { ModernInput } from 'src/components/modern-input';
 import { ModernButton } from 'src/components/modern-button';
 
-import { CardDetails } from './card-details';
-
 import type { AddCreditFormProps } from '../types/add-credit.types';
 
 export function AddCreditForm({ onClose, onOpenSnackBar }: AddCreditFormProps) {
@@ -58,7 +56,6 @@ export function AddCreditForm({ onClose, onOpenSnackBar }: AddCreditFormProps) {
 
     return (
         <Box>
-            <CardDetails />
             <ModernInput
                 name="amount"
                 label="Amount"

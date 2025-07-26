@@ -2,16 +2,14 @@ import type { ReactNode } from 'react';
 
 import { useMemo, useState, useEffect, useContext, useCallback, createContext } from 'react';
 
-import { CssBaseline } from '@mui/material';
-import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
-
-import { varAlpha } from 'src/theme/styles';
+import { useAuthRoute } from 'src/hooks/use-auth-route';
 
 type ThemeMode = 'light' | 'dark';
 
 interface ThemeContextType {
     mode: ThemeMode;
     toggleTheme: () => void;
+    isAuthRoute: boolean;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -30,156 +28,54 @@ interface ThemeProviderProps {
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
     const [mode, setMode] = useState<ThemeMode>('light');
+    const isAuthRoute = useAuthRoute();
+
+    const effectiveMode = isAuthRoute ? 'light' : mode;
 
     useEffect(() => {
-        const savedTheme = localStorage.getItem('theme-mode') as ThemeMode;
-        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (!isAuthRoute) {
+            const savedTheme = localStorage.getItem('theme-mode') as ThemeMode;
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme) {
+                setMode(savedTheme);
+            } else if (systemPrefersDark) {
+                setMode('dark');
+            }
+        }
+    }, [isAuthRoute]);
+
+    useEffect(() => {
+        const documentElement = document.documentElement;
         
-        if (savedTheme) {
-            setMode(savedTheme);
-        } else if (systemPrefersDark) {
-            setMode('dark');
-        }
-    }, []);
-
-    useEffect(() => {
-        if (mode === 'dark') {
-            document.documentElement.classList.add('dark');
+        if (effectiveMode === 'dark') {
+            documentElement.classList.add('dark');
+            documentElement.style.setProperty('color-scheme', 'dark');
         } else {
-            document.documentElement.classList.remove('dark');
+            documentElement.classList.remove('dark');
+            documentElement.style.setProperty('color-scheme', 'light');
         }
-    }, [mode]);
+    }, [effectiveMode]);
 
     const toggleTheme = useCallback(() => {
+        if (isAuthRoute) return;
+        
         const newMode = mode === 'light' ? 'dark' : 'light';
         setMode(newMode);
         localStorage.setItem('theme-mode', newMode);
-    }, [mode]);
+    }, [mode, isAuthRoute]);
 
-    const theme = createTheme({
-        palette: {
-            mode,
-            ...(mode === 'light'
-                ? {
-                    // Light theme
-                    primary: {
-                        main: '#2563EB',
-                        light: '#6BB6FF',
-                        dark: '#1E40AF',
-                    },
-                    secondary: {
-                        main: '#7C3AED',
-                        light: '#A78BFA',
-                        dark: '#5B21B6',
-                    },
-                    success: {
-                        main: '#10B981',
-                        light: '#6EE7B7',
-                        dark: '#059669',
-                    },
-                    info: {
-                        main: '#10B981',
-                        light: '#6EE7B7',
-                        dark: '#059669',
-                    },
-                    warning: {
-                        main: '#F59E0B',
-                        light: '#FCD34D',
-                        dark: '#D97706',
-                    },
-                    error: {
-                        main: '#EF4444',
-                        light: '#FCA5A5',
-                        dark: '#DC2626',
-                    },
-                    background: {
-                        default: '#FFFFFF',
-                        paper: '#FFFFFF',
-                    },
-                    text: {
-                        primary: '#1E293B',
-                        secondary: '#64748B',
-                    },
-                }
-                : {
-                    // Dark theme
-                    primary: {
-                        main: '#6BB6FF',
-                        light: '#93C5FD',
-                        dark: '#2563EB',
-                    },
-                    secondary: {
-                        main: '#A78BFA',
-                        light: '#C4B5FD',
-                        dark: '#7C3AED',
-                    },
-                    success: {
-                        main: '#34D399',
-                        light: '#6EE7B7',
-                        dark: '#10B981',
-                    },
-                    info: {
-                        main: '#34D399',
-                        light: '#6EE7B7',
-                        dark: '#10B981',
-                    },
-                    warning: {
-                        main: '#FBBF24',
-                        light: '#FDE68A',
-                        dark: '#F59E0B',
-                    },
-                    error: {
-                        main: '#F87171',
-                        light: '#FCA5A5',
-                        dark: '#EF4444',
-                    },
-                    background: {
-                        default: '#0F172A',
-                        paper: '#1E293B',
-                    },
-                    text: {
-                        primary: '#F1F5F9',
-                        secondary: '#94A3B8',
-                    },
-                }),
-        },
-        shape: {
-            borderRadius: 12,
-        },
-        components: {
-            MuiCssBaseline: {
-                styleOverrides: {
-                    body: {
-                        background: mode === 'dark' 
-                            ? `linear-gradient(135deg, ${varAlpha('15 23 42', 0.95)} 0%, ${varAlpha('30 41 59', 0.8)} 100%)`
-                            : `linear-gradient(135deg, ${varAlpha('248 250 252', 0.8)} 0%, ${varAlpha('241 245 249', 0.6)} 100%)`,
-                        minHeight: '100vh',
-                    },
-                },
-            },
-            MuiPaper: {
-                styleOverrides: {
-                    root: {
-                        backgroundColor: mode === 'dark' 
-                            ? varAlpha('30 41 59', 0.8)
-                            : varAlpha('255 255 255', 0.8),
-                        backdropFilter: 'blur(10px)',
-                        borderRadius: 12,
-                        border: 'none',
-                    },
-                },
-            },
-        },
-    });
-
-    const contextValue = useMemo(() => ({ mode, toggleTheme }), [mode, toggleTheme]);
+    const contextValue = useMemo(() => ({ 
+        mode: effectiveMode, 
+        toggleTheme, 
+        isAuthRoute 
+    }), [effectiveMode, toggleTheme, isAuthRoute]);
 
     return (
         <ThemeContext.Provider value={contextValue}>
-            <MuiThemeProvider theme={theme}>
-                <CssBaseline />
+            <div className="min-h-screen bg-gradient-to-br from-slate-50/80 to-slate-100/60 dark:from-slate-900/95 dark:to-slate-800/80">
                 {children}
-            </MuiThemeProvider>
+            </div>
         </ThemeContext.Provider>
     );
 }

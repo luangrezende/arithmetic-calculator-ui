@@ -7,6 +7,7 @@ import App from './app';
 import { AuthProvider } from './context/auth-context';
 import { ThemeProvider } from './context/theme-context';
 import { BalanceProvider } from './context/balance-context';
+import { ToastProvider } from './contexts/toast-context';
 import { NotificationsProvider } from './context/notifications-context';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
@@ -18,11 +19,13 @@ root.render(
                 <BrowserRouter>
                     <Suspense>
                         <ThemeProvider>
-                            <NotificationsProvider>
-                                <BalanceProvider>
-                                    <App />
-                                </BalanceProvider>
-                            </NotificationsProvider>
+                            <ToastProvider>
+                                <NotificationsProvider>
+                                    <BalanceProvider>
+                                        <App />
+                                    </BalanceProvider>
+                                </NotificationsProvider>
+                            </ToastProvider>
                         </ThemeProvider>
                     </Suspense>
                 </BrowserRouter>

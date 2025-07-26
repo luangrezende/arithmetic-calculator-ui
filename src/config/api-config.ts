@@ -2,9 +2,6 @@
 export const USER_API_URL = import.meta.env.VITE_USER_API_URL || 'http://localhost:3001/v1/user';
 export const OPERATIONS_API_URL = import.meta.env.VITE_OPERATIONS_API_URL || 'http://localhost:3002/v1/operations';
 
-// API Environment
-export const API_ENVIRONMENT = import.meta.env.VITE_API_ENVIRONMENT || 'development';
-
 export const AUTH_ENDPOINTS = {
     LOGIN: '/auth/login',
     LOGOUT: '/auth/logout',

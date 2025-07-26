@@ -1,4 +1,3 @@
-import type { TypographyStyle } from '@mui/material/styles';
 
 import { setFont, pxToRem, responsiveFontSizes } from '../styles/utils';
 

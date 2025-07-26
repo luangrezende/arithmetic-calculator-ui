@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { CONFIG } from 'src/config-global';
 
-import { ModernButton } from 'src/components/modern-button';
 import { ModernCard } from 'src/components/modern-card';
+import { ModernButton } from 'src/components/modern-button';
 
 export default function NotFoundPage() {
     const navigate = useNavigate();

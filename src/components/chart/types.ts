@@ -10,19 +10,4 @@ export type ChartProps = {
     sx?: SxProps<Theme>;
 };
 
-export type ChartBaseProps = Props;
-
 export type ChartOptions = Props['options'];
-
-export type ChartLegendProps = {
-    labels?: string[];
-    colors?: string[];
-    values?: string[];
-    sublabels?: string[];
-    icons?: React.ReactNode[];
-};
-
-export type ChartLoadingProps = {
-    disabled?: boolean;
-    sx?: SxProps<Theme>;
-};

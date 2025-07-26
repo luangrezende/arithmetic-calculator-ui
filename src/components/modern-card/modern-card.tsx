@@ -1,5 +1,7 @@
 import type { HTMLAttributes } from 'react';
+
 import { forwardRef } from 'react';
+
 import { cn } from 'src/utils/cn';
 
 export interface ModernCardProps extends HTMLAttributes<HTMLDivElement> {

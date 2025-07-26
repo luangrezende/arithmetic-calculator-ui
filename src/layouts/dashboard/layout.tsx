@@ -9,14 +9,13 @@ import Typography from '@mui/material/Typography';
 
 import { formatCurrency } from 'src/utils/format-number';
 
-import { _notifications } from 'src/_mock';
 import { AddCreditModal } from 'src/features/add-credit';
 import { useBalance } from 'src/context/balance-context';
 import { useAuthContext } from 'src/context/auth-context';
 
+import { ThemeToggle } from 'src/components/theme-toggle';
 import { AlertSnackbar } from 'src/components/alert-snackbar';
 import { NavMobile, NavDesktop } from 'src/components/navigation';
-import { ThemeToggle } from 'src/components/theme-toggle';
 
 import { Main } from './main';
 import { layoutClasses } from '../classes';

@@ -1,7 +1,9 @@
-import IconButton from '@mui/material/IconButton';
 import { useTheme } from '@mui/material/styles';
-import { Iconify } from 'src/components/iconify';
+import IconButton from '@mui/material/IconButton';
+
 import { useThemeMode } from 'src/context/theme-context';
+
+import { Iconify } from 'src/components/iconify';
 
 export function ThemeToggle() {
     const theme = useTheme();

@@ -3,9 +3,10 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
 import { RouterLink } from 'src/routes/components';
-import { ModernButton } from 'src/components/modern-button';
 
 import { SimpleLayout } from 'src/layouts/simple';
+
+import { ModernButton } from 'src/components/modern-button';
 
 export function NotFoundView() {
     return (

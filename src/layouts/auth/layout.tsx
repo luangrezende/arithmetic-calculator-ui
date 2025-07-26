@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+
 import { Logo } from 'src/components/logo';
 
 export type AuthLayoutProps = {

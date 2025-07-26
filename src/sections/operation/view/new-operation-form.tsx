@@ -1,12 +1,12 @@
 import { useState } from 'react';
 
 import { useBalance } from 'src/context/balance-context';
-import { useNotifications } from 'src/context/notifications-context';
 import { getUserProfile } from 'src/services/api/auth-service';
+import { useNotifications } from 'src/context/notifications-context';
 import { addOperationRecord } from 'src/services/api/operation-service';
 
-import { ModernButton } from 'src/components/modern-button';
 import { ModernInput } from 'src/components/modern-input';
+import { ModernButton } from 'src/components/modern-button';
 
 interface NewOperationFormProps {
     onClose: () => void;

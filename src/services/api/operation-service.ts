@@ -52,28 +52,6 @@ export const getDashboardData = async (): Promise<any> => {
     }
 };
 
-export const getOperationTypes = async (): Promise<any> => {
-    try {
-        const token = localStorage.getItem('token');
-        if (!token) throw new Error('Token not found. Please log in again.');
-
-        const response = await axiosInstance.get(
-            `${OPERATIONS_API_URL}${OPERATIONS_ENDPOINTS.TYPES}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-                validateStatus: (status) => status >= 200 && status < 300,
-            }
-        );
-
-        return response.data;
-    } catch (error: any) {
-        console.error('Error getting operation:', error);
-        throw error.response?.data || 'An error occurred while getting operation.';
-    }
-};
-
 export const deleteOperationRecords = async (ids: string[]): Promise<void> => {
     try {
         const token = localStorage.getItem('token');

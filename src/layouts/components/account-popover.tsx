@@ -1,7 +1,6 @@
 import type { IconButtonProps } from '@mui/material/IconButton';
 
 import { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -10,9 +9,6 @@ import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import CircularProgress from '@mui/material/CircularProgress';
-import { MenuItem, MenuList, menuItemClasses } from '@mui/material';
-
-import { ModernButton } from 'src/components/modern-button';
 
 import { useLocalUser } from 'src/hooks/use-local-user';
 
@@ -20,9 +16,10 @@ import { logout } from 'src/utils/auth-manager';
 
 import { logoutUser } from 'src/services/api/auth-service';
 
+import { ModernButton } from 'src/components/modern-button';
+
 export function AccountPopover({ sx, ...other }: IconButtonProps) {
     const user = useLocalUser();
-    const navigate = useNavigate();
     const [photoUrl] = useState('');
     const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
     const [loading, setLoading] = useState(false);

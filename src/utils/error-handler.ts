@@ -1,5 +1,5 @@
-import { sessionManager } from "src/utils/session-manager";
 import { logout } from "src/utils/auth-manager";
+import { sessionManager } from "src/utils/session-manager";
 
 interface ApiError {
     response?: {

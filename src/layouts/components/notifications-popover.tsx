@@ -1,4 +1,5 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
+
 import { useRouter } from 'src/routes/hooks';
 
 import { useCurrency } from 'src/hooks/use-currency';
@@ -80,7 +81,7 @@ export function NotificationsPopover() {
                 <button
                     type="button"
                     onClick={handleOpenPopover}
-                    className="relative w-10 h-10 xl:w-11 xl:h-11 flex items-center justify-center rounded-full bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm shadow-sm transition-all duration-200 ease-out sm:hover:scale-105 active:scale-95 sm:hover:bg-slate-200 sm:dark:hover:bg-slate-800 sm:hover:shadow-md focus:outline-none focus:ring-0 active:outline-none active:ring-0 select-none"
+                    className="relative w-10 h-10 xl:w-11 xl:h-11 flex items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800/95 backdrop-blur-sm shadow-sm transition-all duration-200 ease-out active:scale-95 sm:hover:scale-105 sm:hover:bg-slate-100 sm:dark:hover:bg-slate-800 sm:hover:shadow-md focus:outline-none focus:ring-0 active:outline-none active:ring-0 select-none"
                 >
                     <Iconify 
                         icon="solar:letter-unread-bold"
@@ -102,7 +103,11 @@ export function NotificationsPopover() {
 
             {openPopover && (
                 <div 
-                    className="absolute right-0 top-full mt-2 w-72 bg-white dark:bg-slate-800 backdrop-blur-xl backdrop-saturate-150 rounded-xl shadow-xl z-50 overflow-hidden animate-in slide-in-from-top-2 fade-in-0 duration-200 ease-out"
+                    className="absolute right-0 top-full mt-2 w-72 bg-white dark:bg-slate-800 backdrop-blur-xl backdrop-saturate-150 rounded-xl shadow-xl z-50 overflow-hidden"
+                    style={{ 
+                        animation: 'fadeSlideIn 0.3s ease-out forwards',
+                        opacity: 0 
+                    }}
                     role="dialog"
                     aria-modal="true"
                     aria-labelledby="notifications-title"

@@ -1,12 +1,11 @@
 import type { ReactNode } from 'react';
+import type { ThemeMode } from 'src/utils/theme-manager';
 
 import { useMemo, useState, useEffect, useContext, useCallback, createContext } from 'react';
 
 import { useAuthRoute } from 'src/hooks/use-auth-route';
 
 import { themeManager } from 'src/utils/theme-manager';
-
-import type { ThemeMode } from 'src/utils/theme-manager';
 
 interface ThemeContextType {
     mode: ThemeMode;

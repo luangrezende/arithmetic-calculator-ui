@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { sessionManager } from 'src/utils/session-manager';
+
 import { useToast } from 'src/contexts/toast-context';
 
 export const useSessionManager = () => {

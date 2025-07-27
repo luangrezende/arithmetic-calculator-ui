@@ -1,8 +1,8 @@
 import axios from "axios";
 
-import { logout, getTokens, saveTokens } from "src/utils/auth-manager";
 import { sessionManager } from "src/utils/session-manager";
 import { requiresAuthentication } from "src/utils/auth-helpers";
+import { logout, getTokens, saveTokens } from "src/utils/auth-manager";
 
 import { USER_API_URL, AUTH_ENDPOINTS } from "src/config/api-config";
 

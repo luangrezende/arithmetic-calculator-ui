@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 
 import { formatCurrencyWithSymbol } from 'src/utils/format-number';
 
-import { ModernButton } from 'src/components/modern-button';
-import { ModernInput } from 'src/components/modern-input';
 import { Tooltip } from 'src/components/tooltip';
+import { ModernInput } from 'src/components/modern-input';
+import { ModernButton } from 'src/components/modern-button';
 
 interface BalancePopoverProps {
     balance?: number | null;
@@ -79,7 +79,7 @@ export function BalancePopover({
             <Tooltip content="Current Balance - Click to add credit" side="bottom" align="center">
                 <button
                     type="button"
-                    className="px-2 sm:px-3 h-9 sm:h-10 xl:h-11 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 backdrop-blur-sm shadow-sm transition-all duration-200 ease-out sm:hover:scale-105 active:scale-95 sm:hover:bg-emerald-100 sm:dark:hover:bg-emerald-900/50 sm:hover:shadow-md focus:outline-none focus:ring-0 active:outline-none active:ring-0 select-none"
+                    className="px-2 sm:px-3 h-9 sm:h-10 xl:h-11 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 backdrop-blur-sm shadow-sm transition-all duration-200 ease-out active:scale-95 sm:hover:scale-105 sm:hover:bg-emerald-100 sm:dark:hover:bg-emerald-900/50 sm:hover:shadow-md focus:outline-none focus:ring-0 active:outline-none active:ring-0 select-none"
                     onClick={handleOpenPopover}
                     disabled={!isBalanceLoaded}
                     aria-label="Add credit"
@@ -115,7 +115,8 @@ export function BalancePopover({
 
             {openPopover && (
                 <div 
-                    className="absolute left-1/2 transform -translate-x-2/3 sm:left-auto sm:right-0 sm:transform-none top-full mt-2 w-80 max-w-[calc(100vw-1rem)] sm:max-w-[calc(100vw-2rem)] bg-white dark:bg-slate-800 backdrop-blur-xl backdrop-saturate-150 rounded-xl shadow-xl z-50 overflow-hidden animate-in slide-in-from-top-2 fade-in-0 duration-200 ease-out"
+                    className="absolute left-1/2 transform -translate-x-2/3 sm:left-auto sm:right-0 sm:transform-none top-full mt-2 w-80 max-w-[calc(100vw-1rem)] sm:max-w-[calc(100vw-2rem)] bg-white dark:bg-slate-800 backdrop-blur-xl backdrop-saturate-150 rounded-xl shadow-xl z-50 overflow-hidden balance-popover"
+                    style={{ opacity: 0 }}
                     role="dialog"
                     aria-modal="true"
                     aria-labelledby="balance-title"
@@ -124,9 +125,6 @@ export function BalancePopover({
                         <h3 id="balance-title" className="font-medium text-slate-900 dark:text-slate-100">
                             Add Credit
                         </h3>
-                        <p className="text-sm text-slate-600 dark:text-slate-400">
-                            Current balance: {formatCurrencyWithSymbol(balance?.toFixed(2).toString() || '0', currency || 'USD').currency} {formatCurrencyWithSymbol(balance?.toFixed(2).toString() || '0', currency || 'USD').value}
-                        </p>
                     </div>
 
                     <div className="p-4 space-y-4">

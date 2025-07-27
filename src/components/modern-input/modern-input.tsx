@@ -8,7 +8,7 @@ export interface ModernInputProps extends InputHTMLAttributes<HTMLInputElement> 
     label?: string;
     error?: string;
     rounded?: boolean;
-    variant?: 'default' | 'filled' | 'ghost';
+    variant?: 'default' | 'filled' | 'ghost' | 'search';
     inputSize?: 'sm' | 'md' | 'lg';
     startIcon?: React.ReactNode;
     endIcon?: React.ReactNode;
@@ -53,13 +53,16 @@ const ModernInput = forwardRef<HTMLInputElement, ModernInputProps>(
 
         const variantClasses = {
             default: [
-                'bg-white dark:bg-slate-600 text-gray-900 dark:text-white'
+                'bg-slate-100 dark:bg-slate-600 text-gray-900 dark:text-white'
             ],
             filled: [
-                'bg-gray-50 dark:bg-slate-700 focus:bg-white dark:focus:bg-slate-800 text-gray-900 dark:text-white'
+                'bg-slate-100 dark:bg-slate-700 focus:bg-white dark:focus:bg-slate-800 text-gray-900 dark:text-white'
             ],
             ghost: [
-                'bg-transparent focus:bg-white dark:focus:bg-slate-800 text-gray-900 dark:text-white'
+                'bg-transparent focus:bg-slate-100 dark:focus:bg-slate-800 text-gray-900 dark:text-white'
+            ],
+            search: [
+                'bg-slate-200 dark:bg-slate-600 text-gray-900 dark:text-white focus:bg-slate-100 dark:focus:bg-slate-500'
             ]
         };
 

@@ -32,7 +32,7 @@ const ModernCard = forwardRef<HTMLDivElement, ModernCardProps>(
         };
 
         const hoverClasses = hoverable ? [
-            'hover:shadow-lg hover:-translate-y-1 cursor-pointer',
+            'sm:hover:shadow-lg sm:hover:-translate-y-1 cursor-pointer',
         ] : [];
 
         return (

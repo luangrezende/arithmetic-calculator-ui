@@ -70,7 +70,7 @@ export function ModernDrawer({ open, onClose, children, className = '' }: Modern
             
             <div
                 className={`
-                    fixed top-0 left-0 h-full w-64 max-w-[85vw]
+                    fixed top-0 left-0 h-full w-80 max-w-[85vw]
                     z-[1300] overflow-y-auto overflow-x-hidden
                     pt-6 px-4
                     bg-white dark:bg-slate-700 text-gray-900 dark:text-white

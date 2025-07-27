@@ -8,6 +8,7 @@ import { cn } from 'src/utils/cn';
 import { formatDate } from 'src/utils/format-time';
 import { formatCurrencyWithSymbol } from 'src/utils/format-number';
 
+import { UI_HEIGHTS } from 'src/theme/constants';
 import { useToast } from 'src/contexts/toast-context';
 import { DashboardContent } from 'src/layouts/dashboard';
 import {
@@ -19,8 +20,6 @@ import { Iconify } from 'src/components/iconify';
 import { ModernCard } from 'src/components/modern-card';
 import { ModernInput } from 'src/components/modern-input';
 import { ModernButton } from 'src/components/modern-button';
-import { FallbackLoader } from 'src/components/fallback/fallback-loader';
-import { UI_HEIGHTS } from 'src/theme/constants';
 
 import { NewOperationForm } from './new-operation-form';
 
@@ -158,27 +157,15 @@ export function OperationView() {
         });
     }, [operations, order, orderBy]);
 
-    // Helper function to get operation icon (same as notifications)
-    const getOperationIcon = (operation: string) => {
-        if (operation === 'addition') {
-            return 'solar:add-circle-outline';
+    // Helper function to get operation color dot
+    const getOperationDot = (operation: string) => {
+        if (operation === 'Random String' || operation === 'random_string') {
+            return 'bg-slate-400 dark:bg-slate-500';
         }
-        if (operation === 'subtraction') {
-            return 'solar:minus-circle-outline';
+        if (operation === 'Arithmetic Operation' || operation.includes('arithmetic') || operation.includes('addition') || operation.includes('subtraction') || operation.includes('multiplication') || operation.includes('division') || operation.includes('square_root')) {
+            return 'bg-blue-500 dark:bg-blue-400';
         }
-        if (operation === 'multiplication') {
-            return 'solar:close-circle-outline';
-        }
-        if (operation === 'division') {
-            return 'solar:divide-outline';
-        }
-        if (operation === 'square_root') {
-            return 'solar:calculator-outline';
-        }
-        if (operation === 'random_string') {
-            return 'solar:shuffle-outline';
-        }
-        return 'solar:calculator-minimalistic-outline';
+        return 'bg-blue-500 dark:bg-blue-400'; // default para arithmetic
     };
 
     const totalPages = Math.ceil(totalRecords / rowsPerPage);
@@ -199,7 +186,8 @@ export function OperationView() {
                             placeholder="Search operations..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full"
+                            className="w-full pl-6"
+                            variant="search"
                         />
                     </div>
                     
@@ -210,7 +198,7 @@ export function OperationView() {
                             className={`flex items-center justify-center w-10 h-10 rounded-md text-lg font-medium transition-colors ${
                                 viewMode === 'table'
                                     ? 'bg-white dark:bg-slate-600 text-slate-900 dark:text-slate-100 shadow-sm'
-                                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                                    : 'text-slate-600 dark:text-slate-400 lg:hover:text-slate-900 lg:dark:hover:text-slate-100'
                             }`}
                         >
                             <Iconify icon="solar:list-bold" width={18} />
@@ -221,7 +209,7 @@ export function OperationView() {
                             className={`flex items-center justify-center w-10 h-10 rounded-md text-lg font-medium transition-colors ${
                                 viewMode === 'card'
                                     ? 'bg-white dark:bg-slate-600 text-slate-900 dark:text-slate-100 shadow-sm'
-                                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                                    : 'text-slate-600 dark:text-slate-400 lg:hover:text-slate-900 lg:dark:hover:text-slate-100'
                             }`}
                         >
                             <Iconify icon="solar:widget-2-bold" width={18} />
@@ -247,7 +235,8 @@ export function OperationView() {
                         placeholder="Search operations..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full"
+                        className="w-full pl-6"
+                        variant="search"
                     />
                 </div>
                 
@@ -261,7 +250,7 @@ export function OperationView() {
                     >
                         <Iconify icon="solar:add-circle-bold" width={18} />
                     </ModernButton>
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 lg:group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
                         New Operation
                     </div>
                 </div>
@@ -271,7 +260,7 @@ export function OperationView() {
 
     const renderDeleteActions = () => (
         selected.length > 0 && (
-            <div className="flex items-center justify-between p-4 mb-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+            <div className="flex items-center justify-between p-4 mb-4 bg-blue-200 dark:bg-slate-500/90 rounded-lg">
                 <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
                     {selected.length} operation(s) selected
                 </span>
@@ -310,7 +299,7 @@ export function OperationView() {
             ) : (
                 <div className="w-full">
                     <table className="w-full table-fixed">
-                            <thead className="bg-slate-50 dark:bg-slate-800">
+                            <thead className="bg-slate-200 dark:bg-slate-800">
                                 <tr>
                                     <th className="px-1 lg:px-4 py-3 text-left w-8 lg:w-12">
                                         <input
@@ -324,7 +313,7 @@ export function OperationView() {
                                         <button
                                             type="button"
                                             onClick={() => handleRequestSort('type')}
-                                            className="flex items-center space-x-1 hover:text-slate-700 dark:hover:text-slate-200"
+                                            className="flex items-center space-x-1 lg:hover:text-slate-700 lg:dark:hover:text-slate-200"
                                         >
                                             <span className="hidden lg:block">Operation</span>
                                             <span className="lg:hidden">Op</span>
@@ -337,7 +326,7 @@ export function OperationView() {
                                         <button
                                             type="button"
                                             onClick={() => handleRequestSort('expression')}
-                                            className="flex items-center space-x-1 hover:text-slate-700 dark:hover:text-slate-200"
+                                            className="flex items-center space-x-1 lg:hover:text-slate-700 lg:dark:hover:text-slate-200"
                                         >
                                             <span>Expression</span>
                                             <span className={`text-xs ${orderBy === 'expression' ? 'opacity-100' : 'opacity-40'}`}>
@@ -349,7 +338,7 @@ export function OperationView() {
                                         <button
                                             type="button"
                                             onClick={() => handleRequestSort('result')}
-                                            className="flex items-center space-x-1 hover:text-slate-700 dark:hover:text-slate-200"
+                                            className="flex items-center space-x-1 lg:hover:text-slate-700 lg:dark:hover:text-slate-200"
                                         >
                                             <span>Result</span>
                                             <span className={`text-xs ${orderBy === 'result' ? 'opacity-100' : 'opacity-40'}`}>
@@ -361,7 +350,7 @@ export function OperationView() {
                                         <button
                                             type="button"
                                             onClick={() => handleRequestSort('cost')}
-                                            className="flex items-center space-x-1 hover:text-slate-700 dark:hover:text-slate-200"
+                                            className="flex items-center space-x-1 lg:hover:text-slate-700 lg:dark:hover:text-slate-200"
                                         >
                                             <span>Cost</span>
                                             <span className={`text-xs ${orderBy === 'cost' ? 'opacity-100' : 'opacity-40'}`}>
@@ -373,7 +362,7 @@ export function OperationView() {
                                         <button
                                             type="button"
                                             onClick={() => handleRequestSort('userBalance')}
-                                            className="flex items-center space-x-1 hover:text-slate-700 dark:hover:text-slate-200"
+                                            className="flex items-center space-x-1 lg:hover:text-slate-700 lg:dark:hover:text-slate-200"
                                         >
                                             <span>Balance</span>
                                             <span className={`text-xs ${orderBy === 'userBalance' ? 'opacity-100' : 'opacity-40'}`}>
@@ -385,7 +374,7 @@ export function OperationView() {
                                         <button
                                             type="button"
                                             onClick={() => handleRequestSort('createdAt')}
-                                            className="flex items-center space-x-1 hover:text-slate-700 dark:hover:text-slate-200"
+                                            className="flex items-center space-x-1 lg:hover:text-slate-700 lg:dark:hover:text-slate-200"
                                         >
                                             <span>Date</span>
                                             <span className={`text-xs ${orderBy === 'createdAt' ? 'opacity-100' : 'opacity-40'}`}>
@@ -411,8 +400,8 @@ export function OperationView() {
                                             key={operation.id} 
                                             className={cn(
                                                 'cursor-pointer transition-colors duration-150',
-                                                'hover:bg-slate-50 dark:hover:bg-slate-800/50',
-                                                selected.includes(operation.id) && 'bg-blue-50 dark:bg-blue-900/20'
+                                                'lg:hover:bg-slate-50 lg:dark:hover:bg-slate-800/50',
+                                                selected.includes(operation.id) && 'bg-blue-200 dark:bg-blue-900/20'
                                             )}
                                             onClick={() => handleSelectClick(operation.id)}
                                         >
@@ -427,13 +416,7 @@ export function OperationView() {
                                             </td>
                                             <td className="px-2 lg:px-6 py-4 whitespace-nowrap">
                                                 <div className="flex items-center">
-                                                    <div className="w-5 h-5 lg:w-8 lg:h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mr-1 lg:mr-3 shrink-0">
-                                                        <Iconify 
-                                                            icon={getOperationIcon(operation.type)}
-                                                            width={12}
-                                                            sx={{ color: 'primary.main' }}
-                                                        />
-                                                    </div>
+                                                    <div className={`w-3 h-3 lg:w-4 lg:h-4 rounded-full mr-2 lg:mr-3 shrink-0 ${getOperationDot(operation.type)}`} />
                                                     <span className="text-xs lg:text-sm font-medium text-slate-900 dark:text-slate-100 capitalize truncate">
                                                         <span className="hidden lg:inline">{operation.type.replace('_', ' ')}</span>
                                                         <span className="lg:hidden">{operation.type.split('_')[0]}</span>
@@ -512,22 +495,16 @@ export function OperationView() {
                     return (
                         <ModernCard 
                             key={operation.id} 
-                            className={`p-5 cursor-pointer transition-all duration-200 hover:shadow-lg group overflow-hidden ${
+                            className={`p-5 cursor-pointer transition-all duration-200 lg:hover:shadow-lg group overflow-hidden ${
                                 isSelected 
-                                    ? 'bg-blue-50 dark:bg-blue-900/20 shadow-md' 
-                                    : 'hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                                    ? 'bg-blue-200 dark:bg-blue-900/20 shadow-md' 
+                                    : 'lg:hover:bg-slate-50 lg:dark:hover:bg-slate-700/50'
                             }`}
                             onClick={() => handleSelectClick(operation.id)}
                         >
                             <div className="flex items-start justify-between mb-4">
                                 <div className="flex items-center min-w-0 flex-1">
-                                    <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center mr-3 shrink-0">
-                                        <Iconify 
-                                            icon={getOperationIcon(operation.type)}
-                                            width={20}
-                                            sx={{ color: 'primary.main' }}
-                                        />
-                                    </div>
+                                    <div className={`w-5 h-5 rounded-full mr-3 shrink-0 ${getOperationDot(operation.type)}`} />
                                     <div className="min-w-0 flex-1">
                                         <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 capitalize truncate">
                                             {operation.type.replace('_', ' ')}
@@ -554,7 +531,7 @@ export function OperationView() {
                                             // You can add delete single item logic here if needed
                                             handleSelectClick(operation.id);
                                         }}
-                                        className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 p-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                        className="text-red-600 lg:hover:text-red-700 dark:text-red-400 lg:dark:hover:text-red-300 p-1 shrink-0 opacity-0 lg:group-hover:opacity-100 transition-opacity"
                                     >
                                         <Iconify icon="solar:trash-bin-bold" width={16} />
                                     </button>
@@ -601,14 +578,14 @@ export function OperationView() {
     );
 
     const renderPagination = () => (
-        <div className="flex flex-col gap-3 mt-6 p-3 bg-white dark:bg-slate-700 rounded-xl lg:flex-row lg:items-center lg:justify-between lg:gap-0 lg:p-4">
+        <div className="flex flex-col gap-3 mt-6 p-3 bg-slate-200 dark:bg-slate-700 rounded-xl lg:flex-row lg:items-center lg:justify-between lg:gap-0 lg:p-4">
             <div className="flex items-center gap-2 justify-center order-2 lg:order-1 lg:justify-start">
                 <span className="text-xs text-slate-600 dark:text-slate-300 font-medium lg:text-sm">Show:</span>
                 <div className="relative">
                     <select
                         value={rowsPerPage}
                         onChange={handleRowsPerPageChange}
-                        className="appearance-none px-2 py-1 pr-6 text-xs rounded-md bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-600 lg:px-3 lg:py-1.5 lg:pr-8 lg:text-sm"
+                        className="appearance-none px-2 py-1 pr-6 text-xs rounded-md bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-600 lg:px-3 lg:py-1.5 lg:pr-8 lg:text-sm"
                     >
                         <option value={5}>5</option>
                         <option value={10}>10</option>
@@ -633,7 +610,7 @@ export function OperationView() {
                         type="button"
                         onClick={() => handlePageChange(null, Math.max(0, page - 1))}
                         disabled={page === 0}
-                        className="flex items-center justify-center w-8 h-8 rounded-lg bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm text-sm border border-slate-200 dark:border-slate-600 lg:w-9 lg:h-9 lg:rounded-xl lg:text-base"
+                        className="flex items-center justify-center w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 lg:hover:bg-slate-300 lg:dark:hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm text-sm border border-slate-200 dark:border-slate-600 lg:w-9 lg:h-9 lg:rounded-xl lg:text-base"
                     >
                         ←
                     </button>
@@ -649,7 +626,7 @@ export function OperationView() {
                                 className={`flex items-center justify-center w-8 h-8 rounded-lg text-xs font-medium transition-all shadow-sm border lg:w-9 lg:h-9 lg:rounded-xl lg:text-sm ${
                                     page === pageNum
                                         ? 'bg-blue-600 text-white shadow-blue-200 dark:shadow-blue-900/30 border-blue-600'
-                                        : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-600 border-slate-200 dark:border-slate-600'
+                                        : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 lg:hover:bg-slate-300 lg:dark:hover:bg-slate-600 border-slate-200 dark:border-slate-600'
                                 }`}
                             >
                                 {pageNum + 1}
@@ -661,7 +638,7 @@ export function OperationView() {
                         type="button"
                         onClick={() => handlePageChange(null, Math.min(totalPages - 1, page + 1))}
                         disabled={page >= totalPages - 1}
-                        className="flex items-center justify-center w-8 h-8 rounded-lg bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm text-sm border border-slate-200 dark:border-slate-600 lg:w-9 lg:h-9 lg:rounded-xl lg:text-base"
+                        className="flex items-center justify-center w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 lg:hover:bg-slate-300 lg:dark:hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm text-sm border border-slate-200 dark:border-slate-600 lg:w-9 lg:h-9 lg:rounded-xl lg:text-base"
                     >
                         →
                     </button>
@@ -696,7 +673,7 @@ export function OperationView() {
                                 <button
                                     type="button"
                                     onClick={handleCloseModal}
-                                    className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg"
+                                    className="p-2 lg:hover:bg-slate-100 lg:dark:hover:bg-slate-700 rounded-lg"
                                 >
                                     ✕
                                 </button>

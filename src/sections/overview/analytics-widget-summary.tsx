@@ -36,7 +36,7 @@ export function AnalyticsWidgetSummary({
     color = 'primary',
     className,
 }: Props) {
-    const { getCurrencySymbol, currency } = useCurrency();
+    const { currency } = useCurrency();
     
     const chartColors = ['#1e40af'];
 

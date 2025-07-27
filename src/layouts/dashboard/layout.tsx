@@ -2,17 +2,13 @@ import { useState, useEffect, useCallback } from 'react';
 
 import { useCurrency } from 'src/hooks/use-currency';
 
-import { formatCurrency, formatCurrencyWithSymbol } from 'src/utils/format-number';
-
 import { useToast } from 'src/contexts/toast-context';
 import { AddCreditModal } from 'src/features/add-credit';
 import { useBalance } from 'src/context/balance-context';
 import { useAuthContext } from 'src/context/auth-context';
-
 import { addCredit } from 'src/services/api/balance-service';
 import { getUserProfile } from 'src/services/api/auth-service';
 
-import { Tooltip } from 'src/components/tooltip';
 import { ThemeToggle } from 'src/components/theme-toggle';
 import { NavMobile, NavDesktop } from 'src/components/navigation';
 
@@ -23,8 +19,8 @@ import { MenuButton } from '../components/menu-button';
 import { LayoutSection } from '../core/layout-section';
 import { HeaderSection } from '../core/header-section';
 import { AccountPopover } from '../components/account-popover';
-import { NotificationsPopover } from '../components/notifications-popover';
 import { BalancePopover } from '../components/balance-popover';
+import { NotificationsPopover } from '../components/notifications-popover';
 
 export type DashboardLayoutProps = {
     className?: string;
@@ -46,8 +42,6 @@ export function DashboardLayout({ className, children, header }: DashboardLayout
     const handleCloseNav = useCallback(() => {
         setNavOpen(false);
     }, []);
-
-    const handleOpenModal = () => setOpenModal(true);
 
     const handleCloseModal = () => {
         setOpenModal(false);
@@ -159,15 +153,15 @@ export function DashboardLayout({ className, children, header }: DashboardLayout
         sidebarSection={<NavDesktop data={navData} />}
         footerSection={null}
         cssVars={{
-            '--layout-nav-vertical-width': '256px',
-            '--layout-dashboard-content-pt': '6px',
+            '--layout-nav-vertical-width': '320px',
+            '--layout-dashboard-content-pt': '24px',
             '--layout-dashboard-content-pb': '48px',
             '--layout-dashboard-content-px': '24px',
         }}
         sx={{
             [`& .${layoutClasses.hasSidebar}`]: {
                 '@media (min-width: 1024px)': {
-                    pl: '256px',
+                    pl: '320px',
                 },
             },
         }}

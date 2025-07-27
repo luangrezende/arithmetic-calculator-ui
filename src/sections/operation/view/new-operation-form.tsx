@@ -8,6 +8,7 @@ import { addOperationRecord } from 'src/services/api/operation-service';
 
 import { ModernInput } from 'src/components/modern-input';
 import { ModernButton } from 'src/components/modern-button';
+import { ModernSelect } from 'src/components/modern-select';
 
 interface NewOperationFormProps {
     onClose: () => void;
@@ -95,34 +96,21 @@ export function NewOperationForm({ onClose, onAddOperation }: NewOperationFormPr
 
     return (
         <div className="flex flex-col gap-4">
-            <div className="space-y-1">
-                <label htmlFor="operation-select" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Operation
-                    <div className="modern-select mt-1">
-                        <select
-                            id="operation-select"
-                            name="operation-select"
-                            value={operationType?.id || ''}
-                            onChange={(e) => handleOperationChange(e.target.value)}
-                            className="w-full py-2 px-4 pr-12 xl:py-3 xl:px-6 xl:pr-14 text-base h-12 xl:text-lg xl:h-14 rounded-lg bg-white dark:bg-slate-600 text-gray-900 dark:text-white border border-gray-200 dark:border-slate-500 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed appearance-none cursor-pointer shadow-sm hover:border-gray-300 dark:hover:border-slate-400"
-                            required
-                    >
-                        <option value="" disabled className="text-gray-400 dark:text-gray-500">
-                            Select an operation
-                        </option>
-                        {operationOptions.map((option) => (
-                            <option 
-                                key={option.id} 
-                                value={option.id} 
-                                className="text-gray-900 dark:text-white bg-white dark:bg-slate-600"
-                            >
-                                {option.description}
-                            </option>
-                        ))}
-                    </select>
-                    </div>
-                </label>
-            </div>
+            <ModernSelect
+                label="Operation"
+                value={operationType?.id || ''}
+                onChange={(e) => handleOperationChange(e.target.value)}
+                required
+            >
+                <option value="" disabled>
+                    Select an operation
+                </option>
+                {operationOptions.map((option) => (
+                    <option key={option.id} value={option.id}>
+                        {option.description}
+                    </option>
+                ))}
+            </ModernSelect>
 
             {operationType?.description === 'Arithmetic Operation' && (
                 <div>

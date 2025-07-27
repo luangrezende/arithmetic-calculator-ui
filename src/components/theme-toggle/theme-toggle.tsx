@@ -18,7 +18,7 @@ export function ThemeToggle() {
             <button
                 type="button"
                 onClick={toggleTheme}
-                className="w-10 h-10 xl:w-11 xl:h-11 flex items-center justify-center rounded-full bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm shadow-sm transition-all duration-300 ease-out hover:scale-105 active:scale-95 hover:bg-slate-200 dark:hover:bg-slate-700 hover:shadow-md active:outline-none select-none"
+                className="w-10 h-10 xl:w-11 xl:h-11 flex items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800/95 backdrop-blur-sm shadow-sm transition-all duration-300 ease-out hover:scale-105 active:scale-95 hover:bg-slate-100 dark:hover:bg-slate-700 hover:shadow-md active:outline-none select-none"
                 aria-label={tooltipText}
             >
                 <Iconify

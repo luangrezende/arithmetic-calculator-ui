@@ -1,15 +1,14 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 
 import { useLocalUser } from 'src/hooks/use-local-user';
 
 import { logout } from 'src/utils/auth-manager';
 
+import { useThemeMode } from 'src/context/theme-context';
 import { logoutUser } from 'src/services/api/auth-service';
 
 import { Iconify } from 'src/components/iconify';
 import { Tooltip } from 'src/components/tooltip';
-
-import { useThemeMode } from 'src/context/theme-context';
 
 interface AccountPopoverProps {
     className?: string;
@@ -75,7 +74,7 @@ export function AccountPopover({
                 <button
                     type="button"
                     onClick={handleOpenPopover}
-                    className={`w-10 h-10 xl:w-11 xl:h-11 p-0.5 xl:p-1 rounded-full bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm shadow-sm transition-all duration-200 ease-out sm:hover:scale-105 active:scale-95 sm:hover:bg-slate-200 sm:dark:hover:bg-slate-800 sm:hover:shadow-md focus:outline-none focus:ring-0 active:outline-none active:ring-0 select-none ${className}`}
+                    className={`w-10 h-10 xl:w-11 xl:h-11 p-0.5 xl:p-1 rounded-full bg-slate-200 dark:bg-slate-800/95 backdrop-blur-sm shadow-sm transition-all duration-200 ease-out active:scale-95 sm:hover:scale-105 sm:hover:bg-slate-100 sm:dark:hover:bg-slate-800 sm:hover:shadow-md focus:outline-none focus:ring-0 active:outline-none active:ring-0 select-none ${className}`}
                 >
                     <div className="w-full h-full rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center overflow-hidden">
                         {photoUrl ? (
@@ -95,7 +94,11 @@ export function AccountPopover({
 
             {openPopover && (
                 <div 
-                    className="absolute right-0 top-full mt-2 w-48 sm:w-52 bg-white dark:bg-slate-800 backdrop-blur-xl backdrop-saturate-150 rounded-xl shadow-xl z-50 overflow-hidden animate-in slide-in-from-top-2 fade-in-0 duration-200 ease-out"
+                    className="absolute right-0 top-full mt-2 w-48 sm:w-52 bg-white dark:bg-slate-800 backdrop-blur-xl backdrop-saturate-150 rounded-xl shadow-xl z-50 overflow-hidden"
+                    style={{ 
+                        animation: 'fadeSlideIn 0.3s ease-out forwards',
+                        opacity: 0 
+                    }}
                     role="dialog"
                     aria-modal="true"
                     aria-labelledby="profile-title"
@@ -112,8 +115,11 @@ export function AccountPopover({
                     <div className="p-2 space-y-2">
                         <button
                             type="button"
-                            onClick={toggleTheme}
-                            className="lg:hidden w-full py-2 px-3 text-xs font-medium text-slate-600 dark:text-slate-300 sm:hover:text-slate-900 sm:dark:hover:text-slate-100 bg-slate-50 dark:bg-slate-700/80 sm:hover:bg-slate-100 sm:dark:hover:bg-slate-600/80 rounded-lg transition-colors flex items-center justify-center gap-2"
+                            onClick={() => {
+                                toggleTheme();
+                                handleClosePopover();
+                            }}
+                            className="lg:hidden w-full py-2 px-3 text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700/80 rounded-lg transition-colors flex items-center justify-center gap-2"
                         >
                             <Iconify 
                                 icon={mode === 'dark' ? 'solar:sun-bold' : 'solar:moon-bold'} 

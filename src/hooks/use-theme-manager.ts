@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import type { ThemeMode } from 'src/utils/theme-manager';
+
+import { useState, useEffect } from 'react';
 
 import { themeManager } from 'src/utils/theme-manager';
-
-import type { ThemeMode } from 'src/utils/theme-manager';
 
 export const useThemeManager = () => {
     const [currentTheme, setCurrentTheme] = useState<ThemeMode>(() => 

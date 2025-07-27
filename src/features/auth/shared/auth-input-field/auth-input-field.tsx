@@ -84,7 +84,7 @@ export const AuthInputField = forwardRef(
         };
 
         return (
-            <div className="relative mb-3">
+            <div className="w-full mb-3">
                 <ModernInput
                     name={name}
                     label={label}
@@ -94,7 +94,7 @@ export const AuthInputField = forwardRef(
                     error={error ? helperText : undefined}
                     type={type === 'password' && !showPassword ? 'password' : 'text'}
                     disabled={loading}
-                    className={error ? 'focus:ring-red-500' : ''}
+                    className="w-full"
                     endIcon={type === 'password' ? (
                         <Iconify
                             icon={showPassword ? 'solar:eye-bold' : 'solar:eye-closed-bold'}

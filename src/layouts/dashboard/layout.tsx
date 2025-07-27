@@ -9,6 +9,9 @@ import { AddCreditModal } from 'src/features/add-credit';
 import { useBalance } from 'src/context/balance-context';
 import { useAuthContext } from 'src/context/auth-context';
 
+import { addCredit } from 'src/services/api/balance-service';
+import { getUserProfile } from 'src/services/api/auth-service';
+
 import { Tooltip } from 'src/components/tooltip';
 import { ThemeToggle } from 'src/components/theme-toggle';
 import { NavMobile, NavDesktop } from 'src/components/navigation';
@@ -52,11 +55,27 @@ export function DashboardLayout({ className, children, header }: DashboardLayout
 
     const handleAddCredit = async (amount: number) => {
         try {
-            // Aqui você faria a chamada para a API para adicionar crédito
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Simula API call
-            await fetchBalance(); // Atualiza o balance
-            handleOpenSnackbar('success');
+            if (amount < 5 || amount > 100) {
+                showToast('Amount must be between $5 and $100', 'danger');
+                return;
+            }
+
+            const userProfile = await getUserProfile();
+            const accountId = userProfile.data?.accounts?.[0]?.id;
+            
+            if (!accountId) {
+                throw new Error('No account found');
+            }
+
+            const response = await addCredit(amount, accountId);
+            if (response.statusCode === 200) {
+                await fetchBalance();
+                handleOpenSnackbar('success');
+            } else {
+                handleOpenSnackbar('error');
+            }
         } catch (error) {
+            console.error('Error adding credit:', error);
             handleOpenSnackbar('error');
         }
     };

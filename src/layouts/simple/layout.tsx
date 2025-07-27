@@ -30,7 +30,7 @@ export function SimpleLayout({ className, children, header, content }: SimpleLay
                     className={header?.className}
                     slots={{
                         topArea: (
-                            <div className="hidden bg-blue-50 dark:bg-blue-900/30 border-b border-blue-200 dark:border-blue-800 px-4 py-2">
+                            <div className="hidden bg-blue-50 dark:bg-blue-900/30 px-4 py-2">
                                 <div className="text-sm text-blue-700 dark:text-blue-300">
                                     This is an info Alert.
                                 </div>

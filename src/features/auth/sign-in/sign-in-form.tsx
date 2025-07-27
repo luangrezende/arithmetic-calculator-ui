@@ -70,16 +70,18 @@ export function SignInForm({
 
                 {error && <ErrorMessage message={error} />}
 
-                <ModernButton
-                    fullWidth
-                    size="lg"
-                    variant="primary"
-                    onClick={handleSubmit}
-                    loading={loading}
-                    disabled={loginSuccess}
-                >
-                    Sign in
-                </ModernButton>
+                <div className="mt-6">
+                    <ModernButton
+                        fullWidth
+                        size="lg"
+                        variant="primary"
+                        onClick={handleSubmit}
+                        loading={loading}
+                        disabled={loginSuccess}
+                    >
+                        Sign in
+                    </ModernButton>
+                </div>
             </AuthFormLayout>
         </Box>
     );

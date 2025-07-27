@@ -22,7 +22,21 @@ const NotificationsContext = createContext<NotificationsContextProps | undefined
 export const NotificationsProvider = ({ children }: { children: ReactNode }) => {
     const [notifications, setNotifications] = useState<OperationNotification[]>(() => {
         const saved = localStorage.getItem('operation-notifications');
-        return saved ? JSON.parse(saved) : [];
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                const savedNotifications = parsed.map((notif: any) => ({
+                    ...notif,
+                    createdAt: new Date(notif.createdAt),
+                    isUnRead: Boolean(notif.isUnRead)
+                }));
+                return savedNotifications.slice(0, 4);
+            } catch (error) {
+                console.error('Error parsing saved notifications:', error);
+                return [];
+            }
+        }
+        return [];
     });
 
     const saveToLocalStorage = useCallback((notifs: OperationNotification[]) => {
@@ -41,7 +55,7 @@ export const NotificationsProvider = ({ children }: { children: ReactNode }) => 
 
         setNotifications(prev => {
             const updated = [newNotification, ...prev];
-            const limited = updated.slice(0, 50);
+            const limited = updated.slice(0, 4);
             saveToLocalStorage(limited);
             return limited;
         });

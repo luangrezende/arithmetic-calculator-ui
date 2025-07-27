@@ -36,12 +36,12 @@ export function OverviewAnalyticsView() {
 
     if (loading) {
         return (
-            <DashboardContent maxWidth={false}>
+            <DashboardContent maxWidth="lg">
                 <div className="flex items-center justify-center min-h-96">
                     <div className="w-full max-w-md mx-auto">
                         <div className="bg-white dark:bg-slate-700 rounded-xl p-6">
                             <div className="text-center mb-4">
-                                <div className="text-sm font-medium text-slate-600 dark:text-slate-400">Loading Dashboard...</div>
+                                <div className="text-sm font-medium text-slate-600 dark:text-slate-400">Loading dashboard...</div>
                             </div>
                             <div className="relative h-2 bg-slate-100 dark:bg-slate-600 rounded-full overflow-hidden">
                                 <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-purple-600 rounded-full animate-loading-bar" />
@@ -55,7 +55,7 @@ export function OverviewAnalyticsView() {
 
     if (!dashboardData) {
         return (
-            <DashboardContent maxWidth={false}>
+            <DashboardContent maxWidth="lg">
                 <div className="text-center py-8">
                     <h2 className="text-xl text-gray-600 dark:text-gray-400">No data available</h2>
                 </div>
@@ -64,7 +64,7 @@ export function OverviewAnalyticsView() {
     }
 
     return (
-        <DashboardContent maxWidth={false}>
+        <DashboardContent maxWidth="lg">
             <div className="space-y-6">
                 <div className="p-6 sm:p-8 rounded-2xl bg-blue-100 dark:bg-slate-500/90">
                     <h1 className="text-2xl font-bold mb-2 text-primary-600 dark:text-primary-400">

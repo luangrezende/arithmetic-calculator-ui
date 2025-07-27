@@ -102,12 +102,12 @@ export function NotificationsPopover() {
 
             {openPopover && (
                 <div 
-                    className="absolute right-0 top-full mt-2 w-72 bg-white dark:bg-slate-800 backdrop-blur-xl backdrop-saturate-150 rounded-xl shadow-xl border border-slate-200/50 dark:border-slate-700/50 z-50 overflow-hidden animate-in slide-in-from-top-2 fade-in-0 duration-200 ease-out"
+                    className="absolute right-0 top-full mt-2 w-72 bg-white dark:bg-slate-800 backdrop-blur-xl backdrop-saturate-150 rounded-xl shadow-xl z-50 overflow-hidden animate-in slide-in-from-top-2 fade-in-0 duration-200 ease-out"
                     role="dialog"
                     aria-modal="true"
                     aria-labelledby="notifications-title"
                 >
-                    <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-100/60 dark:bg-slate-700/60 backdrop-blur-xl">
+                    <div className="p-4 bg-slate-100/60 dark:bg-slate-700/60 backdrop-blur-xl">
                         <div className="flex items-center justify-between">
                             <div>
                                 <h3 id="notifications-title" className="text-lg font-semibold text-slate-900 dark:text-slate-100">
@@ -130,7 +130,25 @@ export function NotificationsPopover() {
                                             className="w-8 h-8 flex items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-900/50 text-blue-500 dark:text-blue-400 sm:hover:bg-blue-100 sm:dark:hover:bg-blue-900/70 transition-colors disabled:opacity-50"
                                         >
                                             {markingAsRead ? (
-                                                <div className="w-4 h-4 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
+                                                <svg 
+                                                    className="animate-spin h-4 w-4" 
+                                                    fill="none" 
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <circle 
+                                                        className="opacity-25" 
+                                                        cx="12" 
+                                                        cy="12" 
+                                                        r="10" 
+                                                        stroke="currentColor" 
+                                                        strokeWidth="4"
+                                                    />
+                                                    <path 
+                                                        className="opacity-75" 
+                                                        fill="currentColor" 
+                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                                    />
+                                                </svg>
                                             ) : (
                                                 <Iconify icon="solar:check-read-outline" width={16} />
                                             )}
@@ -146,7 +164,25 @@ export function NotificationsPopover() {
                                             className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 dark:bg-red-900/50 text-red-500 dark:text-red-400 sm:hover:bg-red-100 sm:dark:hover:bg-red-900/70 transition-colors disabled:opacity-50"
                                         >
                                             {clearing ? (
-                                                <div className="w-4 h-4 border-2 border-red-500/30 border-t-red-500 rounded-full animate-spin" />
+                                                <svg 
+                                                    className="animate-spin h-4 w-4" 
+                                                    fill="none" 
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <circle 
+                                                        className="opacity-25" 
+                                                        cx="12" 
+                                                        cy="12" 
+                                                        r="10" 
+                                                        stroke="currentColor" 
+                                                        strokeWidth="4"
+                                                    />
+                                                    <path 
+                                                        className="opacity-75" 
+                                                        fill="currentColor" 
+                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                                    />
+                                                </svg>
                                             ) : (
                                                 <Iconify icon="solar:trash-bin-trash-outline" width={16} />
                                             )}
@@ -185,7 +221,7 @@ export function NotificationsPopover() {
                     </div>
 
                     {notifications.length > 0 && (
-                        <div className="p-2 border-t border-slate-200 dark:border-slate-700 bg-slate-100/60 dark:bg-slate-700/60 backdrop-blur-xl">
+                        <div className="p-2 bg-slate-100/60 dark:bg-slate-700/60 backdrop-blur-xl">
                             <button
                                 type="button"
                                 onClick={() => {
@@ -236,14 +272,18 @@ function NotificationItem({ notification, currency }: { notification: OperationN
     };
 
     const { icon, color } = getOperationIcon(notification.operation);
+    
+    // Força a verificação explícita
+    const isUnread = Boolean(notification.isUnRead);
+    const unreadStyles = isUnread 
+        ? 'bg-blue-100/70 dark:bg-blue-900/20 border-l-4 border-blue-500 dark:border-blue-400' 
+        : '';
 
     return (
         <button
             type="button"
             onClick={handleClick}
-            className={`w-full p-3 text-left sm:hover:bg-slate-50 sm:dark:hover:bg-slate-800/50 transition-colors ${
-                notification.isUnRead ? 'bg-blue-100/70 dark:bg-blue-900/20 border-l-4 border-blue-500 dark:border-blue-400' : ''
-            }`}
+            className={`w-full p-3 text-left sm:hover:bg-slate-50 sm:dark:hover:bg-slate-800/50 transition-colors ${unreadStyles}`}
         >
             <div className="flex items-center gap-3">
                 <div className={`w-8 h-8 rounded-full ${color} flex items-center justify-center flex-shrink-0`}>
@@ -255,9 +295,6 @@ function NotificationItem({ notification, currency }: { notification: OperationN
                         <span className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
                             {notification.operation}
                         </span>
-                        {notification.isUnRead && (
-                            <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0" />
-                        )}
                     </div>
                     
                     <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">

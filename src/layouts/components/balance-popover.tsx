@@ -24,6 +24,8 @@ export function BalancePopover({
     const [loading, setLoading] = useState(false);
     const popoverRef = useRef<HTMLDivElement>(null);
 
+    const isValidAmount = amount && parseFloat(amount) >= 5 && parseFloat(amount) <= 100;
+
     const handleOpenPopover = useCallback(() => {
         setOpenPopover(prev => !prev);
     }, []);
@@ -88,19 +90,37 @@ export function BalancePopover({
                             <span>{formatCurrencyWithSymbol(balance?.toFixed(2).toString() || '0', currency || 'USD').value}</span>
                         </div>
                     ) : (
-                        <div className="w-3 h-3 sm:w-4 sm:h-4 border border-emerald-300/30 border-t-emerald-600 dark:border-emerald-400/30 dark:border-t-emerald-400 rounded-full animate-spin" />
+                        <svg 
+                            className="animate-spin h-3 w-3 sm:h-4 sm:w-4" 
+                            fill="none" 
+                            viewBox="0 0 24 24"
+                        >
+                            <circle 
+                                className="opacity-25" 
+                                cx="12" 
+                                cy="12" 
+                                r="10" 
+                                stroke="currentColor" 
+                                strokeWidth="4"
+                            />
+                            <path 
+                                className="opacity-75" 
+                                fill="currentColor" 
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            />
+                        </svg>
                     )}
                 </button>
             </Tooltip>
 
             {openPopover && (
                 <div 
-                    className="absolute left-0 sm:left-auto sm:right-0 top-full mt-2 w-72 max-w-[calc(100vw-2rem)] bg-white dark:bg-slate-800 backdrop-blur-xl backdrop-saturate-150 rounded-xl shadow-xl border border-slate-200/50 dark:border-slate-700/50 z-50 overflow-hidden animate-in slide-in-from-top-2 fade-in-0 duration-200 ease-out"
+                    className="absolute left-1/2 transform -translate-x-2/3 sm:left-auto sm:right-0 sm:transform-none top-full mt-2 w-80 max-w-[calc(100vw-1rem)] sm:max-w-[calc(100vw-2rem)] bg-white dark:bg-slate-800 backdrop-blur-xl backdrop-saturate-150 rounded-xl shadow-xl z-50 overflow-hidden animate-in slide-in-from-top-2 fade-in-0 duration-200 ease-out"
                     role="dialog"
                     aria-modal="true"
                     aria-labelledby="balance-title"
                 >
-                    <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-100/60 dark:bg-slate-700/60 backdrop-blur-xl">
+                    <div className="p-4 bg-slate-100/60 dark:bg-slate-700/60 backdrop-blur-xl">
                         <h3 id="balance-title" className="font-medium text-slate-900 dark:text-slate-100">
                             Add Credit
                         </h3>
@@ -116,9 +136,19 @@ export function BalancePopover({
                             value={amount}
                             onChange={(e) => setAmount(e.target.value)}
                             placeholder="Enter amount to add"
-                            min="0"
+                            min="5"
+                            max="100"
                             step="0.01"
                         />
+                        
+                        {amount && !isValidAmount && (
+                            <div className="flex items-center gap-2 p-2 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                                <div className="w-4 h-4 text-red-500 dark:text-red-400">⚠</div>
+                                <p className="text-xs text-red-600 dark:text-red-400">
+                                    Please enter an amount between $5 and $100
+                                </p>
+                            </div>
+                        )}
                         
                         <div className="flex gap-2">
                             <ModernButton
@@ -135,11 +165,11 @@ export function BalancePopover({
                                 variant="primary"
                                 size="sm"
                                 onClick={handleAddCredit}
-                                disabled={loading || !amount || parseFloat(amount) <= 0}
+                                disabled={loading || !isValidAmount}
                                 loading={loading}
                                 className="flex-1"
                             >
-                                {loading ? 'Adding...' : 'Add Credit'}
+                                Add Credit
                             </ModernButton>
                         </div>
                     </div>

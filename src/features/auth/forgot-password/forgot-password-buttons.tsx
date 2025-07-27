@@ -6,7 +6,7 @@ import type { FormButtonsProps } from './forgot-password.types';
 
 export function FormButtons({ onSubmit, onCancel, loading }: FormButtonsProps) {
     return (
-        <Box display="flex" justifyContent="space-between" mt={2} width="100%">
+        <Box display="flex" justifyContent="space-between" mt={6} width="100%">
             <ModernButton
                 size="lg"
                 variant="outline"

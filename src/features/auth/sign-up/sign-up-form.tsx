@@ -104,16 +104,18 @@ export function SignUpForm({
 
                 {error && <ErrorMessage message={error} />}
 
-                <ModernButton
-                    fullWidth
-                    size="lg"
-                    variant="primary"
-                    onClick={handleSubmit}
-                    loading={loading}
-                    disabled={registerSuccess}
-                >
-                    Sign up
-                </ModernButton>
+                <div className="mt-6">
+                    <ModernButton
+                        fullWidth
+                        size="lg"
+                        variant="primary"
+                        onClick={handleSubmit}
+                        loading={loading}
+                        disabled={registerSuccess}
+                    >
+                        Sign up
+                    </ModernButton>
+                </div>
             </AuthFormLayout>
         </Box>
     );

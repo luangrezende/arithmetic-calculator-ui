@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { useToast } from 'src/contexts/toast-context';
 import { useBalance } from 'src/context/balance-context';
 import { getUserProfile } from 'src/services/api/auth-service';
 import { useNotifications } from 'src/context/notifications-context';
@@ -29,6 +30,7 @@ export function NewOperationForm({ onClose, onAddOperation }: NewOperationFormPr
     const [isLoading, setIsLoading] = useState(false);
     const { fetchBalance } = useBalance();
     const { addOperationNotification } = useNotifications();
+    const { showToast } = useToast();
 
     const validateFields = () => {
         if (!operationType) {
@@ -66,6 +68,7 @@ export function NewOperationForm({ onClose, onAddOperation }: NewOperationFormPr
                 operationCost
             );
 
+            showToast('Operation created successfully!', 'success');
             fetchBalance();
             onClose();
             onAddOperation();
@@ -92,26 +95,33 @@ export function NewOperationForm({ onClose, onAddOperation }: NewOperationFormPr
 
     return (
         <div className="flex flex-col gap-4">
-            <div>
-                {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-                <label htmlFor="operation-select" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div className="space-y-1">
+                <label htmlFor="operation-select" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Operation
-                </label>
-                <select
-                    id="operation-select"
-                    name="operation-select"
-                    value={operationType?.id || ''}
-                    onChange={(e) => handleOperationChange(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                    required
-                >
-                    <option value="">Select an operation</option>
-                    {operationOptions.map((option) => (
-                        <option key={option.id} value={option.id}>
-                            {option.description}
+                    <div className="modern-select mt-1">
+                        <select
+                            id="operation-select"
+                            name="operation-select"
+                            value={operationType?.id || ''}
+                            onChange={(e) => handleOperationChange(e.target.value)}
+                            className="w-full py-2 px-4 pr-12 xl:py-3 xl:px-6 xl:pr-14 text-base h-12 xl:text-lg xl:h-14 rounded-lg bg-white dark:bg-slate-600 text-gray-900 dark:text-white border border-gray-200 dark:border-slate-500 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed appearance-none cursor-pointer shadow-sm hover:border-gray-300 dark:hover:border-slate-400"
+                            required
+                    >
+                        <option value="" disabled className="text-gray-400 dark:text-gray-500">
+                            Select an operation
                         </option>
-                    ))}
-                </select>
+                        {operationOptions.map((option) => (
+                            <option 
+                                key={option.id} 
+                                value={option.id} 
+                                className="text-gray-900 dark:text-white bg-white dark:bg-slate-600"
+                            >
+                                {option.description}
+                            </option>
+                        ))}
+                    </select>
+                    </div>
+                </label>
             </div>
 
             {operationType?.description === 'Arithmetic Operation' && (
@@ -124,20 +134,17 @@ export function NewOperationForm({ onClose, onAddOperation }: NewOperationFormPr
                         required
                         className="w-full"
                     />
-                    {fieldError && (
-                        <p className="text-sm text-red-600 dark:text-red-400 mt-1">{fieldError}</p>
-                    )}
                 </div>
             )}
 
             {operationType?.description === 'Random String' && (
-                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg text-blue-800 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-300">
+                <div className="p-4 bg-blue-50 rounded-lg text-blue-800 dark:bg-blue-900/20 dark:text-blue-300">
                     A new random string will be generated automatically.
                 </div>
             )}
 
             {errorMessage && (
-                <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-300">
+                <div className="p-4 bg-red-50 rounded-lg text-red-800 dark:bg-red-900/20 dark:text-red-300">
                     {errorMessage}
                 </div>
             )}
@@ -158,7 +165,7 @@ export function NewOperationForm({ onClose, onAddOperation }: NewOperationFormPr
                     disabled={isLoading}
                     loading={isLoading}
                 >
-                    {isLoading ? 'Processing...' : 'Submit'}
+                    Add Operation
                 </ModernButton>
             </div>
         </div>

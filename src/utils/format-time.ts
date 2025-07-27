@@ -19,4 +19,4 @@ export function fToNow(date: DatePickerFormat) {
     return isValid ? dayjs(date).toNow(true) : 'Invalid time value';
 }
 
-export const formatDate = (dateString: string): string => dayjs(dateString).format('DD/MM/YYYY HH:mm');
+export const formatDate = (dateString: string): string => dayjs(dateString).format('DD/MM/YYYY • HH:mm');

@@ -34,10 +34,9 @@ const ModernInput = forwardRef<HTMLInputElement, ModernInputProps>(
         const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
         
         const baseClasses = [
-            'w-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0',
+            'w-full transition-all duration-200 border-0 outline-none focus:ring-0',
             'disabled:opacity-50 disabled:cursor-not-allowed',
-            'placeholder-gray-400 dark:placeholder-gray-500',
-            'border border-gray-200 dark:border-gray-700 sm:hover:border-gray-300 sm:dark:hover:border-gray-600'
+            'placeholder-gray-400 dark:placeholder-gray-500'
         ];
 
         const sizeClasses = {
@@ -54,16 +53,13 @@ const ModernInput = forwardRef<HTMLInputElement, ModernInputProps>(
 
         const variantClasses = {
             default: [
-                'bg-white dark:bg-slate-600 focus:ring-primary-500 focus:border-primary-500 text-gray-900 dark:text-white',
-                error ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : ''
+                'bg-white dark:bg-slate-600 text-gray-900 dark:text-white'
             ],
             filled: [
-                'bg-gray-50 dark:bg-slate-700 focus:bg-white dark:focus:bg-slate-800 focus:ring-primary-500 focus:border-primary-500 text-gray-900 dark:text-white',
-                error ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : ''
+                'bg-gray-50 dark:bg-slate-700 focus:bg-white dark:focus:bg-slate-800 text-gray-900 dark:text-white'
             ],
             ghost: [
-                'bg-transparent focus:bg-white dark:focus:bg-slate-800 focus:ring-primary-500 focus:border-primary-500 text-gray-900 dark:text-white border-transparent',
-                error ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : ''
+                'bg-transparent focus:bg-white dark:focus:bg-slate-800 text-gray-900 dark:text-white'
             ]
         };
 

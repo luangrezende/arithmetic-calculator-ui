@@ -35,18 +35,18 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     useEffect(() => {
         if (!isAuthRoute) {
             const savedTheme = localStorage.getItem('theme-mode') as ThemeMode;
-            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             
             if (savedTheme) {
                 setMode(savedTheme);
-            } else if (systemPrefersDark) {
-                setMode('dark');
+            } else {
+                // Default to light mode instead of system preference
+                setMode('light');
             }
         }
     }, [isAuthRoute]);
 
     useEffect(() => {
-        const documentElement = document.documentElement;
+        const {documentElement} = document;
         
         if (effectiveMode === 'dark') {
             documentElement.classList.add('dark');
@@ -73,7 +73,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
     return (
         <ThemeContext.Provider value={contextValue}>
-            <div className="min-h-screen bg-gradient-to-br from-slate-50/80 to-slate-100/60 dark:from-slate-900/95 dark:to-slate-800/80">
+            <div className="min-h-screen bg-slate-100 dark:bg-slate-800">
                 {children}
             </div>
         </ThemeContext.Provider>

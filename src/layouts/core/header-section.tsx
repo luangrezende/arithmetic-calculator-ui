@@ -36,12 +36,14 @@ export function HeaderSection({
     return (
         <header
             className={`
-                relative
+                fixed top-0 right-0 w-full
+                lg:left-[var(--layout-nav-vertical-width)]
+                lg:w-[calc(100%-var(--layout-nav-vertical-width))]
                 ${mode === 'dark' 
-                    ? 'bg-slate-900/95 border-slate-700/50' 
-                    : 'bg-white/95 border-slate-200/50'
+                    ? 'bg-slate-900/95' 
+                    : 'bg-white/95'
                 }
-                backdrop-blur-md border-b
+                backdrop-blur-md
                 transition-all duration-200 ease-in-out
                 ${layoutClasses.header}
                 ${className}
@@ -64,7 +66,6 @@ export function HeaderSection({
                 <div
                     className={`
                         h-full flex items-center justify-between
-                        px-4 sm:px-6 lg:px-8
                         ${slotProps?.container?.maxWidth === false ? '' : 'max-w-7xl mx-auto'}
                         ${slotProps?.container?.className || ''}
                     `}

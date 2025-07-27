@@ -10,14 +10,14 @@ export function NavDesktop({ data, slots, layoutQuery }: NavDesktopProps) {
     return (
         <div
             className={`
-                pt-3 px-3 top-0 left-0 h-full
+                pt-0 px-3 top-0 left-0 h-screen
                 hidden fixed flex-col
                 ${mode === 'dark' 
-                    ? 'bg-slate-900/95 border-slate-700/50' 
-                    : 'bg-white/95 border-slate-200/50'
+                    ? 'bg-slate-900/95' 
+                    : 'bg-white/95'
                 }
-                backdrop-blur-md border-r
-                z-[1200] w-[--layout-nav-vertical-width]
+                backdrop-blur-md
+                shadow-xl
                 lg:flex
                 transition-all duration-200 ease-out
             `}

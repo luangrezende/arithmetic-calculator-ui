@@ -35,7 +35,7 @@ export function CompactContent({
 
     return (
         <div
-            className={`${layoutClasses.content} w-full mx-auto flex flex-1 text-center flex-col p-6 pb-20 max-w-md ${queryClass} ${className}`}
+            className={`${layoutClasses.content} w-full mx-auto flex flex-1 text-center flex-col px-3 sm:px-6 lg:px-8 xl:px-10 py-6 pb-20 max-w-md ${queryClass} ${className}`}
         >
             {children}
         </div>

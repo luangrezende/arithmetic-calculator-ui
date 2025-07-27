@@ -24,13 +24,13 @@ import {
     DialogContentText,
 } from '@mui/material';
 
-import { ModernInput } from 'src/components/modern-input';
+import { useCurrency } from 'src/hooks/use-currency';
 
 import { formatDate } from 'src/utils/format-time';
-import { formatCurrency, formatLargeNumber } from 'src/utils/format-number';
+import { formatCurrency, formatLargeNumber, formatCurrencyWithSymbol } from 'src/utils/format-number';
 
-import { DashboardContent } from 'src/layouts/dashboard';
 import { useToast } from 'src/contexts/toast-context';
+import { DashboardContent } from 'src/layouts/dashboard';
 import {
     deleteOperationRecords,
     getPagedOperationRecords,
@@ -38,6 +38,7 @@ import {
 
 import { Iconify } from 'src/components/iconify';
 import { ModernCard } from 'src/components/modern-card';
+import { ModernInput } from 'src/components/modern-input';
 import { ModernButton } from 'src/components/modern-button';
 
 import { NewOperationForm } from './new-operation-form';
@@ -57,6 +58,7 @@ const modalStyle = {
 };
 
 export function OperationView() {
+    const { currency } = useCurrency();
     const handleOpenModal = () => setOpenModal(true);
     const handleCloseModal = () => setOpenModal(false);
     const handleCloseConfirmDelete = () => setConfirmDeleteOpen(false);
@@ -179,48 +181,60 @@ export function OperationView() {
 
     return (
         <DashboardContent>
-            <Box display="flex" alignItems="center" mb={5}>
-                <Typography variant="h4" flexGrow={1}>
-                    Operations
-                </Typography>
-                <div className="relative mr-2 w-150px sm:w-auto">
-                    <ModernInput
-                        placeholder="Search"
-                        value={searchQuery}
-                        onChange={handleSearchChange}
-                        className="pl-10"
-                        inputSize="sm"
-                    />
-                    <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 pointer-events-none">
-                        <Iconify icon="mdi:magnify" width={16} />
+            {loading ? (
+                <div className="flex items-center justify-center min-h-96">
+                    <div className="w-full max-w-md mx-auto">
+                        <div className="bg-white dark:bg-slate-700 rounded-xl p-6">
+                            <div className="text-center mb-4">
+                                <div className="text-sm font-medium text-slate-600 dark:text-slate-400">Loading Operations...</div>
+                            </div>
+                            <div className="relative h-2 bg-slate-100 dark:bg-slate-600 rounded-full overflow-hidden">
+                                <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-purple-600 rounded-full animate-loading-bar" />
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <ModernButton
-                    variant="primary"
-                    onClick={handleOpenModal}
-                    className="flex items-center justify-center min-w-[40px] sm:min-w-auto px-2 sm:px-4 py-2"
-                >
-                    <Iconify
-                        icon="mingcute:add-line"
-                        width={20}
-                        sx={{
-                            mr: { xs: 0, sm: 1 },
-                        }}
-                    />
-                    <span className="hidden sm:inline">
-                        New operation
-                    </span>
-                </ModernButton>
-            </Box>
-
-            <ModernCard className="overflow-hidden">
-                {loading ? (
-                    <Box display="flex" justifyContent="center" alignItems="center" p={5}>
-                        <Typography variant="h6" color="textSecondary">
-                            Loading...
+            ) : (
+                <>
+                    <Box display="flex" alignItems="center" mb={5}>
+                        <Typography variant="h4" flexGrow={1}>
+                            Operations
                         </Typography>
+                        <div className="relative mr-2 w-150px sm:w-auto">
+                            <ModernInput
+                                placeholder="Search"
+                                value={searchQuery}
+                                onChange={handleSearchChange}
+                                inputSize="sm"
+                                startIcon={
+                                    <Iconify 
+                                        icon="mdi:magnify" 
+                                        width={16} 
+                                        sx={{ color: 'text.secondary' }}
+                                    />
+                                }
+                            />
+                        </div>
+                        <ModernButton
+                            variant="primary"
+                            onClick={handleOpenModal}
+                            className="flex items-center justify-center min-w-[40px] sm:min-w-auto px-2 sm:px-4 py-2"
+                        >
+                            <Iconify
+                                icon="mingcute:add-line"
+                                width={20}
+                                sx={{
+                                    mr: { xs: 0, sm: 1 },
+                                }}
+                            />
+                            <span className="hidden sm:inline">
+                                New operation
+                            </span>
+                        </ModernButton>
                     </Box>
-                ) : operations.length > 0 ? (
+
+                    <ModernCard className="overflow-hidden">
+                        {operations.length > 0 ? (
                     <>
                         <TableContainer>
                             <Table stickyHeader>
@@ -329,9 +343,14 @@ export function OperationView() {
                                                     sx={{
                                                         color: 'red',
                                                         fontWeight: 'bold',
+                                                        display: 'flex',
+                                                        alignItems: 'baseline',
+                                                        gap: '4px'
                                                     }}
                                                 >
-                                                    -{formatCurrency(record.cost.toFixed(2))}
+                                                    <span>-</span>
+                                                    <span style={{ fontSize: '0.8em' }}>{formatCurrencyWithSymbol(record.cost.toFixed(2), currency).currency}</span>
+                                                    <span>{formatCurrencyWithSymbol(record.cost.toFixed(2), currency).value}</span>
                                                 </Typography>
                                             </TableCell>
                                             <TableCell>
@@ -340,9 +359,13 @@ export function OperationView() {
                                                     sx={{
                                                         color: record.cost > 0 ? 'green' : 'red',
                                                         fontWeight: 'bold',
+                                                        display: 'flex',
+                                                        alignItems: 'baseline',
+                                                        gap: '4px'
                                                     }}
                                                 >
-                                                    {formatCurrency(record.userBalance.toFixed(2))}
+                                                    <span style={{ fontSize: '0.8em' }}>{formatCurrencyWithSymbol(record.userBalance.toFixed(2), currency).currency}</span>
+                                                    <span>{formatCurrencyWithSymbol(record.userBalance.toFixed(2), currency).value}</span>
                                                 </Typography>
                                             </TableCell>
                                             <TableCell>{formatDate(record.createdAt)}</TableCell>
@@ -383,7 +406,9 @@ export function OperationView() {
                                 showToast('Please select at least one record to delete.', 'warning');
                             }
                         }}
-                        className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/20 dark:hover:border-red-700"
+                        disabled={isDeleting}
+                        loading={isDeleting}
+                        className="text-red-600 border-red-200 sm:hover:bg-red-50 sm:hover:border-red-300 dark:text-red-400 dark:border-red-800 sm:dark:hover:bg-red-900/20 sm:dark:hover:border-red-700"
                     >
                         <Iconify icon="tabler:trash" width={20} sx={{ mr: 1 }} />
                         Delete Selected
@@ -418,7 +443,8 @@ export function OperationView() {
                         }}
                         variant="secondary"
                         disabled={isDeleting}
-                        className="bg-red-500 hover:bg-red-600 text-white disabled:bg-gray-400"
+                        loading={isDeleting}
+                        className="bg-red-500 sm:hover:bg-red-600 text-white disabled:bg-gray-400"
                     >
                         {isDeleting ? (
                             <>
@@ -443,6 +469,8 @@ export function OperationView() {
                     />
                 </Box>
             </Modal>
+            </>
+            )}
         </DashboardContent>
     );
 }

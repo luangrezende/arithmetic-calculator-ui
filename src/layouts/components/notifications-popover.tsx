@@ -1,169 +1,210 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
+import { useRouter } from 'src/routes/hooks';
 
-import Box from '@mui/material/Box';
-import List from '@mui/material/List';
-import Badge from '@mui/material/Badge';
-import Avatar from '@mui/material/Avatar';
-import Divider from '@mui/material/Divider';
-import Tooltip from '@mui/material/Tooltip';
-import Popover from '@mui/material/Popover';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ListItemButton from '@mui/material/ListItemButton';
+import { useCurrency } from 'src/hooks/use-currency';
 
 import { fToNow } from 'src/utils/format-time';
-import { fCurrency } from 'src/utils/format-number';
+import { formatCurrencyWithSymbol } from 'src/utils/format-number';
 
 import { useNotifications, type OperationNotification } from 'src/context/notifications-context';
 
+import { Tooltip } from 'src/components/tooltip';
 import { Iconify } from 'src/components/iconify';
-import { Scrollbar } from 'src/components/scrollbar';
 
 export function NotificationsPopover() {
     const { notifications, markAllAsRead, clearNotifications } = useNotifications();
+    const { currency } = useCurrency();
+    const router = useRouter();
+    const popoverRef = useRef<HTMLDivElement>(null);
     
     const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
 
-    const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
+    const [openPopover, setOpenPopover] = useState(false);
+    const [markingAsRead, setMarkingAsRead] = useState(false);
+    const [clearing, setClearing] = useState(false);
 
-    const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-        setOpenPopover(event.currentTarget);
+    const handleOpenPopover = useCallback(() => {
+        setOpenPopover(prev => !prev);
     }, []);
 
     const handleClosePopover = useCallback(() => {
-        setOpenPopover(null);
+        setOpenPopover(false);
     }, []);
 
-    const handleMarkAllAsRead = useCallback(() => {
-        markAllAsRead();
+    const handleMarkAllAsRead = useCallback(async () => {
+        setMarkingAsRead(true);
+        try {
+            markAllAsRead();
+        } finally {
+            setMarkingAsRead(false);
+        }
     }, [markAllAsRead]);
 
-    const handleClearAll = useCallback(() => {
-        clearNotifications();
-        setOpenPopover(null);
+    const handleClearAll = useCallback(async () => {
+        setClearing(true);
+        try {
+            clearNotifications();
+            setOpenPopover(false);
+        } finally {
+            setClearing(false);
+        }
     }, [clearNotifications]);
 
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
+                handleClosePopover();
+            }
+        };
+
+        const handleEscapeKey = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                handleClosePopover();
+            }
+        };
+
+        if (openPopover) {
+            document.addEventListener('mousedown', handleClickOutside);
+            document.addEventListener('keydown', handleEscapeKey);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('keydown', handleEscapeKey);
+        };
+    }, [openPopover, handleClosePopover]);
+
     return (
-        <>
-            <IconButton 
-                onClick={handleOpenPopover}
-                sx={{
-                    transition: 'all 0.2s ease-out',
-                    '&:hover': {
-                        backgroundColor: 'action.hover',
-                        transform: 'scale(1.05)',
-                    },
-                    '&:active': {
-                        transform: 'scale(0.95)',
-                    },
-                }}
-                className={`${openPopover 
-                    ? 'text-primary-600 dark:text-primary-400' 
-                    : 'text-gray-700 dark:text-gray-300'
-                } transition-colors`}
-            >
-                <Badge badgeContent={totalUnRead} color="error">
+        <div className="relative" ref={popoverRef}>
+            <Tooltip content="View notifications">
+                <button
+                    type="button"
+                    onClick={handleOpenPopover}
+                    className="relative w-10 h-10 xl:w-11 xl:h-11 flex items-center justify-center rounded-full bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm shadow-sm transition-all duration-200 ease-out sm:hover:scale-105 active:scale-95 sm:hover:bg-slate-200 sm:dark:hover:bg-slate-800 sm:hover:shadow-md focus:outline-none focus:ring-0 active:outline-none active:ring-0 select-none"
+                >
                     <Iconify 
-                        icon="solar:bell-bing-bold"
-                        width={24}
+                        icon="solar:letter-unread-bold"
+                        width={16}
                         sx={{
-                            color: 'inherit',
+                            color: 'primary.main',
+                            transition: 'color 0.2s ease-out',
+                            width: { xs: 16, xl: 18 },
+                            height: { xs: 16, xl: 18 },
                         }}
                     />
-                </Badge>
-            </IconButton>
+                    {totalUnRead > 0 && (
+                        <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center shadow-sm">
+                            {totalUnRead > 9 ? '9+' : totalUnRead}
+                        </span>
+                    )}
+                </button>
+            </Tooltip>
 
-            <Popover
-                open={!!openPopover}
-                anchorEl={openPopover}
-                onClose={handleClosePopover}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                slotProps={{
-                    paper: {
-                        sx: {
-                            width: { xs: 320, sm: 360 },
-                            maxWidth: '90vw',
-                            overflow: 'hidden',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            bgcolor: 'background.paper',
-                            border: '1px solid',
-                            borderColor: 'divider',
-                            boxShadow: (theme) => theme.customShadows?.z20 || '0 20px 40px -4px rgba(0, 0, 0, 0.1)',
-                        },
-                    },
-                }}
-            >
-                <Box display="flex" alignItems="center" sx={{ py: 2, pl: 2.5, pr: 1.5 }}>
-                    <Box sx={{ flexGrow: 1 }}>
-                        <Typography variant="subtitle1">Operation Notifications</Typography>
-                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                            {totalUnRead > 0 
-                                ? `You have ${totalUnRead} new operations`
-                                : 'No new operations'
-                            }
-                        </Typography>
-                    </Box>
+            {openPopover && (
+                <div 
+                    className="absolute right-0 top-full mt-2 w-72 bg-white dark:bg-slate-800 backdrop-blur-xl backdrop-saturate-150 rounded-xl shadow-xl border border-slate-200/50 dark:border-slate-700/50 z-50 overflow-hidden animate-in slide-in-from-top-2 fade-in-0 duration-200 ease-out"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="notifications-title"
+                >
+                    <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-100/60 dark:bg-slate-700/60 backdrop-blur-xl">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h3 id="notifications-title" className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                                    Notifications
+                                </h3>
+                                <p className="text-sm text-slate-600 dark:text-slate-400">
+                                    {totalUnRead > 0 
+                                        ? `${totalUnRead} new notification${totalUnRead > 1 ? 's' : ''}`
+                                        : 'All caught up!'
+                                    }
+                                </p>
+                            </div>
+                            <div className="flex gap-2">
+                                {totalUnRead > 0 && (
+                                    <Tooltip content="Mark all as read">
+                                        <button
+                                            type="button"
+                                            onClick={handleMarkAllAsRead}
+                                            disabled={markingAsRead}
+                                            className="w-8 h-8 flex items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-900/50 text-blue-500 dark:text-blue-400 sm:hover:bg-blue-100 sm:dark:hover:bg-blue-900/70 transition-colors disabled:opacity-50"
+                                        >
+                                            {markingAsRead ? (
+                                                <div className="w-4 h-4 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
+                                            ) : (
+                                                <Iconify icon="solar:check-read-outline" width={16} />
+                                            )}
+                                        </button>
+                                    </Tooltip>
+                                )}
+                                {notifications.length > 0 && (
+                                    <Tooltip content="Clear all notifications">
+                                        <button
+                                            type="button"
+                                            onClick={handleClearAll}
+                                            disabled={clearing}
+                                            className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 dark:bg-red-900/50 text-red-500 dark:text-red-400 sm:hover:bg-red-100 sm:dark:hover:bg-red-900/70 transition-colors disabled:opacity-50"
+                                        >
+                                            {clearing ? (
+                                                <div className="w-4 h-4 border-2 border-red-500/30 border-t-red-500 rounded-full animate-spin" />
+                                            ) : (
+                                                <Iconify icon="solar:trash-bin-trash-outline" width={16} />
+                                            )}
+                                        </button>
+                                    </Tooltip>
+                                )}
+                            </div>
+                        </div>
+                    </div>
 
-                    <Box sx={{ display: 'flex', gap: 0.5 }}>
-                        {totalUnRead > 0 && (
-                            <Tooltip title="Mark all as read">
-                                <IconButton color="primary" onClick={handleMarkAllAsRead}>
-                                    <Iconify icon="solar:check-read-outline" />
-                                </IconButton>
-                            </Tooltip>
+                    <div className="max-h-80 overflow-y-auto">
+                        {notifications.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center py-12 px-4">
+                                <div className="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mb-4">
+                                    <Iconify
+                                        icon="solar:bell-line-duotone"
+                                        width={24}
+                                        sx={{ color: 'text.disabled' }}
+                                    />
+                                </div>
+                                <p className="text-slate-600 dark:text-slate-400 text-center">
+                                    No notifications yet
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="divide-y divide-slate-200/50 dark:divide-slate-700/50">
+                                {notifications.map((notification) => (
+                                    <NotificationItem 
+                                        key={notification.id} 
+                                        notification={notification} 
+                                        currency={currency}
+                                    />
+                                ))}
+                            </div>
                         )}
-                        
-                        {notifications.length > 0 && (
-                            <Tooltip title="Clear all">
-                                <IconButton onClick={handleClearAll}>
-                                    <Iconify icon="solar:trash-bin-trash-outline" />
-                                </IconButton>
-                            </Tooltip>
-                        )}
-                    </Box>
-                </Box>
+                    </div>
 
-                <Divider />
-
-                {notifications.length === 0 ? (
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            py: 4,
-                            px: 2,
-                        }}
-                    >
-                        <Iconify
-                            icon="solar:bell-off-outline"
-                            width={48}
-                            sx={{ color: 'text.disabled', mb: 2 }}
-                        />
-                        <Typography variant="body2" color="text.secondary">
-                            No operations yet
-                        </Typography>
-                    </Box>
-                ) : (
-                    <Scrollbar sx={{ height: 360 }}>
-                        <List disablePadding>
-                            {notifications.map((notification) => (
-                                <NotificationItem key={notification.id} notification={notification} />
-                            ))}
-                        </List>
-                    </Scrollbar>
-                )}
-            </Popover>
-        </>
+                    {notifications.length > 0 && (
+                        <div className="p-2 border-t border-slate-200 dark:border-slate-700 bg-slate-100/60 dark:bg-slate-700/60 backdrop-blur-xl">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    router.push('/operation');
+                                    handleClosePopover();
+                                }}
+                                className="w-full py-1.5 px-3 text-xs font-medium text-slate-600 dark:text-slate-400 sm:hover:text-slate-900 sm:dark:hover:text-slate-100 sm:hover:bg-slate-100 sm:dark:hover:bg-slate-800 rounded-lg transition-colors"
+                            >
+                                View All Operations
+                            </button>
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
     );
 }
 
-function NotificationItem({ notification }: { notification: OperationNotification }) {
+function NotificationItem({ notification, currency }: { notification: OperationNotification; currency: string }) {
     const { markAsRead } = useNotifications();
     
     const handleClick = () => {
@@ -174,78 +215,63 @@ function NotificationItem({ notification }: { notification: OperationNotificatio
 
     const getOperationIcon = (operation: string) => {
         if (operation.toLowerCase().includes('addition')) {
-            return { icon: 'solar:add-circle-outline', color: 'success.main' };
+            return { icon: 'solar:add-circle-outline', color: 'bg-emerald-500/90 dark:bg-emerald-600/90' };
         }
         if (operation.toLowerCase().includes('subtraction')) {
-            return { icon: 'solar:minus-circle-outline', color: 'warning.main' };
+            return { icon: 'solar:minus-circle-outline', color: 'bg-orange-500/90 dark:bg-orange-600/90' };
         }
         if (operation.toLowerCase().includes('multiplication')) {
-            return { icon: 'solar:close-circle-outline', color: 'info.main' };
+            return { icon: 'solar:close-circle-outline', color: 'bg-blue-500/90 dark:bg-blue-600/90' };
         }
         if (operation.toLowerCase().includes('division')) {
-            return { icon: 'solar:divide-outline', color: 'secondary.main' };
+            return { icon: 'solar:divide-outline', color: 'bg-violet-500/90 dark:bg-violet-600/90' };
         }
         if (operation.toLowerCase().includes('square')) {
-            return { icon: 'solar:calculator-outline', color: 'primary.main' };
+            return { icon: 'solar:calculator-outline', color: 'bg-indigo-500/90 dark:bg-indigo-600/90' };
         }
         if (operation.toLowerCase().includes('random')) {
-            return { icon: 'solar:shuffle-outline', color: 'purple' };
+            return { icon: 'solar:shuffle-outline', color: 'bg-slate-500/90 dark:bg-slate-600/90' };
         }
-        return { icon: 'solar:calculator-minimalistic-outline', color: 'primary.main' };
+        return { icon: 'solar:calculator-minimalistic-outline', color: 'bg-cyan-500/90 dark:bg-cyan-600/90' };
     };
 
     const { icon, color } = getOperationIcon(notification.operation);
 
     return (
-        <ListItemButton
+        <button
+            type="button"
             onClick={handleClick}
-            sx={{
-                py: 1.5,
-                px: 2.5,
-                mt: '1px',
-                ...(notification.isUnRead && {
-                    bgcolor: 'action.selected',
-                }),
-            }}
+            className={`w-full p-3 text-left sm:hover:bg-slate-50 sm:dark:hover:bg-slate-800/50 transition-colors ${
+                notification.isUnRead ? 'bg-blue-100/70 dark:bg-blue-900/20 border-l-4 border-blue-500 dark:border-blue-400' : ''
+            }`}
         >
-            <ListItemAvatar>
-                <Avatar sx={{ 
-                    bgcolor: color,
-                    color: 'white',
-                    width: 40,
-                    height: 40
-                }}>
-                    <Iconify icon={icon} width={20} />
-                </Avatar>
-            </ListItemAvatar>
-            <ListItemText
-                primary={
-                    <div className="flex items-center gap-2">
-                        <span>{`Operation: ${notification.operation}`}</span>
+            <div className="flex items-center gap-3">
+                <div className={`w-8 h-8 rounded-full ${color} flex items-center justify-center flex-shrink-0`}>
+                    <Iconify icon={icon} width={16} sx={{ color: 'white' }} />
+                </div>
+                
+                <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                        <span className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
+                            {notification.operation}
+                        </span>
                         {notification.isUnRead && (
-                            <div className="w-2 h-2 bg-primary-500 rounded-full" />
+                            <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0" />
                         )}
                     </div>
-                }
-                secondary={
-                    <div className="flex items-center gap-1 mt-1">
-                        <Iconify icon="solar:wallet-money-outline" width={14} />
-                        <span>{`Cost: ${fCurrency(notification.amount)}`}</span>
-                        <span className="mx-1">•</span>
-                        <Iconify icon="solar:clock-circle-outline" width={14} />
-                        <span>{fToNow(notification.createdAt)}</span>
+                    
+                    <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
+                        <div className="flex items-center gap-1">
+                            <span className="text-xs">{formatCurrencyWithSymbol(notification.amount, currency).currency}</span>
+                            <span className="font-medium">{formatCurrencyWithSymbol(notification.amount, currency).value}</span>
+                        </div>
+                        <span>•</span>
+                        <div className="flex items-center gap-1">
+                            <span>{fToNow(notification.createdAt)}</span>
+                        </div>
                     </div>
-                }
-                primaryTypographyProps={{
-                    variant: 'subtitle2',
-                    component: 'div'
-                }}
-                secondaryTypographyProps={{
-                    variant: 'body2',
-                    color: 'text.secondary',
-                    component: 'div',
-                }}
-            />
-        </ListItemButton>
+                </div>
+            </div>
+        </button>
     );
 }

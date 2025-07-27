@@ -1,25 +1,32 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 
 import { useLocalUser } from 'src/hooks/use-local-user';
 
+import { formatCurrencyWithSymbol } from 'src/utils/format-number';
 import { logout } from 'src/utils/auth-manager';
 
 import { logoutUser } from 'src/services/api/auth-service';
 
-import { ModernButton } from 'src/components/modern-button';
+import { Tooltip } from 'src/components/tooltip';
+import { Iconify } from 'src/components/iconify';
+import { useThemeMode } from 'src/context/theme-context';
 
 interface AccountPopoverProps {
     className?: string;
 }
 
-export function AccountPopover({ className }: AccountPopoverProps) {
+export function AccountPopover({ 
+    className
+}: AccountPopoverProps) {
     const user = useLocalUser();
+    const { mode, toggleTheme } = useThemeMode();
     const [photoUrl] = useState('');
     const [openPopover, setOpenPopover] = useState(false);
     const [loading, setLoading] = useState(false);
+    const popoverRef = useRef<HTMLDivElement>(null);
 
     const handleOpenPopover = useCallback(() => {
-        setOpenPopover(true);
+        setOpenPopover(prev => !prev);
     }, []);
 
     const handleClosePopover = useCallback(() => {
@@ -38,73 +45,103 @@ export function AccountPopover({ className }: AccountPopoverProps) {
         }
     }, []);
 
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
+                handleClosePopover();
+            }
+        };
+
+        const handleEscapeKey = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                handleClosePopover();
+            }
+        };
+
+        if (openPopover) {
+            document.addEventListener('mousedown', handleClickOutside);
+            document.addEventListener('keydown', handleEscapeKey);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('keydown', handleEscapeKey);
+        };
+    }, [openPopover, handleClosePopover]);
+
     return (
-        <div className="relative">
-            <button
-                type="button"
-                onClick={handleOpenPopover}
-                className={`w-10 h-10 p-0.5 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-200 ease-out hover:scale-105 active:scale-95 hover:shadow-md ${className}`}
-            >
-                <div className="w-full h-full rounded-full bg-white dark:bg-slate-800 flex items-center justify-center overflow-hidden">
-                    {photoUrl ? (
-                        <img
-                            src={photoUrl}
-                            alt={user?.name}
-                            className="w-full h-full object-cover"
-                        />
-                    ) : (
-                        <span className="text-lg font-semibold text-slate-700 dark:text-slate-200">
-                            {user?.name?.charAt(0)?.toUpperCase() || 'U'}
-                        </span>
-                    )}
-                </div>
-            </button>
+        <div className="relative" ref={popoverRef}>
+            <Tooltip content="Open account menu">
+                <button
+                    type="button"
+                    onClick={handleOpenPopover}
+                    className={`w-10 h-10 xl:w-11 xl:h-11 p-0.5 xl:p-1 rounded-full bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm shadow-sm transition-all duration-200 ease-out sm:hover:scale-105 active:scale-95 sm:hover:bg-slate-200 sm:dark:hover:bg-slate-800 sm:hover:shadow-md focus:outline-none focus:ring-0 active:outline-none active:ring-0 select-none ${className}`}
+                >
+                    <div className="w-full h-full rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center overflow-hidden">
+                        {photoUrl ? (
+                            <img
+                                src={photoUrl}
+                                alt={user?.name}
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
+                                {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                            </span>
+                        )}
+                    </div>
+                </button>
+            </Tooltip>
 
             {openPopover && (
-                <>
-                    <div
-                        className="fixed inset-0 z-40"
-                        onClick={handleClosePopover}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Escape') {
-                                handleClosePopover();
-                            }
-                        }}
-                        role="button"
-                        tabIndex={0}
-                        aria-label="Close popover"
-                    />
-                    <div className="absolute right-0 top-full mt-2 w-48 sm:w-52 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-xl shadow-lg border border-slate-200/50 dark:border-slate-700/50 z-50">
-                        <div className="p-4 pb-3">
-                            <h3 className="font-medium text-slate-900 dark:text-slate-100 truncate">
-                                {user?.name}
-                            </h3>
-                            <p className="text-sm text-slate-600 dark:text-slate-400 truncate">
-                                {user?.username}
-                            </p>
-                        </div>
-
-                        <div className="border-t border-dashed border-slate-200 dark:border-slate-700" />
-
-                        <div className="p-2">
-                            <ModernButton
-                                variant="outline"
-                                onClick={handleLogout}
-                                disabled={loading}
-                                className="w-full text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/20 dark:hover:border-red-700 flex items-center justify-center gap-2"
-                            >
-                                {loading ? (
-                                    <>
-                                        <div className="w-5 h-5 border-2 border-red-600/30 border-t-red-600 dark:border-red-400/30 dark:border-t-red-400 rounded-full animate-spin" />
-                                        Logging out...
-                                    </>
-                                ) : (
-                                    'Logout'
-                                )}
-                            </ModernButton>
-                        </div>
+                <div 
+                    className="absolute right-0 top-full mt-2 w-48 sm:w-52 bg-white dark:bg-slate-800 backdrop-blur-xl backdrop-saturate-150 rounded-xl shadow-xl border border-slate-200/50 dark:border-slate-700/50 z-50 overflow-hidden animate-in slide-in-from-top-2 fade-in-0 duration-200 ease-out"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="profile-title"
+                >
+                    <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-100/60 dark:bg-slate-700/60 backdrop-blur-xl">
+                        <h3 id="profile-title" className="font-medium text-slate-900 dark:text-slate-100 truncate">
+                            {user?.name}
+                        </h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400 truncate">
+                            {user?.username}
+                        </p>
                     </div>
-                </>
+
+                    <div className="p-2 space-y-2">
+                        <button
+                            type="button"
+                            onClick={toggleTheme}
+                            className="lg:hidden w-full py-2 px-3 text-xs font-medium text-slate-600 dark:text-slate-300 sm:hover:text-slate-900 sm:dark:hover:text-slate-100 bg-slate-50 dark:bg-slate-700/80 sm:hover:bg-slate-100 sm:dark:hover:bg-slate-600/80 rounded-lg transition-colors flex items-center justify-center gap-2"
+                        >
+                            <Iconify 
+                                icon={mode === 'dark' ? 'solar:sun-bold' : 'solar:moon-bold'} 
+                                width={14} 
+                                sx={{ color: mode === 'dark' ? '#eab308' : '#2563eb' }}
+                            />
+                            Toggle Theme
+                        </button>
+                        
+                        <div className="lg:hidden w-full h-px bg-slate-200 dark:bg-slate-700 border-dashed border-t border-slate-300 dark:border-slate-600" />
+                        
+                        <button
+                            type="button"
+                            onClick={handleLogout}
+                            disabled={loading}
+                            className="w-full py-2 lg:py-2.5 px-3 text-xs lg:text-sm font-medium text-red-600 dark:text-red-400 sm:hover:text-red-700 sm:dark:hover:text-red-300 sm:hover:bg-red-50 sm:dark:hover:bg-red-900/20 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                        >
+                            {loading ? (
+                                <>
+                                    <div className="w-4 h-4 border-2 border-red-600/30 border-t-red-600 dark:border-red-400/30 dark:border-t-red-400 rounded-full animate-spin" />
+                                    Logging out...
+                                </>
+                            ) : (
+                                'Logout'
+                            )}
+                        </button>
+                    </div>
+                </div>
             )}
         </div>
     );

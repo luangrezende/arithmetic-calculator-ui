@@ -24,18 +24,20 @@ export function fNumber(inputValue: InputNumberValue, options?: Options) {
     return fm;
 }
 
-export function fCurrency(inputValue: InputNumberValue, options?: Options) {
+export function fCurrency(inputValue: InputNumberValue, options?: Options & { currency?: string }) {
     const locale = DEFAULT_LOCALE;
 
     const number = processInput(inputValue);
     if (number === null) return '';
 
+    const { currency, ...restOptions } = options || {};
+
     const fm = new Intl.NumberFormat(locale.code, {
         style: 'currency',
-        currency: locale.currency,
+        currency: currency || locale.currency,
         minimumFractionDigits: 0,
         maximumFractionDigits: 2,
-        ...options,
+        ...restOptions,
     }).format(number);
 
     return fm;
@@ -80,11 +82,23 @@ export const parseAmount = (value: string): number | null => {
     return Number.isNaN(parsedValue) ? null : parsedValue;
 };
 
-export const formatCurrency = (value: string) => {
+export const formatCurrency = (value: string, currency = 'USD') => {
     const numericValue = value.replace(/[^\d]/g, '');
     const number = parseFloat(numericValue) / 100;
     return new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: 'USD',
+        currency,
     }).format(number || 0);
+};
+
+export const formatCurrencyWithSymbol = (inputValue: InputNumberValue, currency: string = 'USD'): { currency: string; value: string } => {
+    const number = processInput(inputValue);
+    if (number === null) return { currency, value: '0' };
+    
+    const formatted = new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+    }).format(number);
+    
+    return { currency, value: formatted };
 };

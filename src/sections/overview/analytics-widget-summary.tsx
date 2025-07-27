@@ -1,6 +1,8 @@
 import type { ChartOptions } from 'src/components/chart';
 
-import { fNumber, fPercent, formatLargeNumber } from 'src/utils/format-number';
+import { useCurrency } from 'src/hooks/use-currency';
+
+import { fNumber, fPercent, formatLargeNumber, formatCurrencyWithSymbol } from 'src/utils/format-number';
 
 import { Iconify } from 'src/components/iconify';
 import { SvgColor } from 'src/components/svg-color';
@@ -34,6 +36,8 @@ export function AnalyticsWidgetSummary({
     color = 'primary',
     className,
 }: Props) {
+    const { getCurrencySymbol, currency } = useCurrency();
+    
     const chartColors = ['#1e40af'];
 
     const chartOptions = useChart({
@@ -79,9 +83,16 @@ export function AnalyticsWidgetSummary({
 
             <div className="flex flex-wrap items-end justify-end">
                 <div className="flex-grow min-w-28">
-                    <div className="mb-2 text-sm font-medium text-gray-600 dark:text-gray-300">{title}</div>
-                    <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {isCurrency ? `$${formatLargeNumber(total)}` : formatLargeNumber(total)}
+                    <div className="mb-2 text-lg font-bold text-gray-900 dark:text-white">{title}</div>
+                    <div className="text-4xl font-bold text-gray-900 dark:text-white">
+                        {isCurrency ? (
+                            <div className="flex items-baseline gap-1">
+                                <span className="text-2xl">{formatCurrencyWithSymbol(total, currency).currency}</span>
+                                <span>{formatLargeNumber(total)}</span>
+                            </div>
+                        ) : (
+                            formatLargeNumber(total)
+                        )}
                     </div>
                 </div>
 

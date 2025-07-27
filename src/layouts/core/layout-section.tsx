@@ -1,4 +1,4 @@
-import type { CSSObject, SxProps, Theme } from '@mui/material/styles';
+import type { Theme, SxProps, CSSObject } from '@mui/material/styles';
 
 import Box from '@mui/material/Box';
 import GlobalStyles from '@mui/material/GlobalStyles';
@@ -39,16 +39,21 @@ export function LayoutSection({
     return (
         <>
             {inputGlobalStyles}
-
             <Box id="root__layout" className={layoutClasses.root} sx={sx}>
                 {sidebarSection}
+                {headerSection}
                 <Box
                     display="flex"
                     flex="1 1 auto"
                     flexDirection="column"
                     className={layoutClasses.hasSidebar}
+                    sx={{
+                        minHeight: '100vh',
+                        pl: { lg: 'var(--layout-nav-vertical-width)' },
+                        pt: { xs: 'var(--layout-header-mobile-height)', md: 'var(--layout-header-desktop-height)' },
+                        transition: 'padding 0.2s',
+                    }}
                 >
-                    {headerSection}
                     {children}
                     {footerSection}
                 </Box>

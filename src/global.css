@@ -25,6 +25,33 @@
   body {
     @apply transition-colors duration-200;
   }
+  
+  /* Remove bordas duplas e estado selecionado de botões */
+  button:focus,
+  button:active,
+  button:focus-visible,
+  button:focus-within,
+  button[data-focus],
+  button[data-focus-visible] {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: transparent !important;
+  }
+  
+  /* Remove seleção visual em todos os elementos interativos */
+  button::selection,
+  button::-moz-selection {
+    background: transparent !important;
+  }
+  
+  /* Remove highlight/seleção do browser */
+  button {
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+  }
 }
 
 @layer components {
@@ -52,5 +79,41 @@
     .layout__main__content {
       @apply min-h-0;
     }
+  }
+
+  /* Radix UI Tooltip Arrow Fix */
+  [data-radix-popper-content-wrapper] {
+    z-index: 9999 !important;
+  }
+  
+  [data-radix-tooltip-content] {
+    transform-origin: var(--radix-tooltip-content-transform-origin);
+    animation: none !important;
+  }
+  
+  [data-radix-tooltip-arrow] {
+    fill: currentColor !important;
+    z-index: 9999 !important;
+  }
+
+  /* Loading Bar Animation */
+  @keyframes loading-bar {
+    0% {
+      transform: translateX(-100%);
+      width: 0%;
+    }
+    50% {
+      transform: translateX(0%);
+      width: 100%;
+    }
+    100% {
+      transform: translateX(100%);
+      width: 0%;
+    }
+  }
+
+  .animate-loading-bar {
+    animation: loading-bar 2s linear infinite;
+    width: 0%;
   }
 }

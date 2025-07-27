@@ -19,20 +19,20 @@ const ModernCard = forwardRef<HTMLDivElement, ModernCardProps>(
     }, ref) => {
         
         const baseClasses = [
-            'bg-white rounded-xl shadow-sm transition-all duration-200',
-            'dark:bg-gray-800'
+            'bg-white rounded-xl shadow-sm transition-all duration-200 border-0',
+            'dark:bg-slate-700'
         ];
 
         const paddingClasses = {
             none: '',
-            sm: 'p-3',
-            md: 'p-4',
-            lg: 'p-6',
-            xl: 'p-8'
+            sm: 'p-3 xl:p-4',
+            md: 'p-4 xl:p-6',
+            lg: 'p-6 xl:p-8',
+            xl: 'p-8 xl:p-10'
         };
 
         const hoverClasses = hoverable ? [
-            'hover:shadow-xl hover:-translate-y-2 cursor-pointer',
+            'hover:shadow-lg hover:-translate-y-1 cursor-pointer',
         ] : [];
 
         return (

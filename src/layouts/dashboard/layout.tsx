@@ -1,12 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
-import { formatCurrency } from 'src/utils/format-number';
+import { useCurrency } from 'src/hooks/use-currency';
 
+import { formatCurrency, formatCurrencyWithSymbol } from 'src/utils/format-number';
+
+import { useToast } from 'src/contexts/toast-context';
 import { AddCreditModal } from 'src/features/add-credit';
 import { useBalance } from 'src/context/balance-context';
 import { useAuthContext } from 'src/context/auth-context';
-import { useToast } from 'src/contexts/toast-context';
 
+import { Tooltip } from 'src/components/tooltip';
 import { ThemeToggle } from 'src/components/theme-toggle';
 import { NavMobile, NavDesktop } from 'src/components/navigation';
 
@@ -18,6 +21,7 @@ import { LayoutSection } from '../core/layout-section';
 import { HeaderSection } from '../core/header-section';
 import { AccountPopover } from '../components/account-popover';
 import { NotificationsPopover } from '../components/notifications-popover';
+import { BalancePopover } from '../components/balance-popover';
 
 export type DashboardLayoutProps = {
     className?: string;
@@ -30,15 +34,31 @@ export type DashboardLayoutProps = {
 export function DashboardLayout({ className, children, header }: DashboardLayoutProps) {
     const { isLoaded } = useAuthContext();
     const { balance, isBalanceLoaded, fetchBalance } = useBalance();
+    const { currency } = useCurrency();
     const { showToast } = useToast();
 
     const [navOpen, setNavOpen] = useState(false);
     const [openModal, setOpenModal] = useState(false);
 
+    const handleCloseNav = useCallback(() => {
+        setNavOpen(false);
+    }, []);
+
     const handleOpenModal = () => setOpenModal(true);
 
     const handleCloseModal = () => {
         setOpenModal(false);
+    };
+
+    const handleAddCredit = async (amount: number) => {
+        try {
+            // Aqui você faria a chamada para a API para adicionar crédito
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Simula API call
+            await fetchBalance(); // Atualiza o balance
+            handleOpenSnackbar('success');
+        } catch (error) {
+            handleOpenSnackbar('error');
+        }
     };
 
     const handleOpenSnackbar = (status: 'success' | 'error') => {
@@ -61,7 +81,7 @@ export function DashboardLayout({ className, children, header }: DashboardLayout
                     slotProps={{
                         container: {
                             maxWidth: false,
-                            className: 'px-4 sm:px-6 lg:px-8',
+                            className: 'px-3 sm:px-6 lg:px-8 xl:px-10',
                         },
                     }}
                     className={header?.className}
@@ -75,51 +95,44 @@ export function DashboardLayout({ className, children, header }: DashboardLayout
                                 <NavMobile
                                     data={navData}
                                     open={navOpen}
-                                    onClose={() => setNavOpen(false)}
+                                    onClose={handleCloseNav}
                                 />
                             </>
                         ),
                         rightArea: (
-                            <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
-                                <div className="flex items-center">
-                                    <div
-                                        className={`flex items-center justify-center px-3 sm:px-4 py-2 rounded-lg cursor-pointer transition-all duration-200 ease-out hover:scale-105 active:scale-95 hover:shadow-sm text-sm sm:text-base ${
-                                            isBalanceLoaded
-                                                ? balance || -1 > 0
-                                                    ? 'bg-emerald-100 dark:bg-emerald-900/30 hover:bg-emerald-200 dark:hover:bg-emerald-900/50'
-                                                    : 'bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600'
-                                                : 'bg-slate-200 dark:bg-slate-700'
-                                        }`}
-                                        onClick={isBalanceLoaded ? handleOpenModal : undefined}
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter' || e.key === ' ') {
-                                                e.preventDefault();
-                                                if (isBalanceLoaded) handleOpenModal();
-                                            }
-                                        }}
-                                        role="button"
-                                        tabIndex={isBalanceLoaded ? 0 : -1}
-                                        aria-label="Add credit"
-                                    >
-                                        {isBalanceLoaded ? (
-                                            <span className={`text-base sm:text-lg font-bold ${
-                                                balance || -1 > 0
-                                                    ? 'text-emerald-700 dark:text-emerald-300'
-                                                    : 'text-slate-600 dark:text-slate-400'
-                                            }`}>
-                                                {formatCurrency(
-                                                    balance?.toFixed(2).toString() || '0'
-                                                )}
-                                            </span>
-                                        ) : (
-                                            <div className="w-5 h-5 sm:w-6 sm:h-6 border-2 border-slate-400 dark:border-slate-500 border-t-transparent rounded-full animate-spin" />
-                                        )}
+                            <>
+                                {/* Desktop Layout */}
+                                <div className="hidden sm:flex items-center gap-2 lg:gap-3">
+                                    <BalancePopover 
+                                        balance={balance}
+                                        isBalanceLoaded={isBalanceLoaded}
+                                        currency={currency}
+                                        onAddCredit={handleAddCredit}
+                                    />
+                                    
+                                    <div className="w-px h-6 bg-slate-300 dark:bg-slate-600" />
+                                    
+                                    <div className="flex items-center gap-2">
+                                        <div className="hidden lg:block">
+                                            <ThemeToggle />
+                                        </div>
+                                        <NotificationsPopover />
+                                        <AccountPopover />
                                     </div>
                                 </div>
-                                <ThemeToggle />
-                                <NotificationsPopover />
-                                <AccountPopover />
-                            </div>
+
+                                {/* Mobile Layout */}
+                                <div className="flex sm:hidden items-center gap-2">
+                                    <BalancePopover 
+                                        balance={balance}
+                                        isBalanceLoaded={isBalanceLoaded}
+                                        currency={currency}
+                                        onAddCredit={handleAddCredit}
+                                    />
+                                    <NotificationsPopover />
+                                    <AccountPopover />
+                                </div>
+                            </>
                         ),
                 }}
             />
@@ -127,7 +140,7 @@ export function DashboardLayout({ className, children, header }: DashboardLayout
         sidebarSection={<NavDesktop data={navData} layoutQuery="lg" />}
         footerSection={null}
         cssVars={{
-            '--layout-nav-vertical-width': '240px',
+            '--layout-nav-vertical-width': '290px',
             '--layout-dashboard-content-pt': '6px',
             '--layout-dashboard-content-pb': '48px',
             '--layout-dashboard-content-px': '24px',

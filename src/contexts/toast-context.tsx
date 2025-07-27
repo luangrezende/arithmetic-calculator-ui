@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import { useMemo, useState, useContext, useCallback, createContext } from 'react';
 
 import { Iconify } from 'src/components/iconify';
 
@@ -41,9 +41,9 @@ const ToastIcon = ({ type }: { type: ToastType }) => {
 
 const ToastItem = ({ toast, onRemove }: { toast: Toast; onRemove: (id: string) => void }) => {
     const bgColors = {
-        success: 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800',
-        warning: 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800',
-        danger: 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800',
+        success: 'bg-emerald-50 dark:bg-emerald-900/80 border-emerald-200 dark:border-emerald-800',
+        warning: 'bg-yellow-50 dark:bg-yellow-900/80 border-yellow-200 dark:border-yellow-800',
+        danger: 'bg-red-50 dark:bg-red-900/80 border-red-200 dark:border-red-800',
     };
 
     const textColors = {
@@ -55,7 +55,7 @@ const ToastItem = ({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
     return (
         <div
             className={`
-                flex items-start gap-3 p-4 rounded-lg border backdrop-blur-sm shadow-lg
+                flex items-start gap-3 p-4 rounded-lg backdrop-blur-sm shadow-lg
                 animate-in slide-in-from-right-full duration-300
                 ${bgColors[toast.type]} ${textColors[toast.type]}
                 min-w-80 max-w-96
@@ -103,7 +103,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         <ToastContext.Provider value={contextValue}>
             {children}
             
-            <div className="fixed top-4 right-4 z-[9999] flex flex-col gap-2">
+            <div className="fixed top-16 lg:top-20 right-4 z-[9999] flex flex-col gap-2">
                 {toasts.map((toast) => (
                     <ToastItem
                         key={toast.id}

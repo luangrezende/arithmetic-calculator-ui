@@ -12,10 +12,8 @@ export function NavMobile({ data, open, slots, onClose }: NavMobileProps) {
     const pathname = usePathname();
 
     useEffect(() => {
-        if (open) {
-            onClose();
-        }
-    }, [pathname, onClose, open]);
+        onClose();
+    }, [pathname, onClose]);
 
     return (
         <ModernDrawer open={open} onClose={onClose}>

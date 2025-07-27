@@ -21,7 +21,12 @@ export function SimpleLayout({ className, children, header, content }: SimpleLay
             headerSection={
                 <HeaderSection
                     layoutQuery="md"
-                    slotProps={{ container: { maxWidth: false } }}
+                    slotProps={{ 
+                        container: { 
+                            maxWidth: false,
+                            className: 'px-3 sm:px-6 lg:px-8 xl:px-10',
+                        } 
+                    }}
                     className={header?.className}
                     slots={{
                         topArea: (

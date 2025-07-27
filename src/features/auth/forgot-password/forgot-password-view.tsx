@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { getTokens } from 'src/utils/auth-manager';
+
 import { useToast } from 'src/contexts/toast-context';
 
 import { ForgotPasswordForm } from './forgot-password-form';
@@ -44,8 +45,7 @@ export default function ForgotPasswordView() {
     const handleCancel = () => navigate('/sign-in');
 
     return (
-        <>
-            <ForgotPasswordForm
+        <ForgotPasswordForm
                 email={form.email}
                 onFieldChange={(field, value) => handleFieldChange(field, value)}
                 onSubmit={handleForgotPassword}
@@ -54,6 +54,5 @@ export default function ForgotPasswordView() {
                 error={error}
                 onBackToSignIn={handleCancel}
             />
-        </>
     );
 }

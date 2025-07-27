@@ -6,7 +6,7 @@ export const useLayoutVars = () => {
     
     return {
         '--layout-nav-bg': isDark ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-        '--layout-nav-zIndex': '1101',
+        '--layout-nav-zIndex': '1100',
         '--layout-nav-mobile-width': '320px',
         '--layout-nav-item-height': '44px',
         '--layout-nav-item-color': isDark ? 'rgb(148, 163, 184)' : 'rgb(100, 116, 139)',
@@ -17,7 +17,7 @@ export const useLayoutVars = () => {
         '--layout-nav-item-hover-bg': isDark 
             ? 'rgba(107, 182, 255, 0.16)' 
             : 'rgba(37, 99, 235, 0.16)',
-        '--layout-header-zIndex': '1100',
+        '--layout-header-zIndex': '1050',
         '--layout-header-mobile-height': '60px',
         '--layout-header-desktop-height': '72px',
     };
@@ -26,8 +26,8 @@ export const useLayoutVars = () => {
 export const getLayoutClasses = () => ({
     nav: 'bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm',
     header: 'bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm',
-    main: 'bg-slate-50 dark:bg-slate-900',
-    paper: 'bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl',
+    main: 'bg-slate-100 dark:bg-slate-800',
+    paper: 'bg-white/90 dark:bg-slate-700/90 backdrop-blur-sm rounded-xl',
     text: {
         primary: 'text-slate-900 dark:text-slate-100',
         secondary: 'text-slate-600 dark:text-slate-400',

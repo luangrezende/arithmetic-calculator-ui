@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { getTokens } from 'src/utils/auth-manager';
 
-import { registerUser } from 'src/services/api/auth-service';
 import { useToast } from 'src/contexts/toast-context';
+import { registerUser } from 'src/services/api/auth-service';
 
 import { SignUpForm } from './sign-up-form';
 

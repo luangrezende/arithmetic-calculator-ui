@@ -137,10 +137,10 @@ export function DashboardLayout({ className, children, header }: DashboardLayout
                 }}
             />
         }
-        sidebarSection={<NavDesktop data={navData} layoutQuery="lg" />}
+        sidebarSection={<NavDesktop data={navData} />}
         footerSection={null}
         cssVars={{
-            '--layout-nav-vertical-width': '290px',
+            '--layout-nav-vertical-width': '256px',
             '--layout-dashboard-content-pt': '6px',
             '--layout-dashboard-content-pb': '48px',
             '--layout-dashboard-content-px': '24px',
@@ -148,7 +148,7 @@ export function DashboardLayout({ className, children, header }: DashboardLayout
         sx={{
             [`& .${layoutClasses.hasSidebar}`]: {
                 '@media (min-width: 1024px)': {
-                    pl: 'var(--layout-nav-vertical-width)',
+                    pl: '256px',
                 },
             },
         }}

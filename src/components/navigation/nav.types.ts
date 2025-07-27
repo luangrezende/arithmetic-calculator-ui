@@ -1,4 +1,4 @@
-import type { Theme, SxProps, Breakpoint } from '@mui/material/styles';
+import type { Theme, SxProps } from '@mui/material/styles';
 
 export type NavItem = {
     path: string;
@@ -16,7 +16,7 @@ export type NavContentProps = {
     sx?: SxProps<Theme>;
 };
 
-export type NavDesktopProps = NavContentProps & { layoutQuery: Breakpoint };
+export type NavDesktopProps = NavContentProps;
 
 export type NavMobileProps = {
     data: NavItem[];

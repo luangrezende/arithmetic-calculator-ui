@@ -4,7 +4,9 @@ import { useMemo, useState, useEffect, useContext, useCallback, createContext } 
 
 import { useAuthRoute } from 'src/hooks/use-auth-route';
 
-type ThemeMode = 'light' | 'dark';
+import { themeManager } from 'src/utils/theme-manager';
+
+import type { ThemeMode } from 'src/utils/theme-manager';
 
 interface ThemeContextType {
     mode: ThemeMode;
@@ -27,43 +29,39 @@ interface ThemeProviderProps {
 }
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-    const [mode, setMode] = useState<ThemeMode>('light');
+    const [mode, setMode] = useState<ThemeMode>(() => themeManager.getCurrentTheme());
     const isAuthRoute = useAuthRoute();
 
     const effectiveMode = isAuthRoute ? 'light' : mode;
 
     useEffect(() => {
-        if (!isAuthRoute) {
-            const savedTheme = localStorage.getItem('theme-mode') as ThemeMode;
-            
-            if (savedTheme) {
-                setMode(savedTheme);
-            } else {
-                // Default to light mode instead of system preference
-                setMode('light');
+        const unsubscribe = themeManager.subscribe((newTheme) => {
+            if (!isAuthRoute) {
+                setMode(newTheme);
             }
-        }
+        });
+
+        return unsubscribe;
     }, [isAuthRoute]);
 
     useEffect(() => {
-        const {documentElement} = document;
-        
-        if (effectiveMode === 'dark') {
-            documentElement.classList.add('dark');
-            documentElement.style.setProperty('color-scheme', 'dark');
-        } else {
+        if (isAuthRoute && effectiveMode !== 'light') {
+            // Temporarily apply light mode for auth routes without persisting
+            const { documentElement } = document;
             documentElement.classList.remove('dark');
             documentElement.style.setProperty('color-scheme', 'light');
+        } else if (!isAuthRoute) {
+            // Re-apply the stored theme when leaving auth routes
+            themeManager.setTheme(mode);
         }
-    }, [effectiveMode]);
+    }, [isAuthRoute, effectiveMode, mode]);
 
     const toggleTheme = useCallback(() => {
         if (isAuthRoute) return;
         
-        const newMode = mode === 'light' ? 'dark' : 'light';
-        setMode(newMode);
-        localStorage.setItem('theme-mode', newMode);
-    }, [mode, isAuthRoute]);
+        const newTheme = themeManager.toggleTheme();
+        setMode(newTheme);
+    }, [isAuthRoute]);
 
     const contextValue = useMemo(() => ({ 
         mode: effectiveMode, 
@@ -73,7 +71,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
     return (
         <ThemeContext.Provider value={contextValue}>
-            <div className="min-h-screen bg-slate-100 dark:bg-slate-800">
+            <div className="min-h-screen bg-slate-100 dark:bg-slate-800 transition-colors duration-300">
                 {children}
             </div>
         </ThemeContext.Provider>

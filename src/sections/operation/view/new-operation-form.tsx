@@ -145,6 +145,7 @@ export function NewOperationForm({ onClose, onAddOperation }: NewOperationFormPr
             <div className="flex justify-end gap-2">
                 <ModernButton
                     variant="outline"
+                    size="sm"
                     onClick={onClose}
                     disabled={isLoading}
                 >
@@ -152,6 +153,7 @@ export function NewOperationForm({ onClose, onAddOperation }: NewOperationFormPr
                 </ModernButton>
                 <ModernButton
                     variant="primary"
+                    size="sm"
                     onClick={handleSubmit}
                     disabled={isLoading}
                     loading={isLoading}

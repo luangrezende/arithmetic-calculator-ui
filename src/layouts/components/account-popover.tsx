@@ -1,14 +1,14 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useLocalUser } from 'src/hooks/use-local-user';
 
-import { formatCurrencyWithSymbol } from 'src/utils/format-number';
 import { logout } from 'src/utils/auth-manager';
 
 import { logoutUser } from 'src/services/api/auth-service';
 
-import { Tooltip } from 'src/components/tooltip';
 import { Iconify } from 'src/components/iconify';
+import { Tooltip } from 'src/components/tooltip';
+
 import { useThemeMode } from 'src/context/theme-context';
 
 interface AccountPopoverProps {
@@ -129,7 +129,7 @@ export function AccountPopover({
                             type="button"
                             onClick={handleLogout}
                             disabled={loading}
-                            className="w-full py-2 lg:py-2.5 px-3 text-xs lg:text-sm font-medium text-red-600 dark:text-red-400 sm:hover:text-red-700 sm:dark:hover:text-red-300 sm:hover:bg-red-50 sm:dark:hover:bg-red-900/20 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                            className="w-full py-2 px-3 text-sm font-medium text-red-600 dark:text-red-400 sm:hover:text-red-700 sm:dark:hover:text-red-300 sm:hover:bg-red-50 sm:dark:hover:bg-red-900/20 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
                         >
                             {loading ? (
                                 <>

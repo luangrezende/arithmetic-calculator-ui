@@ -35,33 +35,33 @@ const ModernButton = forwardRef<HTMLButtonElement, ModernButtonProps>(
         ];
 
         const sizeClasses = {
-            sm: 'px-3 py-2 text-sm h-10 xl:px-4 xl:py-2 xl:text-base xl:h-12',
-            md: 'px-4 py-2 text-base h-12 xl:px-6 xl:py-3 xl:text-lg xl:h-14',
-            lg: 'px-6 py-3 text-lg h-14 xl:px-8 xl:py-4 xl:text-xl xl:h-16'
+            sm: 'px-2 py-1.5 text-xs h-8 xl:px-3 xl:py-2 xl:text-sm xl:h-9',
+            md: 'px-3 py-2 text-sm h-9 xl:px-4 xl:py-2.5 xl:text-base xl:h-10',
+            lg: 'px-4 py-2.5 text-base h-10 xl:px-5 xl:py-3 xl:text-lg xl:h-11'
         };
 
         const variantClasses = {
             primary: [
-                'bg-primary-600 sm:hover:bg-primary-700 active:bg-primary-800',
-                'dark:bg-primary-500 sm:dark:hover:bg-primary-600 dark:active:bg-primary-700',
+                'bg-blue-600 sm:hover:bg-blue-700 active:bg-blue-800',
+                'dark:bg-blue-500 sm:dark:hover:bg-blue-600 dark:active:bg-blue-700',
                 'text-white dark:text-white',
-                'shadow-button sm:hover:shadow-button-hover',
+                'shadow-sm sm:hover:shadow-md',
                 'border border-transparent'
             ],
             secondary: [
                 'bg-slate-100 sm:hover:bg-slate-200 active:bg-slate-300',
                 'dark:bg-slate-700 sm:dark:hover:bg-slate-600 dark:active:bg-slate-500',
-                'text-slate-900 sm:hover:text-slate-900 dark:text-slate-100 sm:dark:hover:text-slate-50',
-                'shadow-sm sm:hover:shadow-button',
+                'text-slate-900 dark:text-slate-100',
+                'shadow-sm sm:hover:shadow-md',
                 'border border-transparent'
             ],
             outline: [
-                'bg-transparent sm:hover:bg-primary-50 active:bg-primary-100',
-                'dark:bg-transparent sm:dark:hover:bg-primary-900/20 dark:active:bg-primary-900/30',
-                'text-primary-600 sm:hover:text-primary-700 active:text-primary-800',
-                'dark:text-primary-400 sm:dark:hover:text-primary-300 dark:active:text-primary-200',
-                'border-2 border-primary-600 sm:hover:border-primary-700 dark:border-primary-400 sm:dark:hover:border-primary-300',
-                'shadow-sm sm:hover:shadow-button'
+                'bg-transparent sm:hover:bg-blue-50 active:bg-blue-100',
+                'dark:bg-transparent sm:dark:hover:bg-blue-900/20 dark:active:bg-blue-900/30',
+                'text-blue-600 sm:hover:text-blue-700 active:text-blue-800',
+                'dark:text-blue-400 sm:dark:hover:text-blue-300 dark:active:text-blue-200',
+                'border border-blue-600 sm:hover:border-blue-700 dark:border-blue-400 sm:dark:hover:border-blue-300',
+                'shadow-sm sm:hover:shadow-md'
             ],
             ghost: [
                 'bg-transparent sm:hover:bg-slate-100 active:bg-slate-200',

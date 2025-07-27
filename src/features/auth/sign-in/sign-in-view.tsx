@@ -10,7 +10,7 @@ import { SignInForm } from './sign-in-form';
 export function SignInView() {
     const navigate = useNavigate();
     const login = loginUser();
-    const { token } = getTokens();
+    const { token, refreshToken } = getTokens();
 
     const [form, setForm] = useState({ email: '', password: '' });
     const [loginSuccess, setLoginSuccess] = useState(false);
@@ -18,8 +18,8 @@ export function SignInView() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (token) navigate('/');
-    }, [token, navigate]);
+        if (token && refreshToken) navigate('/');
+    }, [token, refreshToken, navigate]);
 
     const handleFieldChange = (field: string, value: string) => {
         setForm((prev) => ({ ...prev, [field]: value }));

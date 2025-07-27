@@ -10,7 +10,7 @@ import { SignUpForm } from './sign-up-form';
 
 export default function SignUpView() {
     const navigate = useNavigate();
-    const { token } = getTokens();
+    const { token, refreshToken } = getTokens();
     const { showToast } = useToast();
 
     const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' });
@@ -19,8 +19,8 @@ export default function SignUpView() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (token) navigate('/');
-    }, [token, navigate]);
+        if (token && refreshToken) navigate('/');
+    }, [token, refreshToken, navigate]);
 
     const handleFieldChange = (field: string, value: string) => {
         setForm((prev) => ({ ...prev, [field]: value }));

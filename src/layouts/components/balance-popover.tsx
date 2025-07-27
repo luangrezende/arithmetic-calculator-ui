@@ -1,11 +1,10 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { formatCurrencyWithSymbol } from 'src/utils/format-number';
 
-import { Tooltip } from 'src/components/tooltip';
-import { Iconify } from 'src/components/iconify';
-import { ModernInput } from 'src/components/modern-input';
 import { ModernButton } from 'src/components/modern-button';
+import { ModernInput } from 'src/components/modern-input';
+import { Tooltip } from 'src/components/tooltip';
 
 interface BalancePopoverProps {
     balance?: number | null;

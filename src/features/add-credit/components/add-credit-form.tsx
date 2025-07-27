@@ -65,12 +65,13 @@ export function AddCreditForm({ onClose, onOpenSnackBar }: AddCreditFormProps) {
             />
 
             <Box display="flex" justifyContent="flex-end" gap={2} sx={{ mt: 2 }}>
-                <ModernButton onClick={onClose} variant="outline" disabled={isLoading}>
+                <ModernButton onClick={onClose} variant="outline" size="sm" disabled={isLoading}>
                     Cancel
                 </ModernButton>
                 <ModernButton
                     onClick={handleSubmit}
                     variant="primary"
+                    size="sm"
                     disabled={isLoading}
                 >
                     {isLoading ? (

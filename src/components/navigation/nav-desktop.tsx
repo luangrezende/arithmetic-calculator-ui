@@ -1,31 +1,10 @@
-import { useThemeMode } from 'src/context/theme-context';
-
 import { NavContent } from './nav-content';
 
 import type { NavDesktopProps } from './nav.types';
 
-export function NavDesktop({ data, slots, layoutQuery }: NavDesktopProps) {
-    const { mode } = useThemeMode();
-
+export function NavDesktop({ data, slots }: NavDesktopProps) {
     return (
-        <div
-            className={`
-                pt-0 px-3 top-0 left-0 h-screen
-                hidden fixed flex-col
-                ${mode === 'dark' 
-                    ? 'bg-slate-900/95' 
-                    : 'bg-white/95'
-                }
-                backdrop-blur-md
-                shadow-xl
-                lg:flex
-                transition-all duration-200 ease-out
-            `}
-            style={{
-                width: 'var(--layout-nav-vertical-width)',
-                zIndex: 'var(--layout-nav-zIndex)',
-            }}
-        >
+        <div className="fixed top-0 left-0 h-screen w-64 max-w-[85vw] z-[1100] overflow-y-auto overflow-x-hidden pt-6 px-4 bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-2xl hidden lg:block">
             <NavContent data={data} slots={slots} />
         </div>
     );

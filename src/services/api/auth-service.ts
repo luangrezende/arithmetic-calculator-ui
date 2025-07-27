@@ -56,7 +56,10 @@ export const loginUser = () => async (username: string, password: string) => {
 export const logoutUser = async () => {
     try {
         const refreshToken = localStorage.getItem('refreshToken');
-        if (!refreshToken) throw new Error('RefreshToken not found.');
+        if (!refreshToken) {
+            console.warn('RefreshToken not found during logout - user may already be logged out');
+            return { success: true, message: 'Already logged out' };
+        }
 
         const response = await axios.post(
             `${USER_API_URL}${AUTH_ENDPOINTS.LOGOUT}`,
@@ -74,13 +77,7 @@ export const logoutUser = async () => {
 
 export const getUserProfile = async () => {
     try {
-        const token = localStorage.getItem('token');
-        if (!token) throw new Error('Token not found. Please log in again.');
-
         const response = await axiosInstance.get(`${USER_ENDPOINTS.PROFILE}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
             validateStatus: (status) => status >= 200 && status < 300,
         });
 

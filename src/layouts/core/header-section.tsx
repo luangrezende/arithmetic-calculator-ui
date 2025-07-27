@@ -37,8 +37,8 @@ export function HeaderSection({
         <header
             className={`
                 fixed top-0 right-0 w-full
-                lg:left-[var(--layout-nav-vertical-width)]
-                lg:w-[calc(100%-var(--layout-nav-vertical-width))]
+                lg:left-[256px]
+                lg:w-[calc(100%-256px)]
                 ${mode === 'dark' 
                     ? 'bg-slate-900/95' 
                     : 'bg-white/95'

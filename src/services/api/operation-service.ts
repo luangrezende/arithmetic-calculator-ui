@@ -4,9 +4,6 @@ import axiosInstance from '../axios/axios-interceptor';
 
 export const addOperationRecord = async (accountId: string, expression: string): Promise<any> => {
     try {
-        const token = localStorage.getItem('token');
-        if (!token) throw new Error('Token not found. Please log in again.');
-
         const payload: any = {
             accountId,
             expression,
@@ -16,9 +13,6 @@ export const addOperationRecord = async (accountId: string, expression: string):
             `${OPERATIONS_API_URL}${OPERATIONS_ENDPOINTS.RECORDS}`,
             payload,
             {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
                 validateStatus: (status) => status >= 200 && status < 300,
             }
         );
@@ -32,15 +26,9 @@ export const addOperationRecord = async (accountId: string, expression: string):
 
 export const getDashboardData = async (): Promise<any> => {
     try {
-        const token = localStorage.getItem('token');
-        if (!token) throw new Error('Token not found. Please log in again.');
-
         const response = await axiosInstance.get(
             `${OPERATIONS_API_URL}${OPERATIONS_ENDPOINTS.DASHBOARD}`,
             {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
                 validateStatus: (status) => status >= 200 && status < 300,
             }
         );
@@ -54,13 +42,7 @@ export const getDashboardData = async (): Promise<any> => {
 
 export const deleteOperationRecords = async (ids: string[]): Promise<void> => {
     try {
-        const token = localStorage.getItem('token');
-        if (!token) throw new Error('Token not found. Please log in again.');
-
         await axiosInstance.delete(`${OPERATIONS_API_URL}${OPERATIONS_ENDPOINTS.RECORDS}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
             data: { ids },
             validateStatus: (status) => status >= 200 && status < 300,
         });
@@ -76,15 +58,9 @@ export const getPagedOperationRecords = async (
     searchQuery: string = ''
 ) => {
     try {
-        const token = localStorage.getItem('token');
-        if (!token) throw new Error('Token not found. Please log in again.');
-
         const response = await axiosInstance.get(
             `${OPERATIONS_API_URL}${OPERATIONS_ENDPOINTS.RECORDS}`,
             {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
                 params: {
                     page,
                     pageSize,

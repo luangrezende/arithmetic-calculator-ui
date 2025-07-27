@@ -217,8 +217,9 @@ export function OperationView() {
                         </div>
                         <ModernButton
                             variant="primary"
+                            size="sm"
                             onClick={handleOpenModal}
-                            className="flex items-center justify-center min-w-[40px] sm:min-w-auto px-2 sm:px-4 py-2"
+                            className="flex items-center justify-center min-w-[36px] sm:min-w-auto px-2 sm:px-3"
                         >
                             <Iconify
                                 icon="mingcute:add-line"
@@ -399,6 +400,7 @@ export function OperationView() {
                 <Box display="flex" justifyContent="flex-end" my={2}>
                     <ModernButton
                         variant="outline"
+                        size="sm"
                         onClick={() => {
                             if (selected.length > 0) {
                                 handleOpenConfirmDelete();
@@ -408,7 +410,7 @@ export function OperationView() {
                         }}
                         disabled={isDeleting}
                         loading={isDeleting}
-                        className="text-red-600 border-red-200 sm:hover:bg-red-50 sm:hover:border-red-300 dark:text-red-400 dark:border-red-800 sm:dark:hover:bg-red-900/20 sm:dark:hover:border-red-700"
+                        className="text-red-600 border-red-600 sm:hover:bg-red-50 sm:hover:border-red-700 dark:text-red-400 dark:border-red-400 sm:dark:hover:bg-red-900/20 sm:dark:hover:border-red-300"
                     >
                         <Iconify icon="tabler:trash" width={20} sx={{ mr: 1 }} />
                         Delete Selected
@@ -433,6 +435,7 @@ export function OperationView() {
                     <ModernButton
                         onClick={handleCloseConfirmDelete}
                         variant="ghost"
+                        size="sm"
                         disabled={isDeleting}
                     >
                         Cancel
@@ -441,10 +444,11 @@ export function OperationView() {
                         onClick={() => {
                             deleteRecords(selected);
                         }}
-                        variant="secondary"
+                        variant="primary"
+                        size="sm"
                         disabled={isDeleting}
                         loading={isDeleting}
-                        className="bg-red-500 sm:hover:bg-red-600 text-white disabled:bg-gray-400"
+                        className="bg-red-600 sm:hover:bg-red-700 active:bg-red-800 dark:bg-red-500 sm:dark:hover:bg-red-600 dark:active:bg-red-700"
                     >
                         {isDeleting ? (
                             <>

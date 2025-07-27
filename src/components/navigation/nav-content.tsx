@@ -14,21 +14,21 @@ export function NavContent({ data, slots }: NavContentProps) {
     const { mode } = useThemeMode();
 
     return (
-        <div className="pt-8">
-            <div className="mb-20 px-2">
+        <div className="pt-2">
+            <div className="mb-16 px-2">
                 <Logo />
             </div>
 
-            <h6 className={`mb-6 px-3 text-xs font-medium uppercase tracking-wider ${
+            <h6 className={`mb-4 px-4 text-xs font-medium uppercase tracking-wider ${
                 mode === 'dark' ? 'text-slate-400' : 'text-slate-600'
             }`}>
-                Overview
+                Menu
             </h6>
 
             {slots?.topArea}
 
             <Scrollbar fillContent>
-                <nav className="flex flex-1 flex-col px-3">
+                <nav className="flex flex-1 flex-col px-4">
                     <ul className="flex flex-col gap-2">
                         {data.map((item, index) => {
                             const isActive = item.path === pathname;

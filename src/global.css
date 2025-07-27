@@ -8,6 +8,9 @@
 @layer base {
   :root {
     color-scheme: light;
+    --transition-theme: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                       color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                       border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
   .dark {
@@ -20,13 +23,18 @@
   
   html {
     scroll-behavior: smooth;
+    transition: var(--transition-theme);
   }
   
   body {
-    @apply transition-colors duration-200;
+    transition: var(--transition-theme);
   }
   
-  /* Remove bordas duplas e estado selecionado de botões */
+  .theme-transition,
+  .theme-transition * {
+    transition: var(--transition-theme);
+  }
+  
   button:focus,
   button:active,
   button:focus-visible,
@@ -38,13 +46,11 @@
     border-color: transparent !important;
   }
   
-  /* Remove seleção visual em todos os elementos interativos */
   button::selection,
   button::-moz-selection {
     background: transparent !important;
   }
   
-  /* Remove highlight/seleção do browser */
   button {
     -webkit-tap-highlight-color: transparent !important;
     -webkit-user-select: none !important;
@@ -81,7 +87,6 @@
     }
   }
 
-  /* Radix UI Tooltip Arrow Fix */
   [data-radix-popper-content-wrapper] {
     z-index: 9999 !important;
   }
@@ -96,7 +101,6 @@
     z-index: 9999 !important;
   }
 
-  /* Loading Bar Animation */
   @keyframes loading-bar {
     0% {
       transform: translateX(-100%);

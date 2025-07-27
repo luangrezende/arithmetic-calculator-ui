@@ -16,6 +16,7 @@ const SignInPage = lazy(() => import('src/features/auth/sign-in'));
 const ForgotPasswordPage = lazy(
     () => import('src/features/auth/forgot-password/forgot-password-view')
 );
+const SessionExpiredPage = lazy(() => import('src/pages/session-expired'));
 const Page404 = lazy(() => import('src/pages/page-not-found'));
 
 const withSuspense = (Component: React.ComponentType) => (
@@ -56,6 +57,10 @@ export function Router() {
         {
             path: '/404',
             element: withSuspense(Page404),
+        },
+        {
+            path: '/session-expired',
+            element: withSuspense(SessionExpiredPage),
         },
     ];
 

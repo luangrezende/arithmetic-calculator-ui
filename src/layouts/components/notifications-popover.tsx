@@ -81,13 +81,16 @@ export function NotificationsPopover() {
                 <button
                     type="button"
                     onClick={handleOpenPopover}
-                    className="relative w-10 h-10 xl:w-11 xl:h-11 flex items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800/95 backdrop-blur-sm shadow-sm transition-all duration-200 ease-out active:scale-95 sm:hover:scale-105 sm:hover:bg-slate-100 sm:dark:hover:bg-slate-800 sm:hover:shadow-md focus:outline-none focus:ring-0 active:outline-none active:ring-0 select-none"
+                    className="relative w-10 h-10 xl:w-11 xl:h-11 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 backdrop-blur-sm shadow-sm transition-all duration-200 ease-out active:scale-95 sm:hover:scale-105 sm:hover:bg-slate-100 sm:dark:hover:bg-slate-800 sm:hover:shadow-md focus:outline-none focus:ring-0 active:outline-none active:ring-0 select-none"
                 >
                     <Iconify 
                         icon="solar:letter-unread-bold"
                         width={16}
                         sx={{
                             color: 'primary.main',
+                            '.dark &': {
+                                color: '#e2e8f0',
+                            },
                             transition: 'color 0.2s ease-out',
                             width: { xs: 16, xl: 18 },
                             height: { xs: 16, xl: 18 },
@@ -132,7 +135,7 @@ export function NotificationsPopover() {
                                             type="button"
                                             onClick={handleMarkAllAsRead}
                                             disabled={markingAsRead}
-                                            className="w-8 h-8 flex items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-900/50 text-blue-500 dark:text-blue-400 sm:hover:bg-blue-100 sm:dark:hover:bg-blue-900/70 transition-colors disabled:opacity-50"
+                                            className="w-8 h-8 flex items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-900/50 text-blue-500 dark:text-blue-300 sm:hover:bg-blue-100 sm:dark:hover:bg-blue-900/70 transition-colors disabled:opacity-50"
                                         >
                                             {markingAsRead ? (
                                                 <svg 
@@ -262,7 +265,7 @@ function NotificationItem({ notification, currency }: { notification: OperationN
             return { icon: 'solar:minus-circle-outline', color: 'bg-orange-500/90 dark:bg-orange-600/90' };
         }
         if (operation.toLowerCase().includes('multiplication')) {
-            return { icon: 'solar:close-circle-outline', color: 'bg-blue-500/90 dark:bg-blue-600/90' };
+            return { icon: 'solar:close-circle-outline', color: 'bg-blue-500/90 dark:bg-blue-700/90' };
         }
         if (operation.toLowerCase().includes('division')) {
             return { icon: 'solar:divide-outline', color: 'bg-violet-500/90 dark:bg-violet-600/90' };
@@ -278,10 +281,9 @@ function NotificationItem({ notification, currency }: { notification: OperationN
 
     const { icon, color } = getOperationIcon(notification.operation);
     
-    // Força a verificação explícita
     const isUnread = Boolean(notification.isUnRead);
     const unreadStyles = isUnread 
-        ? 'bg-blue-100/70 dark:bg-blue-900/20 border-l-4 border-blue-500 dark:border-blue-400' 
+        ? 'bg-blue-100/70 dark:bg-blue-900/20 border-l-4 border-blue-500 dark:border-blue-300' 
         : '';
 
     return (

@@ -31,9 +31,9 @@ export const handleAuthError = (error: ApiError): void => {
         'não autorizado'
     ];
 
-    const isSessionExpired = status === 401 || 
-                            status === 403 || 
-                            sessionExpiredMessages.some(msg => message.includes(msg));
+    // Only handle auth errors if they are not 401 (let axios interceptor handle 401 with refresh token logic)
+    const isSessionExpired = (status === 403 || sessionExpiredMessages.some(msg => message.includes(msg))) && 
+                            status !== 401;
 
     if (isSessionExpired && !sessionManager.isCurrentlyRedirecting()) {
         console.warn('Session expired or unauthorized access detected:', {

@@ -74,9 +74,9 @@ export function AccountPopover({
                 <button
                     type="button"
                     onClick={handleOpenPopover}
-                    className={`w-10 h-10 xl:w-11 xl:h-11 p-0.5 xl:p-1 rounded-full bg-slate-200 dark:bg-slate-800/95 backdrop-blur-sm shadow-sm transition-all duration-200 ease-out active:scale-95 sm:hover:scale-105 sm:hover:bg-slate-100 sm:dark:hover:bg-slate-800 sm:hover:shadow-md focus:outline-none focus:ring-0 active:outline-none active:ring-0 select-none ${className}`}
+                    className={`w-10 h-10 xl:w-11 xl:h-11 p-0.5 xl:p-1 rounded-full bg-slate-100 dark:bg-slate-800 backdrop-blur-sm shadow-sm transition-all duration-200 ease-out active:scale-95 sm:hover:scale-105 sm:hover:bg-slate-100 sm:dark:hover:bg-slate-800 sm:hover:shadow-md focus:outline-none focus:ring-0 active:outline-none active:ring-0 select-none ${className}`}
                 >
-                    <div className="w-full h-full rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center overflow-hidden">
+                    <div className="w-full h-full rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center overflow-hidden">
                         {photoUrl ? (
                             <img
                                 src={photoUrl}

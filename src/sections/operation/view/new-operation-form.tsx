@@ -100,6 +100,7 @@ export function NewOperationForm({ onClose, onAddOperation }: NewOperationFormPr
                 label="Operation"
                 value={operationType?.id || ''}
                 onChange={(e) => handleOperationChange(e.target.value)}
+                disabled={isLoading}
                 required
             >
                 <option value="" disabled>
@@ -119,6 +120,7 @@ export function NewOperationForm({ onClose, onAddOperation }: NewOperationFormPr
                         value={expression}
                         onChange={(e) => setExpression(e.target.value)}
                         error={fieldError || undefined}
+                        disabled={isLoading}
                         required
                         className="w-full"
                     />

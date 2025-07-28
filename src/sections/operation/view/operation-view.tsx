@@ -1,6 +1,6 @@
 import type { OperationRecord } from 'src/models/operation-record';
 
-import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useRef, useMemo, useState, useEffect, useCallback } from 'react';
 
 import { useCurrency } from 'src/hooks/use-currency';
 
@@ -25,10 +25,15 @@ import { NewOperationForm } from './new-operation-form';
 
 export function OperationView() {
     const { currency } = useCurrency();
-    const [viewMode, setViewMode] = useState<'table' | 'card'>('table');
+    const [viewMode, setViewMode] = useState<'table' | 'card'>(() => {
+        const saved = sessionStorage.getItem('operations-view-mode');
+        return (saved as 'table' | 'card') || 'table';
+    });
     const [isDeleting, setIsDeleting] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+    const [isSearchFocused, setIsSearchFocused] = useState(false);
+    const searchInputRef = useRef<HTMLInputElement>(null);
     const [operations, setOperations] = useState<OperationRecord[]>([]);
     const [loading, setLoading] = useState(false);
     const [order, setOrder] = useState<'asc' | 'desc'>('desc');
@@ -62,6 +67,7 @@ export function OperationView() {
     useEffect(() => {
         const handler = setTimeout(() => {
             setDebouncedSearchQuery(searchQuery);
+            setSelected([]);
         }, 600);
 
         return () => {
@@ -72,6 +78,24 @@ export function OperationView() {
     useEffect(() => {
         fetchPagedOperations();
     }, [fetchPagedOperations]);
+
+    useEffect(() => {
+        sessionStorage.setItem('operations-view-mode', viewMode);
+    }, [viewMode]);
+
+    useEffect(() => {
+        if (isSearchFocused && searchInputRef.current) {
+            const handleClickOutside = (event: MouseEvent) => {
+                if (searchInputRef.current && !searchInputRef.current.contains(event.target as Node)) {
+                    setIsSearchFocused(false);
+                }
+            };
+
+            document.addEventListener('mousedown', handleClickOutside);
+            return () => document.removeEventListener('mousedown', handleClickOutside);
+        }
+        return undefined;
+    }, [isSearchFocused]);
 
     const handleSelectAllClick = useCallback((checked: boolean) => {
         if (checked) {
@@ -157,7 +181,6 @@ export function OperationView() {
         });
     }, [operations, order, orderBy]);
 
-    // Helper function to get operation color dot
     const getOperationDot = (operation: string) => {
         if (operation === 'Random String' || operation === 'random_string') {
             return 'bg-slate-400 dark:bg-slate-500';
@@ -165,40 +188,25 @@ export function OperationView() {
         if (operation === 'Arithmetic Operation' || operation.includes('arithmetic') || operation.includes('addition') || operation.includes('subtraction') || operation.includes('multiplication') || operation.includes('division') || operation.includes('square_root')) {
             return 'bg-blue-500 dark:bg-blue-400';
         }
-        return 'bg-blue-500 dark:bg-blue-400'; // default para arithmetic
+        return 'bg-blue-500 dark:bg-blue-400';
     };
 
     const totalPages = Math.ceil(totalRecords / rowsPerPage);
 
     const renderTopBar = () => (
         <div className="flex flex-col gap-4 mb-6">
-            {/* Desktop: Title + Controls */}
-            <div className="hidden lg:flex lg:items-center gap-4">
-                <div className="flex-1">
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-                        Operations
-                    </h1>
-                </div>
-                
-                <div className="flex gap-3 items-center">
-                    <div className="w-64">
-                        <ModernInput
-                            placeholder="Search operations..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-6"
-                            variant="search"
-                        />
-                    </div>
-                    
-                    <div className={`flex items-center bg-slate-100 dark:bg-slate-700 rounded-lg p-1 ${UI_HEIGHTS.default}`}>
+            {/* Desktop: Controls */}
+            <div className="hidden lg:block">
+                {/* Search + View Mode Switch + New Operation Button */}
+                <div className="flex justify-between items-center gap-4">
+                    <div className={`flex items-center justify-center bg-gray-50 dark:bg-slate-600 rounded-lg p-1 w-24 ${UI_HEIGHTS.default}`}>
                         <button
                             type="button"
                             onClick={() => setViewMode('table')}
                             className={`flex items-center justify-center w-10 h-10 rounded-md text-lg font-medium transition-colors ${
                                 viewMode === 'table'
-                                    ? 'bg-white dark:bg-slate-600 text-slate-900 dark:text-slate-100 shadow-sm'
-                                    : 'text-slate-600 dark:text-slate-400 lg:hover:text-slate-900 lg:dark:hover:text-slate-100'
+                                    ? 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-100 shadow-sm'
+                                    : 'text-slate-500 dark:text-slate-400 lg:hover:text-slate-500 lg:dark:hover:text-slate-100'
                             }`}
                         >
                             <Iconify icon="solar:list-bold" width={18} />
@@ -208,23 +216,42 @@ export function OperationView() {
                             onClick={() => setViewMode('card')}
                             className={`flex items-center justify-center w-10 h-10 rounded-md text-lg font-medium transition-colors ${
                                 viewMode === 'card'
-                                    ? 'bg-white dark:bg-slate-600 text-slate-900 dark:text-slate-100 shadow-sm'
-                                    : 'text-slate-600 dark:text-slate-400 lg:hover:text-slate-900 lg:dark:hover:text-slate-100'
+                                    ? 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-100 shadow-sm'
+                                    : 'text-slate-500 dark:text-slate-400 lg:hover:text-slate-500 lg:dark:hover:text-slate-100'
                             }`}
                         >
                             <Iconify icon="solar:widget-2-bold" width={18} />
                         </button>
                     </div>
                     
-                    <ModernButton
-                        variant="primary"
-                        size="md"
-                        onClick={handleOpenModal}
-                        className={`whitespace-nowrap ${UI_HEIGHTS.default}`}
-                    >
-                        <Iconify icon="solar:add-circle-bold" width={18} />
-                        <span className="ml-2">New Operation</span>
-                    </ModernButton>
+                    <div className="flex items-center gap-3">
+                        <div className="w-64">
+                            <ModernInput
+                                ref={searchInputRef}
+                                placeholder="Search operations..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onFocus={() => setIsSearchFocused(true)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Tab' && isSearchFocused) {
+                                        e.preventDefault();
+                                        searchInputRef.current?.focus();
+                                    }
+                                }}
+                                className="w-full"
+                                variant="default"
+                            />
+                        </div>
+                        
+                        <ModernButton
+                            variant="primary"
+                            size="sm"
+                            onClick={handleOpenModal}
+                            className="whitespace-nowrap h-12 xl:h-14"
+                        >
+                            <span>New Operation</span>
+                        </ModernButton>
+                    </div>
                 </div>
             </div>
 
@@ -232,20 +259,28 @@ export function OperationView() {
             <div className="flex lg:hidden gap-3">
                 <div className="flex-1">
                     <ModernInput
+                        ref={searchInputRef}
                         placeholder="Search operations..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-6"
-                        variant="search"
+                        onFocus={() => setIsSearchFocused(true)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Tab' && isSearchFocused) {
+                                e.preventDefault();
+                                searchInputRef.current?.focus();
+                            }
+                        }}
+                        className="w-full"
+                        variant="default"
                     />
                 </div>
                 
                 <div className="relative group">
                     <ModernButton
                         variant="primary"
-                        size="md"
+                        size="sm"
                         onClick={handleOpenModal}
-                        className={`shrink-0 ${UI_HEIGHTS.default}`}
+                        className="shrink-0 w-16 h-12"
                         title="New Operation"
                     >
                         <Iconify icon="solar:add-circle-bold" width={18} />
@@ -260,15 +295,15 @@ export function OperationView() {
 
     const renderDeleteActions = () => (
         selected.length > 0 && (
-            <div className="flex items-center justify-between p-4 mb-4 bg-blue-200 dark:bg-slate-500/90 rounded-lg">
+            <div className="flex items-center justify-between p-4 mb-4 bg-blue-200 dark:bg-slate-600 rounded-lg">
                 <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
                     {selected.length} operation(s) selected
                 </span>
                 <ModernButton
                     variant="danger"
-                    size="md"
+                    size="sm"
                     onClick={() => setConfirmDeleteOpen(true)}
-                    className={`h-${UI_HEIGHTS.default}`}
+                    className="whitespace-nowrap"
                 >
                     <div className="flex items-center gap-2">
                         <Iconify icon="solar:trash-bin-bold" width={16} />
@@ -280,214 +315,188 @@ export function OperationView() {
     );
 
     const renderTableView = () => (
-        <ModernCard className="overflow-hidden">
-            {loading ? (
-                <div className="p-6">
-                    <div className="flex items-center justify-center min-h-96">
-                        <div className="w-full max-w-md mx-auto">
-                            <div className="bg-white dark:bg-slate-700 rounded-xl p-6">
-                                <div className="text-center mb-4">
-                                    <div className="text-sm font-medium text-slate-600 dark:text-slate-400">Loading operations...</div>
-                                </div>
-                                <div className="relative h-2 bg-slate-100 dark:bg-slate-600 rounded-full overflow-hidden">
-                                    <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-purple-600 rounded-full animate-loading-bar" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            ) : (
+        <ModernCard className="overflow-hidden bg-white dark:!bg-slate-600">
                 <div className="w-full">
                     <table className="w-full table-fixed">
-                            <thead className="bg-slate-200 dark:bg-slate-800">
+                        <thead className="bg-slate-200 dark:bg-slate-700">
+                            <tr>
+                                <th className="px-1 lg:px-4 py-3 text-left w-8 lg:w-12">
+                                    <input
+                                        type="checkbox"
+                                        checked={operations.length > 0 && selected.length === operations.length}
+                                        onChange={(e) => handleSelectAllClick(e.target.checked)}
+                                        className="rounded text-blue-600"
+                                    />
+                                </th>
+                                <th className="px-2 lg:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider w-20 lg:w-40">
+                                    <button
+                                        type="button"
+                                        onClick={() => handleRequestSort('type')}
+                                        className="flex items-center space-x-1 lg:hover:text-slate-700 lg:dark:hover:text-slate-200"
+                                    >
+                                        <span className="hidden lg:block">Operation</span>
+                                        <span className="lg:hidden">Op</span>
+                                        <span className={`text-xs ${orderBy === 'type' ? 'opacity-100' : 'opacity-40'}`}>
+                                            {order === 'asc' ? '↑' : '↓'}
+                                        </span>
+                                    </button>
+                                </th>
+                                <th className="px-2 lg:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider w-14 lg:w-24">
+                                    <button
+                                        type="button"
+                                        onClick={() => handleRequestSort('expression')}
+                                        className="flex items-center space-x-1 lg:hover:text-slate-700 lg:dark:hover:text-slate-200"
+                                    >
+                                        <span>Expression</span>
+                                        <span className={`text-xs ${orderBy === 'expression' ? 'opacity-100' : 'opacity-40'}`}>
+                                            {order === 'asc' ? '↑' : '↓'}
+                                        </span>
+                                    </button>
+                                </th>
+                                <th className="px-2 lg:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider w-14 lg:w-28">
+                                    <button
+                                        type="button"
+                                        onClick={() => handleRequestSort('result')}
+                                        className="flex items-center space-x-1 lg:hover:text-slate-700 lg:dark:hover:text-slate-200"
+                                    >
+                                        <span>Result</span>
+                                        <span className={`text-xs ${orderBy === 'result' ? 'opacity-100' : 'opacity-40'}`}>
+                                            {order === 'asc' ? '↑' : '↓'}
+                                        </span>
+                                    </button>
+                                </th>
+                                <th className="px-2 lg:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider w-14 lg:w-24">
+                                    <button
+                                        type="button"
+                                        onClick={() => handleRequestSort('cost')}
+                                        className="flex items-center space-x-1 lg:hover:text-slate-700 lg:dark:hover:text-slate-200"
+                                    >
+                                        <span>Cost</span>
+                                        <span className={`text-xs ${orderBy === 'cost' ? 'opacity-100' : 'opacity-40'}`}>
+                                            {order === 'asc' ? '↑' : '↓'}
+                                        </span>
+                                    </button>
+                                </th>
+                                <th className="px-2 lg:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider w-14 lg:w-24 hidden sm:table-cell">
+                                    <button
+                                        type="button"
+                                        onClick={() => handleRequestSort('userBalance')}
+                                        className="flex items-center space-x-1 lg:hover:text-slate-700 lg:dark:hover:text-slate-200"
+                                    >
+                                        <span>Balance</span>
+                                        <span className={`text-xs ${orderBy === 'userBalance' ? 'opacity-100' : 'opacity-40'}`}>
+                                            {order === 'asc' ? '↑' : '↓'}
+                                        </span>
+                                    </button>
+                                </th>
+                                <th className="px-2 lg:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider w-20 lg:w-28">
+                                    <button
+                                        type="button"
+                                        onClick={() => handleRequestSort('createdAt')}
+                                        className="flex items-center space-x-1 lg:hover:text-slate-700 lg:dark:hover:text-slate-200"
+                                    >
+                                        <span>Date</span>
+                                        <span className={`text-xs ${orderBy === 'createdAt' ? 'opacity-100' : 'opacity-40'}`}>
+                                            {order === 'asc' ? '↑' : '↓'}
+                                        </span>
+                                    </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+                            {sortedOperations.length === 0 ? (
                                 <tr>
-                                    <th className="px-1 lg:px-4 py-3 text-left w-8 lg:w-12">
-                                        <input
-                                            type="checkbox"
-                                            checked={operations.length > 0 && selected.length === operations.length}
-                                            onChange={(e) => handleSelectAllClick(e.target.checked)}
-                                            className="rounded text-blue-600"
-                                        />
-                                    </th>
-                                    <th className="px-2 lg:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider w-20 lg:w-40">
-                                        <button
-                                            type="button"
-                                            onClick={() => handleRequestSort('type')}
-                                            className="flex items-center space-x-1 lg:hover:text-slate-700 lg:dark:hover:text-slate-200"
-                                        >
-                                            <span className="hidden lg:block">Operation</span>
-                                            <span className="lg:hidden">Op</span>
-                                            <span className={`text-xs ${orderBy === 'type' ? 'opacity-100' : 'opacity-40'}`}>
-                                                {order === 'asc' ? '↑' : '↓'}
-                                            </span>
-                                        </button>
-                                    </th>
-                                    <th className="px-2 lg:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider w-14 lg:w-24">
-                                        <button
-                                            type="button"
-                                            onClick={() => handleRequestSort('expression')}
-                                            className="flex items-center space-x-1 lg:hover:text-slate-700 lg:dark:hover:text-slate-200"
-                                        >
-                                            <span>Expression</span>
-                                            <span className={`text-xs ${orderBy === 'expression' ? 'opacity-100' : 'opacity-40'}`}>
-                                                {order === 'asc' ? '↑' : '↓'}
-                                            </span>
-                                        </button>
-                                    </th>
-                                    <th className="px-2 lg:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider w-14 lg:w-28">
-                                        <button
-                                            type="button"
-                                            onClick={() => handleRequestSort('result')}
-                                            className="flex items-center space-x-1 lg:hover:text-slate-700 lg:dark:hover:text-slate-200"
-                                        >
-                                            <span>Result</span>
-                                            <span className={`text-xs ${orderBy === 'result' ? 'opacity-100' : 'opacity-40'}`}>
-                                                {order === 'asc' ? '↑' : '↓'}
-                                            </span>
-                                        </button>
-                                    </th>
-                                    <th className="px-2 lg:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider w-14 lg:w-24">
-                                        <button
-                                            type="button"
-                                            onClick={() => handleRequestSort('cost')}
-                                            className="flex items-center space-x-1 lg:hover:text-slate-700 lg:dark:hover:text-slate-200"
-                                        >
-                                            <span>Cost</span>
-                                            <span className={`text-xs ${orderBy === 'cost' ? 'opacity-100' : 'opacity-40'}`}>
-                                                {order === 'asc' ? '↑' : '↓'}
-                                            </span>
-                                        </button>
-                                    </th>
-                                    <th className="px-2 lg:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider w-14 lg:w-24 hidden sm:table-cell">
-                                        <button
-                                            type="button"
-                                            onClick={() => handleRequestSort('userBalance')}
-                                            className="flex items-center space-x-1 lg:hover:text-slate-700 lg:dark:hover:text-slate-200"
-                                        >
-                                            <span>Balance</span>
-                                            <span className={`text-xs ${orderBy === 'userBalance' ? 'opacity-100' : 'opacity-40'}`}>
-                                                {order === 'asc' ? '↑' : '↓'}
-                                            </span>
-                                        </button>
-                                    </th>
-                                    <th className="px-2 lg:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider w-20 lg:w-28">
-                                        <button
-                                            type="button"
-                                            onClick={() => handleRequestSort('createdAt')}
-                                            className="flex items-center space-x-1 lg:hover:text-slate-700 lg:dark:hover:text-slate-200"
-                                        >
-                                            <span>Date</span>
-                                            <span className={`text-xs ${orderBy === 'createdAt' ? 'opacity-100' : 'opacity-40'}`}>
-                                                {order === 'asc' ? '↑' : '↓'}
-                                            </span>
-                                        </button>
-                                    </th>
+                                    <td colSpan={7} className="px-6 py-12 text-center">
+                                        <div className="flex flex-col items-center">
+                                            <div className="text-4xl text-slate-400 dark:text-slate-500 mb-3">📥</div>
+                                            <span className="text-slate-600 dark:text-slate-400 mt-3">No operations found</span>
+                                            <span className="text-xs text-slate-500 dark:text-slate-500 mt-2">Add credits and perform an operation</span>
+                                        </div>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody className="bg-white dark:bg-slate-900 divide-y divide-slate-200 dark:divide-slate-700">
-                                {sortedOperations.length === 0 ? (
-                                    <tr>
-                                        <td colSpan={7} className="px-6 py-12 text-center">
-                                            <div className="flex flex-col items-center">
-                                                <div className="text-4xl text-slate-400 dark:text-slate-500 mb-3">📥</div>
-                                                <span className="text-slate-600 dark:text-slate-400 mt-3">No operations found</span>
+                            ) : (
+                                sortedOperations.map((operation) => (
+                                    <tr 
+                                        key={operation.id} 
+                                        className={cn(
+                                            'cursor-pointer transition-colors duration-150',
+                                            'lg:hover:bg-slate-200 lg:dark:hover:bg-blue-500/40',
+                                            selected.includes(operation.id) && 'bg-blue-200 dark:bg-slate-500'
+                                        )}
+                                        onClick={() => handleSelectClick(operation.id)}
+                                    >
+                                        <td className="px-1 lg:px-4 py-4">
+                                            <input
+                                                type="checkbox"
+                                                checked={selected.includes(operation.id)}
+                                                onChange={() => handleSelectClick(operation.id)}
+                                                className="rounded text-blue-600"
+                                                onClick={(e) => e.stopPropagation()}
+                                            />
+                                        </td>
+                                        <td className="px-2 lg:px-6 py-4 whitespace-nowrap">
+                                            <div className="flex items-center">
+                                                <div className={`w-3 h-3 lg:w-4 lg:h-4 rounded-full mr-2 lg:mr-3 shrink-0 ${getOperationDot(operation.type)}`} />
+                                                <span className="text-xs lg:text-sm font-medium text-slate-900 dark:text-slate-100 capitalize truncate">
+                                                    <span className="hidden lg:inline">{operation.type.replace('_', ' ')}</span>
+                                                    <span className="lg:hidden">{operation.type.split('_')[0]}</span>
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td className="px-2 lg:px-6 py-4">
+                                            <div className="truncate">
+                                                <span className="text-xs lg:text-sm text-slate-900 dark:text-slate-100 font-mono">
+                                                    {operation.expression}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td className="px-2 lg:px-6 py-4">
+                                            <div className="truncate">
+                                                <span className="text-xs lg:text-sm text-slate-900 dark:text-slate-100 font-mono">
+                                                    {operation.result}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td className="px-2 lg:px-6 py-4 whitespace-nowrap">
+                                            <div className="flex flex-col lg:flex-row lg:items-baseline">
+                                                <span className="text-xs text-red-600 dark:text-red-400 lg:mr-1">{formatCurrencyWithSymbol(operation.cost, currency).currency}</span>
+                                                <span className="text-xs lg:text-sm font-medium text-red-600 dark:text-red-400">{formatCurrencyWithSymbol(operation.cost, currency).value}</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-2 lg:px-6 py-4 whitespace-nowrap hidden sm:table-cell">
+                                            <div className="flex flex-col lg:flex-row lg:items-baseline">
+                                                <span className="text-xs text-green-600 dark:text-green-400 lg:mr-1">{formatCurrencyWithSymbol(operation.userBalance, currency).currency}</span>
+                                                <span className="text-xs lg:text-sm font-medium text-green-600 dark:text-green-400">{formatCurrencyWithSymbol(operation.userBalance, currency).value}</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-2 lg:px-6 py-4">
+                                            <div className="truncate">
+                                                <span className="text-xs lg:text-sm text-slate-600 dark:text-slate-400">
+                                                    <span className="hidden lg:inline">{formatDate(operation.createdAt)}</span>
+                                                    <span className="lg:hidden">{new Date(operation.createdAt).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' })}</span>
+                                                </span>
                                             </div>
                                         </td>
                                     </tr>
-                                ) : (
-                                    sortedOperations.map((operation) => (
-                                        <tr 
-                                            key={operation.id} 
-                                            className={cn(
-                                                'cursor-pointer transition-colors duration-150',
-                                                'lg:hover:bg-slate-50 lg:dark:hover:bg-slate-800/50',
-                                                selected.includes(operation.id) && 'bg-blue-200 dark:bg-blue-900/20'
-                                            )}
-                                            onClick={() => handleSelectClick(operation.id)}
-                                        >
-                                            <td className="px-1 lg:px-4 py-4">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={selected.includes(operation.id)}
-                                                    onChange={() => handleSelectClick(operation.id)}
-                                                    className="rounded text-blue-600"
-                                                    onClick={(e) => e.stopPropagation()}
-                                                />
-                                            </td>
-                                            <td className="px-2 lg:px-6 py-4 whitespace-nowrap">
-                                                <div className="flex items-center">
-                                                    <div className={`w-3 h-3 lg:w-4 lg:h-4 rounded-full mr-2 lg:mr-3 shrink-0 ${getOperationDot(operation.type)}`} />
-                                                    <span className="text-xs lg:text-sm font-medium text-slate-900 dark:text-slate-100 capitalize truncate">
-                                                        <span className="hidden lg:inline">{operation.type.replace('_', ' ')}</span>
-                                                        <span className="lg:hidden">{operation.type.split('_')[0]}</span>
-                                                    </span>
-                                                </div>
-                                            </td>
-                                            <td className="px-2 lg:px-6 py-4">
-                                                <div className="truncate">
-                                                    <span className="text-xs lg:text-sm text-slate-900 dark:text-slate-100 font-mono">
-                                                        {operation.expression}
-                                                    </span>
-                                                </div>
-                                            </td>
-                                            <td className="px-2 lg:px-6 py-4">
-                                                <div className="truncate">
-                                                    <span className="text-xs lg:text-sm text-slate-900 dark:text-slate-100 font-mono">
-                                                        {operation.result}
-                                                    </span>
-                                                </div>
-                                            </td>
-                                            <td className="px-2 lg:px-6 py-4 whitespace-nowrap">
-                                                <div className="flex flex-col lg:flex-row lg:items-baseline">
-                                                    <span className="text-xs text-red-600 dark:text-red-400 lg:mr-1">{formatCurrencyWithSymbol(operation.cost, currency).currency}</span>
-                                                    <span className="text-xs lg:text-sm font-medium text-red-600 dark:text-red-400">{formatCurrencyWithSymbol(operation.cost, currency).value}</span>
-                                                </div>
-                                            </td>
-                                            <td className="px-2 lg:px-6 py-4 whitespace-nowrap hidden sm:table-cell">
-                                                <div className="flex flex-col lg:flex-row lg:items-baseline">
-                                                    <span className="text-xs text-green-600 dark:text-green-400 lg:mr-1">{formatCurrencyWithSymbol(operation.userBalance, currency).currency}</span>
-                                                    <span className="text-xs lg:text-sm font-medium text-green-600 dark:text-green-400">{formatCurrencyWithSymbol(operation.userBalance, currency).value}</span>
-                                                </div>
-                                            </td>
-                                            <td className="px-2 lg:px-6 py-4">
-                                                <div className="truncate">
-                                                    <span className="text-xs lg:text-sm text-slate-600 dark:text-slate-400">
-                                                        <span className="hidden lg:inline">{formatDate(operation.createdAt)}</span>
-                                                        <span className="lg:hidden">{new Date(operation.createdAt).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' })}</span>
-                                                    </span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </ModernCard>
     );
 
     const renderCardView = () => (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 overflow-hidden">
-            {loading ? (
+            {sortedOperations.length === 0 ? (
                 <div className="col-span-full">
-                    <div className="flex items-center justify-center min-h-96">
-                        <div className="w-full max-w-md mx-auto">
-                            <div className="bg-white dark:bg-slate-700 rounded-xl p-6">
-                                <div className="text-center mb-4">
-                                    <div className="text-sm font-medium text-slate-600 dark:text-slate-400">Loading operations...</div>
-                                </div>
-                                <div className="relative h-2 bg-slate-100 dark:bg-slate-600 rounded-full overflow-hidden">
-                                    <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-purple-600 rounded-full animate-loading-bar" />
-                                </div>
-                            </div>
+                    <ModernCard className="bg-white dark:bg-slate-700">
+                        <div className="flex flex-col items-center py-12">
+                            <div className="text-4xl text-slate-400 dark:text-slate-500 mb-3">📥</div>
+                            <span className="text-slate-600 dark:text-slate-400 mt-3">No operations found</span>
+                            <span className="text-xs text-slate-500 dark:text-slate-500 mt-2">Add credits and perform an operation</span>
                         </div>
-                    </div>
-                </div>
-            ) : sortedOperations.length === 0 ? (
-                <div className="col-span-full flex flex-col items-center py-12">
-                    <div className="text-4xl text-slate-400 dark:text-slate-500 mb-3">📥</div>
-                    <span className="text-slate-600 dark:text-slate-400 mt-3">No operations found</span>
+                    </ModernCard>
                 </div>
             ) : (
                 sortedOperations.map((operation) => {
@@ -495,16 +504,61 @@ export function OperationView() {
                     return (
                         <ModernCard 
                             key={operation.id} 
-                            className={`p-5 cursor-pointer transition-all duration-200 lg:hover:shadow-lg group overflow-hidden ${
+                            className={`p-5 lg:p-5 p-4 cursor-pointer transition-all duration-200 lg:hover:shadow-lg lg:hover:bg-slate-200 lg:dark:hover:bg-blue-500/40 group overflow-hidden bg-white dark:bg-slate-700 ${
                                 isSelected 
-                                    ? 'bg-blue-200 dark:bg-blue-900/20 shadow-md' 
-                                    : 'lg:hover:bg-slate-50 lg:dark:hover:bg-slate-700/50'
+                                    ? 'bg-blue-200 dark:bg-slate-500 shadow-md' 
+                                    : ''
                             }`}
                             onClick={() => handleSelectClick(operation.id)}
                         >
+                            {/* Mobile Layout */}
+                            <div className="lg:hidden">
+                                <div className="flex items-center justify-between mb-3">
+                                    <div className="flex items-center min-w-0 flex-1">
+                                        <div className={`w-4 h-4 rounded-full mr-2 shrink-0 ${getOperationDot(operation.type)} ${isSelected ? 'opacity-70' : ''}`} />
+                                        <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 capitalize truncate">
+                                            {operation.type.replace('_', ' ')}
+                                        </h3>
+                                    </div>
+                                    <div className="flex items-center text-xs shrink-0 ml-2">
+                                        <div className="text-center">
+                                            <div className="text-slate-500 dark:text-slate-400 text-xs mb-1">Cost</div>
+                                            <span className="text-red-600 dark:text-red-400 font-medium">
+                                                <span className="mr-1">{formatCurrencyWithSymbol(operation.cost, currency).currency}</span>
+                                                <span>{formatCurrencyWithSymbol(operation.cost, currency).value}</span>
+                                            </span>
+                                        </div>
+                                        <span className="text-slate-400 dark:text-slate-500 mx-2">|</span>
+                                        <div className="text-center">
+                                            <div className="text-slate-500 dark:text-slate-400 text-xs mb-1">Balance</div>
+                                            <span className="text-green-600 dark:text-green-400 font-medium">
+                                                <span className="mr-1">{formatCurrencyWithSymbol(operation.userBalance, currency).currency}</span>
+                                                <span>{formatCurrencyWithSymbol(operation.userBalance, currency).value}</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div className="space-y-3">
+                                    <div className="overflow-hidden">
+                                        <span className="text-slate-500 dark:text-slate-400 text-xs">Expression: </span>
+                                        <span className="text-slate-900 dark:text-slate-100 font-mono text-xs">{operation.expression}</span>
+                                    </div>
+                                    
+                                    <div className="bg-blue-50 dark:bg-slate-800 rounded-lg p-3">
+                                        <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Result</p>
+                                        <p className="text-base font-bold text-blue-600 dark:text-blue-400 font-mono break-words">
+                                            {operation.result}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Desktop Layout */}
+                            <div className="hidden lg:block">
                             <div className="flex items-start justify-between mb-4">
                                 <div className="flex items-center min-w-0 flex-1">
-                                    <div className={`w-5 h-5 rounded-full mr-3 shrink-0 ${getOperationDot(operation.type)}`} />
+                                    <div className={`w-5 h-5 rounded-full mr-3 shrink-0 ${getOperationDot(operation.type)} ${isSelected ? 'opacity-70' : ''}`} />
                                     <div className="min-w-0 flex-1">
                                         <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 capitalize truncate">
                                             {operation.type.replace('_', ' ')}
@@ -515,20 +569,12 @@ export function OperationView() {
                                     </div>
                                 </div>
                                 
-                                {/* Selected indicator */}
-                                {isSelected && (
-                                    <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center shrink-0">
-                                        <Iconify icon="solar:check-bold" width={12} sx={{ color: 'white' }} />
-                                    </div>
-                                )}
-                                
                                 {/* Delete button - only show when not selected */}
                                 {!isSelected && (
                                     <button
                                         type="button"
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            // You can add delete single item logic here if needed
                                             handleSelectClick(operation.id);
                                         }}
                                         className="text-red-600 lg:hover:text-red-700 dark:text-red-400 lg:dark:hover:text-red-300 p-1 shrink-0 opacity-0 lg:group-hover:opacity-100 transition-opacity"
@@ -546,7 +592,7 @@ export function OperationView() {
                                     </p>
                                 </div>
                                 
-                                <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 overflow-hidden">
+                                <div className="bg-blue-50 dark:bg-slate-800 rounded-lg p-3 overflow-hidden">
                                     <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Result</p>
                                     <p className="text-lg font-bold text-blue-600 dark:text-blue-400 font-mono break-words">
                                         {operation.result}
@@ -570,6 +616,7 @@ export function OperationView() {
                                     </div>
                                 </div>
                             </div>
+                            </div>
                         </ModernCard>
                     );
                 })
@@ -578,14 +625,14 @@ export function OperationView() {
     );
 
     const renderPagination = () => (
-        <div className="flex flex-col gap-3 mt-6 p-3 bg-slate-200 dark:bg-slate-700 rounded-xl lg:flex-row lg:items-center lg:justify-between lg:gap-0 lg:p-4">
+        <div className="flex flex-col gap-3 mt-6 p-3 bg-white dark:bg-slate-600 rounded-xl lg:flex-row lg:items-center lg:justify-between lg:gap-0 lg:p-4">
             <div className="flex items-center gap-2 justify-center order-2 lg:order-1 lg:justify-start">
                 <span className="text-xs text-slate-600 dark:text-slate-300 font-medium lg:text-sm">Show:</span>
                 <div className="relative">
                     <select
                         value={rowsPerPage}
                         onChange={handleRowsPerPageChange}
-                        className="appearance-none px-2 py-1 pr-6 text-xs rounded-md bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-600 lg:px-3 lg:py-1.5 lg:pr-8 lg:text-sm"
+                        className="appearance-none px-2 py-1 pr-6 text-xs rounded-md bg-white dark:bg-slate-600 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-600 lg:px-3 lg:py-1 lg:pr-8 lg:text-sm h-10"
                     >
                         <option value={5}>5</option>
                         <option value={10}>10</option>
@@ -610,7 +657,7 @@ export function OperationView() {
                         type="button"
                         onClick={() => handlePageChange(null, Math.max(0, page - 1))}
                         disabled={page === 0}
-                        className="flex items-center justify-center w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 lg:hover:bg-slate-300 lg:dark:hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm text-sm border border-slate-200 dark:border-slate-600 lg:w-9 lg:h-9 lg:rounded-xl lg:text-base"
+                        className="flex items-center justify-center w-8 h-8 rounded-lg bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 lg:hover:bg-slate-50 lg:dark:hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm text-sm border border-slate-200 dark:border-slate-600 lg:w-9 lg:h-9 lg:rounded-xl lg:text-base"
                     >
                         ←
                     </button>
@@ -623,10 +670,10 @@ export function OperationView() {
                                 type="button"
                                 key={pageNum}
                                 onClick={() => handlePageChange(null, pageNum)}
-                                className={`flex items-center justify-center w-8 h-8 rounded-lg text-xs font-medium transition-all shadow-sm border lg:w-9 lg:h-9 lg:rounded-xl lg:text-sm ${
+                                className={`flex items-center justify-center w-8 h-8 rounded-lg text-xs font-bold transition-all shadow-sm border lg:w-9 lg:h-9 lg:rounded-xl lg:text-sm ${
                                     page === pageNum
-                                        ? 'bg-blue-600 text-white shadow-blue-200 dark:shadow-blue-900/30 border-blue-600'
-                                        : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 lg:hover:bg-slate-300 lg:dark:hover:bg-slate-600 border-slate-200 dark:border-slate-600'
+                                        ? 'bg-blue-600 text-white shadow-blue-200 dark:shadow-blue-900/30 border-blue-600 dark:bg-blue-700 dark:border-blue-700'
+                                        : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 lg:hover:bg-slate-50 lg:dark:hover:bg-slate-600 border-slate-200 dark:border-slate-600'
                                 }`}
                             >
                                 {pageNum + 1}
@@ -638,7 +685,7 @@ export function OperationView() {
                         type="button"
                         onClick={() => handlePageChange(null, Math.min(totalPages - 1, page + 1))}
                         disabled={page >= totalPages - 1}
-                        className="flex items-center justify-center w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 lg:hover:bg-slate-300 lg:dark:hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm text-sm border border-slate-200 dark:border-slate-600 lg:w-9 lg:h-9 lg:rounded-xl lg:text-base"
+                        className="flex items-center justify-center w-8 h-8 rounded-lg bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 lg:hover:bg-slate-50 lg:dark:hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm text-sm border border-slate-200 dark:border-slate-600 lg:w-9 lg:h-9 lg:rounded-xl lg:text-base"
                     >
                         →
                     </button>
@@ -652,36 +699,74 @@ export function OperationView() {
             {renderTopBar()}
             {renderDeleteActions()}
             
-            {/* Desktop: respects viewMode, Mobile: always cards */}
-            <div className="hidden lg:block overflow-hidden">
-                {viewMode === 'table' ? renderTableView() : renderCardView()}
-            </div>
-            <div className="block lg:hidden overflow-hidden">
-                {renderCardView()}
-            </div>
-            
-            {totalRecords > 0 && renderPagination()}
+            {loading ? (
+                <div className="flex items-center justify-center min-h-96">
+                    <div className="w-full max-w-md mx-auto">
+                        <ModernCard className="bg-white dark:bg-slate-700">
+                            <div className="text-center mb-4">
+                                <div className="text-sm font-medium text-slate-600 dark:text-slate-400">Loading operations...</div>
+                            </div>
+                            <div className="relative h-2 bg-slate-100 dark:bg-slate-600 rounded-full overflow-hidden">
+                                <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-purple-600 rounded-full animate-loading-bar" />
+                            </div>
+                        </ModernCard>
+                    </div>
+                </div>
+            ) : (
+                <>
+                    {/* Desktop: respects viewMode, Mobile: always cards */}
+                    <div className="hidden lg:block overflow-hidden">
+                        {viewMode === 'table' ? renderTableView() : renderCardView()}
+                    </div>
+                    <div className="block lg:hidden overflow-hidden">
+                        {renderCardView()}
+                    </div>
+                    
+                    {totalRecords > 0 && renderPagination()}
+                </>
+            )}
 
             {openModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-                    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden">
+                <div 
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget) {
+                            handleCloseModal();
+                        }
+                    }}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Escape') {
+                            handleCloseModal();
+                        }
+                    }}
+                    role="button"
+                    tabIndex={0}
+                    aria-label="Close modal"
+                >
+                    <div 
+                        className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-md"
+                        role="dialog"
+                        aria-modal="true"
+                    >
                         <div className="p-6">
-                            <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                                    New Operation
-                                </h2>
-                                <button
-                                    type="button"
-                                    onClick={handleCloseModal}
-                                    className="p-2 lg:hover:bg-slate-100 lg:dark:hover:bg-slate-700 rounded-lg"
-                                >
-                                    ✕
-                                </button>
+                            <div className="flex items-center mb-4">
+                                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mr-4">
+                                    <span className="text-blue-600 dark:text-blue-400 text-xl">+</span>
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                                        New Operation
+                                    </h3>
+                                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                                        Choose an operation to perform.
+                                    </p>
+                                </div>
                             </div>
                             <NewOperationForm
                                 onClose={handleCloseModal}
                                 onAddOperation={() => {
                                     handleCloseModal();
+                                    setSelected([]);
                                     fetchPagedOperations();
                                 }}
                             />
@@ -691,8 +776,27 @@ export function OperationView() {
             )}
 
             {confirmDeleteOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-                    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-md">
+                <div 
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget) {
+                            handleCloseConfirmDelete();
+                        }
+                    }}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Escape') {
+                            handleCloseConfirmDelete();
+                        }
+                    }}
+                    role="button"
+                    tabIndex={0}
+                    aria-label="Close modal"
+                >
+                    <div 
+                        className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-md"
+                        role="dialog"
+                        aria-modal="true"
+                    >
                         <div className="p-6">
                             <div className="flex items-center mb-4">
                                 <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mr-4">

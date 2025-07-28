@@ -42,7 +42,7 @@ const ModernButton = forwardRef<HTMLButtonElement, ModernButtonProps>(
         const variantClasses = {
             primary: [
                 'bg-blue-600 sm:hover:bg-blue-700 active:bg-blue-800',
-                'dark:bg-blue-500 sm:dark:hover:bg-blue-600 dark:active:bg-blue-700',
+                'dark:bg-blue-700 sm:dark:hover:bg-blue-800 dark:active:bg-blue-900',
                 'text-white dark:text-white',
                 'shadow-sm sm:hover:shadow-md'
             ],
@@ -67,7 +67,7 @@ const ModernButton = forwardRef<HTMLButtonElement, ModernButtonProps>(
             ],
             danger: [
                 'bg-red-600 sm:hover:bg-red-700 active:bg-red-800',
-                'dark:bg-red-500 sm:dark:hover:bg-red-600 dark:active:bg-red-700',
+                'dark:bg-red-700 sm:dark:hover:bg-red-800 dark:active:bg-red-900',
                 'text-white dark:text-white',
                 'shadow-sm sm:hover:shadow-md'
             ]

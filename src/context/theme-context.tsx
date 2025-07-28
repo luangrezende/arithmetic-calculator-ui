@@ -45,12 +45,10 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
     useEffect(() => {
         if (isAuthRoute && effectiveMode !== 'light') {
-            // Temporarily apply light mode for auth routes without persisting
             const { documentElement } = document;
             documentElement.classList.remove('dark');
             documentElement.style.setProperty('color-scheme', 'light');
         } else if (!isAuthRoute) {
-            // Re-apply the stored theme when leaving auth routes
             themeManager.setTheme(mode);
         }
     }, [isAuthRoute, effectiveMode, mode]);

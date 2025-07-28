@@ -137,16 +137,9 @@ export function BalancePopover({
                             min="5"
                             max="100"
                             step="0.01"
+                            disabled={loading}
+                            error={amount && !isValidAmount ? "Please enter an amount between $5 and $100" : undefined}
                         />
-                        
-                        {amount && !isValidAmount && (
-                            <div className="flex items-center gap-2 p-2 bg-red-50 dark:bg-red-900/20 rounded-lg">
-                                <div className="w-4 h-4 text-red-500 dark:text-red-400">⚠</div>
-                                <p className="text-xs text-red-600 dark:text-red-400">
-                                    Please enter an amount between $5 and $100
-                                </p>
-                            </div>
-                        )}
                         
                         <div className="flex gap-2">
                             <ModernButton

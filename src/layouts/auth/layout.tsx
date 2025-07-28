@@ -21,7 +21,7 @@ export function AuthLayout({ children, className }: AuthLayoutProps) {
                         backgroundImage: `url(/assets/background/overlay.jpg)`
                     }}
                 >
-                    <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 w-full max-w-md shadow-xl">
+                    <div className="bg-slate-100/95 backdrop-blur-sm rounded-2xl p-8 w-full max-w-md shadow-xl">
                         {children}
                     </div>
                 </div>

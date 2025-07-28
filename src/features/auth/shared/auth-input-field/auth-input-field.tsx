@@ -73,10 +73,6 @@ export const AuthInputField = forwardRef(
             validateFields: validateField,
         }));
 
-        const handleBlur = () => {
-            validateField();
-        };
-
         const handleChange = (inputValue: string) => {
             setHelperText('');
             setError(false);
@@ -90,7 +86,6 @@ export const AuthInputField = forwardRef(
                     label={label}
                     value={value}
                     onChange={(e) => handleChange(e.target.value)}
-                    onBlur={handleBlur}
                     error={error ? helperText : undefined}
                     type={type === 'password' && !showPassword ? 'password' : 'text'}
                     disabled={loading}

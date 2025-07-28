@@ -42,6 +42,7 @@ axiosInstance.interceptors.response.use(
                 const { refreshToken } = getTokens();
 
                 if (!refreshToken) {
+                    console.warn("Refresh token is missing. Logging out user.");
                     logout();
                     sessionManager.redirectToLogin();
                     throw new Error("Refresh token is missing.");
@@ -61,16 +62,17 @@ axiosInstance.interceptors.response.use(
 
                     return await axiosInstance(originalRequest);
                 }
+                
+                console.warn("Invalid refresh response. Logging out user.");
+                logout();
+                sessionManager.redirectToSessionExpired();
+                throw new Error("Invalid refresh response.");
             } catch (refreshError) {
                 console.error("Error refreshing token:", refreshError);
                 logout();
                 sessionManager.redirectToSessionExpired();
+                throw refreshError;
             }
-        }
-
-        if (error.response?.status === 401) {
-            logout();
-            sessionManager.redirectToSessionExpired();
         }
 
         return Promise.reject(error);

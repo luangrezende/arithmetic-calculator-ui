@@ -64,10 +64,7 @@ const ModernSelect = forwardRef<HTMLSelectElement, ModernSelectProps>(
                 {label && (
                     <label 
                         htmlFor={selectId}
-                        className={cn(
-                            'block text-sm font-medium',
-                            error ? 'text-red-700 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'
-                        )}
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-300"
                     >
                         {label}
                     </label>
@@ -104,7 +101,7 @@ const ModernSelect = forwardRef<HTMLSelectElement, ModernSelectProps>(
                 </div>
 
                 {error && (
-                    <p className="text-sm text-red-600 dark:text-red-400">
+                    <p className="text-sm text-red-700 dark:text-red-400">
                         {error}
                     </p>
                 )}

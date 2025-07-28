@@ -36,7 +36,7 @@ const ModernInput = forwardRef<HTMLInputElement, ModernInputProps>(
         const baseClasses = [
             'w-full transition-all duration-200 border-0 outline-none focus:ring-0',
             'disabled:opacity-50 disabled:cursor-not-allowed',
-            'placeholder-gray-400 dark:placeholder-gray-500'
+            'placeholder-gray-400 dark:placeholder-gray-400'
         ];
 
         const sizeClasses = {
@@ -53,7 +53,7 @@ const ModernInput = forwardRef<HTMLInputElement, ModernInputProps>(
 
         const variantClasses = {
             default: [
-                'bg-slate-100 dark:bg-slate-600 text-gray-900 dark:text-white'
+                'bg-white dark:bg-slate-600 text-gray-900 dark:text-white'
             ],
             filled: [
                 'bg-slate-100 dark:bg-slate-700 focus:bg-white dark:focus:bg-slate-800 text-gray-900 dark:text-white'
@@ -73,10 +73,7 @@ const ModernInput = forwardRef<HTMLInputElement, ModernInputProps>(
                 {label && (
                     <label 
                         htmlFor={inputId}
-                        className={cn(
-                            'block text-sm font-medium',
-                            error ? 'text-red-700 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'
-                        )}
+                        className="block text-sm font-medium text-slate-600 dark:text-slate-100"
                     >
                         {label}
                     </label>
@@ -149,7 +146,18 @@ const ModernInput = forwardRef<HTMLInputElement, ModernInputProps>(
                 </div>
                 
                 {error && (
-                    <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+                    <div className="mt-2">
+                        <div className="bg-red-50/70 dark:bg-red-900/15 border border-red-200/60 dark:border-red-800/30 rounded-md px-3 py-2 shadow-sm">
+                            <div className="flex items-center space-x-2">
+                                <div className="flex-shrink-0">
+                                    <svg className="w-3.5 h-3.5 text-red-500 dark:text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                    </svg>
+                                </div>
+                                <p className="text-xs font-medium text-red-700 dark:text-red-300">{error}</p>
+                            </div>
+                        </div>
+                    </div>
                 )}
             </div>
         );

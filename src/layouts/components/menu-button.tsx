@@ -14,7 +14,7 @@ export function MenuButton({ className = '', onClick, ...other }: MenuButtonProp
                 className={`
                     inline-flex items-center justify-center 
                     w-10 h-10 xl:w-11 xl:h-11 rounded-full 
-                    bg-slate-200 dark:bg-slate-800/95 backdrop-blur-sm
+                    bg-slate-100 dark:bg-slate-800 backdrop-blur-sm
                     shadow-sm text-gray-600 dark:text-gray-300
                     sm:hover:bg-slate-100 sm:dark:hover:bg-slate-800 sm:hover:shadow-md
                     focus:outline-none focus:ring-0 active:outline-none active:ring-0 select-none

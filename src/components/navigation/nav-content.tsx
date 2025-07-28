@@ -43,11 +43,11 @@ export function NavContent({ data, slots }: NavContentProps) {
                                             sm:hover:scale-[1.01] active:scale-[0.99]
                                             ${isActive 
                                                 ? mode === 'dark'
-                                                    ? 'bg-primary-900/30 text-primary-300 font-semibold shadow-sm'
-                                                    : 'bg-primary-50 text-primary-700 font-semibold shadow-sm'
+                                                    ? 'bg-blue-500/20 text-blue-100 font-semibold shadow-md'
+                                                    : 'bg-blue-50 text-blue-700 font-semibold shadow-sm'
                                                 : mode === 'dark'
                                                     ? 'text-slate-300 sm:hover:bg-slate-800/50 sm:hover:text-white sm:hover:shadow-sm'
-                                                    : 'text-slate-700 sm:hover:bg-slate-100 sm:hover:text-slate-900 sm:hover:shadow-sm'
+                                                    : 'text-slate-500 sm:hover:bg-slate-100 sm:hover:text-slate-500 sm:hover:shadow-sm'
                                             }
                                         `}
                                     >

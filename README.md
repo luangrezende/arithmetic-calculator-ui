@@ -60,12 +60,14 @@ This project follows a modular architecture with clear separation of concerns:
 
 3. **Set up environment variables**
    ```bash
-   # Create .env file in the root directory
-   cp .env.example .env
+   # Create .env.local file in the root directory
+   cp .env.example .env.local
    
-   # Edit .env with your configuration
-   VITE_API_URL=http://localhost:3000
-   VITE_APP_NAME="Arithmetic Calculator"
+   # Edit .env.local with your API configuration
+   # For development environment:
+   VITE_API_BASE_URL=https://your-api-gateway.execute-api.us-east-1.amazonaws.com/dev
+   # For production environment:
+   # VITE_API_BASE_URL=https://your-api-gateway.execute-api.us-east-1.amazonaws.com/prod
    ```
 
 4. **Start the development server**

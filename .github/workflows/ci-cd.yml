@@ -37,6 +37,8 @@ jobs:
       
     - name: Build
       run: npm run build
+      env:
+        VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
       
     - name: Test
       run: npm test
@@ -111,13 +113,25 @@ jobs:
         tag_name: ${{ steps.version.outputs.version }}
         name: ${{ steps.version.outputs.version }} - Frontend
         body: |
-          ## Frontend ${{ steps.version.outputs.version }}
+          ## Frontend Release ${{ steps.version.outputs.version }}
           
-          **Type:** ${{ steps.version.outputs.release_type }} release  
-          **SHA:** `${{ github.sha }}`
+          ### Release Information
+          - **Type:** ${{ steps.version.outputs.release_type }} release
+          - **Build:** `${{ github.sha }}`
           
-          ### Changes
+          ### What Changed
           ${{ github.event.head_commit.message }}
+          
+          ### Deployment Status
+          - Application built successfully
+          - TypeScript compilation passed
+          - Linting checks completed
+          - API endpoint configured
+          - Ready for production use
+          
+          ### Resources
+          - [Repository](https://github.com/${{ github.repository }})
+          - [Documentation](https://github.com/${{ github.repository }}#readme)
         draft: false
         prerelease: false
       env:

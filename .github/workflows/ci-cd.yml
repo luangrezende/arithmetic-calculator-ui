@@ -23,12 +23,11 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '18'
-        cache: 'npm'
         
-    - name: Clean install dependencies
+    - name: Install dependencies
       run: |
         rm -rf node_modules package-lock.json yarn.lock
-        npm ci
+        npm install
       
     - name: Lint
       run: npm run lint
@@ -112,27 +111,13 @@ jobs:
         tag_name: ${{ steps.version.outputs.version }}
         name: ${{ steps.version.outputs.version }} - Frontend
         body: |
-          ## Release ${{ steps.version.outputs.version }}
+          ## Frontend ${{ steps.version.outputs.version }}
           
-          **Release Type:** ${{ steps.version.outputs.release_type }} release
+          **Type:** ${{ steps.version.outputs.release_type }} release  
+          **SHA:** `${{ github.sha }}`
           
-          ### Deployed Components
-          - React Application (S3)
-          - CloudFront Distribution Updated
-          - Build SHA: `${{ github.sha }}`
-          - Deployment Date: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
-          
-          ### Technical Details
-          - React 18 + TypeScript
-          - Tailwind CSS + Vite
-          - S3 Static Hosting
-          - CloudFront CDN
-          - Responsive Design
-          
-          ### Commit Message
-          ```
+          ### Changes
           ${{ github.event.head_commit.message }}
-          ```
         draft: false
         prerelease: false
       env:

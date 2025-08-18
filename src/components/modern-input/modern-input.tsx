@@ -8,7 +8,7 @@ export interface ModernInputProps extends InputHTMLAttributes<HTMLInputElement> 
     label?: string;
     error?: string;
     rounded?: boolean;
-    variant?: 'default' | 'filled' | 'ghost' | 'search';
+    variant?: 'default' | 'filled' | 'ghost' | 'search' | 'white';
     inputSize?: 'sm' | 'md' | 'lg';
     startIcon?: React.ReactNode;
     endIcon?: React.ReactNode;
@@ -36,13 +36,13 @@ const ModernInput = forwardRef<HTMLInputElement, ModernInputProps>(
         const baseClasses = [
             'w-full transition-all duration-200 border-0 outline-none focus:ring-0',
             'disabled:opacity-50 disabled:cursor-not-allowed',
-            'placeholder-gray-400 dark:placeholder-gray-400'
+            'placeholder:text-xs placeholder-gray-500 dark:placeholder-gray-400 focus:placeholder-gray-400 dark:focus:placeholder-gray-300'
         ];
 
         const sizeClasses = {
-            sm: 'py-2 text-sm h-10 xl:py-2 xl:text-base xl:h-12',
-            md: 'py-2 text-base h-12 xl:py-3 xl:text-lg xl:h-14',
-            lg: 'py-3 text-lg h-14 xl:py-4 xl:text-xl xl:h-16'
+            sm: 'py-2 text-xs h-10 xl:py-2 xl:text-sm xl:h-12',
+            md: 'py-2 text-sm h-12 xl:py-3 xl:text-base xl:h-14',
+            lg: 'py-3 text-base h-14 xl:py-4 xl:text-lg xl:h-16'
         };
 
         const paddingClasses = {
@@ -53,16 +53,19 @@ const ModernInput = forwardRef<HTMLInputElement, ModernInputProps>(
 
         const variantClasses = {
             default: [
-                'bg-white dark:bg-slate-600 text-gray-900 dark:text-white'
+                'bg-slate-100 dark:bg-slate-600 text-gray-900 dark:text-white'
             ],
             filled: [
-                'bg-slate-100 dark:bg-slate-700 focus:bg-white dark:focus:bg-slate-800 text-gray-900 dark:text-white'
+                'bg-slate-200 dark:bg-slate-700 focus:bg-slate-100 dark:focus:bg-slate-800 text-gray-900 dark:text-white'
             ],
             ghost: [
                 'bg-transparent focus:bg-slate-100 dark:focus:bg-slate-800 text-gray-900 dark:text-white'
             ],
             search: [
                 'bg-slate-200 dark:bg-slate-600 text-gray-900 dark:text-white focus:bg-slate-100 dark:focus:bg-slate-500'
+            ],
+            white: [
+                'bg-white dark:bg-slate-600 text-gray-900 dark:text-white border border-slate-200 dark:border-slate-600'
             ]
         };
 

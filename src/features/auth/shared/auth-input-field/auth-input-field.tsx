@@ -79,6 +79,16 @@ export const AuthInputField = forwardRef(
             onChange(inputValue);
         };
 
+        const getPlaceholder = (fieldName: string, fieldType: string) => {
+            if (fieldType === 'email') return 'Enter your email address';
+            if (fieldType === 'password') {
+                if (fieldName === 'confirmPassword') return 'Confirm your password';
+                return 'Enter your password';
+            }
+            if (fieldName === 'name') return 'Enter your full name';
+            return `Enter ${label.toLowerCase()}`;
+        };
+
         return (
             <div className="w-full mb-3">
                 <ModernInput
@@ -86,6 +96,7 @@ export const AuthInputField = forwardRef(
                     label={label}
                     value={value}
                     onChange={(e) => handleChange(e.target.value)}
+                    placeholder={getPlaceholder(name, type)}
                     error={error ? helperText : undefined}
                     type={type === 'password' && !showPassword ? 'password' : 'text'}
                     disabled={loading}

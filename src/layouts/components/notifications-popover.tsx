@@ -274,16 +274,16 @@ function NotificationItem({ notification, currency }: { notification: OperationN
             return { icon: 'solar:calculator-outline', color: 'bg-indigo-500/90 dark:bg-indigo-600/90' };
         }
         if (operation.toLowerCase().includes('random')) {
-            return { icon: 'solar:shuffle-outline', color: 'bg-slate-500/90 dark:bg-slate-600/90' };
+            return { icon: 'solar:shuffle-bold', color: 'bg-purple-500/90 dark:bg-purple-400/90' };
         }
-        return { icon: 'solar:calculator-minimalistic-outline', color: 'bg-cyan-500/90 dark:bg-cyan-600/90' };
+        return { icon: 'solar:calculator-minimalistic-outline', color: 'bg-blue-500/90 dark:bg-blue-400/90' };
     };
 
     const { icon, color } = getOperationIcon(notification.operation);
     
     const isUnread = Boolean(notification.isUnRead);
     const unreadStyles = isUnread 
-        ? 'bg-blue-100/70 dark:bg-blue-900/20 border-l-4 border-blue-500 dark:border-blue-300' 
+        ? 'bg-blue-100/70 dark:bg-blue-900/20' 
         : '';
 
     return (

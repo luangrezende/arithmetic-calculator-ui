@@ -60,6 +60,7 @@ export function AddCreditForm({ onClose, onOpenSnackBar }: AddCreditFormProps) {
                 label="Amount"
                 value={form.amount}
                 type="number"
+                placeholder="Enter amount (minimum $5.00)"
                 required
                 onChange={(e) => onFieldChange('amount', e.target.value)}
             />

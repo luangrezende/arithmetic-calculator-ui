@@ -1,9 +1,9 @@
 # Arithmetic Calculator UI v1.0.0
 
 ![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?logo=typescript)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?logo=tailwind-css)
-![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?logo=vite)
+![Vite](https://img.shields.io/badge/Vite-6.0-646CFF?logo=vite)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 A modern, responsive web application for performing arithmetic calculations with user authentication, credit management, and operation history. Built with React, TypeScript, and Tailwind CSS.
@@ -77,7 +77,7 @@ This project follows a modular architecture with clear separation of concerns:
    yarn dev
    ```
 
-The application will be available at `http://localhost:5173`.
+The application will be available at `http://localhost:3040`.
 
 ### Production Build
 
@@ -106,10 +106,10 @@ docker build -t arithmetic-calculator-ui .
 ### 2. Run the Docker Container
 
 ```bash
-docker run -p 3000:3000 arithmetic-calculator-ui
+docker run -p 3040:3040 arithmetic-calculator-ui
 ```
 
-The application will be accessible at `http://localhost:3000`.
+The application will be accessible at `http://localhost:3040`.
 
 ## Project Structure
 

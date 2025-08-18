@@ -103,7 +103,7 @@ export function NewOperationForm({ onClose, onAddOperation }: NewOperationFormPr
                 disabled={isLoading}
                 required
             >
-                <option value="" disabled>
+                <option value="">
                     Select an operation
                 </option>
                 {operationOptions.map((option) => (
@@ -119,6 +119,7 @@ export function NewOperationForm({ onClose, onAddOperation }: NewOperationFormPr
                         label="Expression"
                         value={expression}
                         onChange={(e) => setExpression(e.target.value)}
+                        placeholder="e.g., 2 + 3 * 4 or sqrt(16)"
                         error={fieldError || undefined}
                         disabled={isLoading}
                         required

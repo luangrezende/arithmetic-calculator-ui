@@ -181,11 +181,13 @@ export function OperationView() {
         });
     }, [operations, order, orderBy]);
 
-    const getOperationDot = (operation: string) => {
-        if (operation === 'Random String' || operation === 'random_string') {
-            return 'bg-slate-400 dark:bg-slate-500';
+    const isRandomStringOperation = (operation: OperationRecord) => operation.expression === 'random_string';
+
+    const getOperationDot = (operation: OperationRecord) => {
+        if (isRandomStringOperation(operation)) {
+            return 'bg-purple-500 dark:bg-purple-400';
         }
-        if (operation === 'Arithmetic Operation' || operation.includes('arithmetic') || operation.includes('addition') || operation.includes('subtraction') || operation.includes('multiplication') || operation.includes('division') || operation.includes('square_root')) {
+        if (operation.type === 'Arithmetic Operation' || operation.type.includes('arithmetic') || operation.type.includes('addition') || operation.type.includes('subtraction') || operation.type.includes('multiplication') || operation.type.includes('division') || operation.type.includes('square_root')) {
             return 'bg-blue-500 dark:bg-blue-400';
         }
         return 'bg-blue-500 dark:bg-blue-400';
@@ -195,9 +197,7 @@ export function OperationView() {
 
     const renderTopBar = () => (
         <div className="flex flex-col gap-4 mb-6">
-            {/* Desktop: Controls */}
             <div className="hidden lg:block">
-                {/* Search + View Mode Switch + New Operation Button */}
                 <div className="flex justify-between items-center gap-4">
                     <div className={`flex items-center justify-center bg-gray-50 dark:bg-slate-600 rounded-lg p-1 w-24 ${UI_HEIGHTS.default}`}>
                         <button
@@ -239,7 +239,7 @@ export function OperationView() {
                                     }
                                 }}
                                 className="w-full"
-                                variant="default"
+                                variant="white"
                             />
                         </div>
                         
@@ -255,7 +255,7 @@ export function OperationView() {
                 </div>
             </div>
 
-            {/* Mobile: Search + Button only */}
+            {/* Mobile controls */}
             <div className="flex lg:hidden gap-3">
                 <div className="flex-1">
                     <ModernInput
@@ -271,7 +271,7 @@ export function OperationView() {
                             }
                         }}
                         className="w-full"
-                        variant="default"
+                        variant="white"
                     />
                 </div>
                 
@@ -436,23 +436,33 @@ export function OperationView() {
                                         </td>
                                         <td className="px-2 lg:px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center">
-                                                <div className={`w-3 h-3 lg:w-4 lg:h-4 rounded-full mr-2 lg:mr-3 shrink-0 ${getOperationDot(operation.type)}`} />
+                                                <div className={`w-3 h-3 lg:w-4 lg:h-4 rounded-full mr-2 lg:mr-3 shrink-0 ${getOperationDot(operation)}`} />
                                                 <span className="text-xs lg:text-sm font-medium text-slate-900 dark:text-slate-100 capitalize truncate">
-                                                    <span className="hidden lg:inline">{operation.type.replace('_', ' ')}</span>
-                                                    <span className="lg:hidden">{operation.type.split('_')[0]}</span>
+                                                    <span className="hidden lg:inline">
+                                                        {operation.expression === 'random_string' ? 'Random String' : operation.type.replace('_', ' ')}
+                                                    </span>
+                                                    <span className="lg:hidden">
+                                                        {operation.expression === 'random_string' ? 'Random' : operation.type.split('_')[0]}
+                                                    </span>
                                                 </span>
                                             </div>
                                         </td>
                                         <td className="px-2 lg:px-6 py-4">
                                             <div className="truncate">
-                                                <span className="text-xs lg:text-sm text-slate-900 dark:text-slate-100 font-mono">
-                                                    {operation.expression}
-                                                </span>
+                                                {operation.expression === 'random_string' ? (
+                                                    <div className="flex items-center justify-center text-purple-500 w-6">
+                                                        <Iconify icon="solar:shuffle-bold" width={16} />
+                                                    </div>
+                                                ) : (
+                                                    <span className="text-xs lg:text-sm text-slate-900 dark:text-slate-100 font-mono">
+                                                        {operation.expression}
+                                                    </span>
+                                                )}
                                             </div>
                                         </td>
                                         <td className="px-2 lg:px-6 py-4">
                                             <div className="truncate">
-                                                <span className="text-xs lg:text-sm text-slate-900 dark:text-slate-100 font-mono">
+                                                <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300 font-mono">
                                                     {operation.result}
                                                 </span>
                                             </div>
@@ -515,9 +525,9 @@ export function OperationView() {
                             <div className="lg:hidden">
                                 <div className="flex items-center justify-between mb-3">
                                     <div className="flex items-center min-w-0 flex-1">
-                                        <div className={`w-4 h-4 rounded-full mr-2 shrink-0 ${getOperationDot(operation.type)} ${isSelected ? 'opacity-70' : ''}`} />
+                                        <div className={`w-4 h-4 rounded-full mr-2 shrink-0 ${getOperationDot(operation)} ${isSelected ? 'opacity-70' : ''}`} />
                                         <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 capitalize truncate">
-                                            {operation.type.replace('_', ' ')}
+                                            {operation.expression === 'random_string' ? 'Random String' : operation.type.replace('_', ' ')}
                                         </h3>
                                     </div>
                                     <div className="flex items-center text-xs shrink-0 ml-2">
@@ -542,7 +552,16 @@ export function OperationView() {
                                 <div className="space-y-3">
                                     <div className="overflow-hidden">
                                         <span className="text-slate-500 dark:text-slate-400 text-xs">Expression: </span>
-                                        <span className="text-slate-900 dark:text-slate-100 font-mono text-xs">{operation.expression}</span>
+                                        {operation.expression === 'random_string' ? (
+                                            <div className="inline-flex items-center">
+                                                <div className="mr-1 text-purple-500">
+                                                    <Iconify icon="solar:shuffle-bold" width={12} />
+                                                </div>
+                                                <span className="text-slate-900 dark:text-slate-100 font-mono text-xs opacity-70">Random String</span>
+                                            </div>
+                                        ) : (
+                                            <span className="text-slate-900 dark:text-slate-100 font-mono text-xs">{operation.expression}</span>
+                                        )}
                                     </div>
                                     
                                     <div className="bg-blue-50 dark:bg-slate-800 rounded-lg p-3">
@@ -558,10 +577,10 @@ export function OperationView() {
                             <div className="hidden lg:block">
                             <div className="flex items-start justify-between mb-4">
                                 <div className="flex items-center min-w-0 flex-1">
-                                    <div className={`w-5 h-5 rounded-full mr-3 shrink-0 ${getOperationDot(operation.type)} ${isSelected ? 'opacity-70' : ''}`} />
+                                    <div className={`w-5 h-5 rounded-full mr-3 shrink-0 ${getOperationDot(operation)} ${isSelected ? 'opacity-70' : ''}`} />
                                     <div className="min-w-0 flex-1">
                                         <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 capitalize truncate">
-                                            {operation.type.replace('_', ' ')}
+                                            {operation.expression === 'random_string' ? 'Random String' : operation.type.replace('_', ' ')}
                                         </h3>
                                         <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
                                             {formatDate(operation.createdAt)}
@@ -587,9 +606,20 @@ export function OperationView() {
                             <div className="space-y-4 overflow-hidden">
                                 <div className="overflow-hidden">
                                     <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Expression</p>
-                                    <p className="text-sm font-medium text-slate-900 dark:text-slate-100 font-mono truncate">
-                                        {operation.expression}
-                                    </p>
+                                    {operation.expression === 'random_string' ? (
+                                        <div className="flex items-center">
+                                            <div className="mr-2 text-purple-500">
+                                                <Iconify icon="solar:shuffle-bold" width={14} />
+                                            </div>
+                                            <p className="text-sm font-medium text-slate-900 dark:text-slate-100 font-mono truncate opacity-70">
+                                                Random String
+                                            </p>
+                                        </div>
+                                    ) : (
+                                        <p className="text-sm font-medium text-slate-900 dark:text-slate-100 font-mono truncate">
+                                            {operation.expression}
+                                        </p>
+                                    )}
                                 </div>
                                 
                                 <div className="bg-blue-50 dark:bg-slate-800 rounded-lg p-3 overflow-hidden">

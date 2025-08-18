@@ -15,7 +15,7 @@ export function ForgotPasswordLink({ onClick }: ForgotPasswordLinkProps) {
                     '&:hover': { textDecoration: 'none' },
                     cursor: 'pointer'
                 }}
-                className="text-slate-600 dark:text-slate-100 hover:text-slate-700 dark:hover:text-slate-200"
+                className="text-slate-500 dark:text-slate-100 hover:text-slate-600 dark:hover:text-slate-200"
             >
                 Forgot password?
             </Link>

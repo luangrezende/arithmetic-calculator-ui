@@ -15,7 +15,7 @@ export function Main({ children, className, layoutQuery }: MainProps) {
     }[layoutQuery];
 
     const renderContent = (
-        <div className="py-10 px-6 w-full rounded-xl flex flex-col bg-white/90 dark:bg-slate-700/90 backdrop-blur-sm max-w-md">
+        <div className="py-10 px-6 w-full rounded-xl flex flex-col bg-white/95 dark:bg-slate-700/95 backdrop-blur-sm max-w-md text-slate-800 dark:text-slate-100">
             {children}
         </div>
     );

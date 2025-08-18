@@ -12,15 +12,15 @@ export function AuthTitle({ title, subtitle, actionText, onAction }: AuthTitlePr
         <Box gap={1.5} display="flex" flexDirection="column" alignItems="center" sx={{ mb: 5 }}>
             <Typography 
                 variant="h4" 
-                className="text-slate-600 dark:text-slate-100 font-bold"
-                sx={{ fontWeight: 700, fontSize: '1.75rem' }}
+                className="text-slate-700 dark:text-slate-100 font-semibold"
+                sx={{ fontWeight: 600, fontSize: '1.75rem' }}
             >
                 {title}
             </Typography>
             {subtitle && (
                 <Typography 
                     variant="body2" 
-                    className="text-slate-600 dark:text-slate-100"
+                    className="text-slate-500 dark:text-slate-200"
                     sx={{ fontWeight: 400 }}
                 >
                     {subtitle}{' '}
@@ -28,7 +28,7 @@ export function AuthTitle({ title, subtitle, actionText, onAction }: AuthTitlePr
                         <Link
                             component="button"
                             variant="subtitle2"
-                            className="text-slate-600 dark:text-slate-100 hover:text-slate-700 dark:hover:text-slate-200"
+                            className="text-slate-600 dark:text-slate-100 hover:text-slate-700 dark:hover:text-slate-50"
                             sx={{ 
                                 ml: 0.5, 
                                 fontWeight: 500,

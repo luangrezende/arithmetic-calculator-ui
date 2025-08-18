@@ -1,10 +1,12 @@
-# Arithmetic Calculator UI v1.0.0
+# Arithmetic Calculator UI
 
-![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?logo=tailwind-css)
-![Vite](https://img.shields.io/badge/Vite-6.0-646CFF?logo=vite)
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Build Status](https://img.shields.io/github/actions/workflow/status/luangrezende/arithmetic-calculator-ui/ci-cd.yml?branch=main&style=flat-square&logo=github)
+![Version](https://img.shields.io/github/v/release/luangrezende/arithmetic-calculator-ui?style=flat-square&logo=github)
+![React](https://img.shields.io/badge/React-18.3-61DAFB?style=flat-square&logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=flat-square&logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=flat-square&logo=tailwind-css)
+![Vite](https://img.shields.io/badge/Vite-6.0-646CFF?style=flat-square&logo=vite)
+![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)
 
 A modern, responsive web application for performing arithmetic calculations with user authentication, credit management, and operation history. Built with React, TypeScript, and Tailwind CSS.
 

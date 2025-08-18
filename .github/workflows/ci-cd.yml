@@ -1,0 +1,137 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: read
+  actions: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Lint
+      run: npm run lint
+      
+    - name: Type check
+      run: npm run type-check
+      
+    - name: Build
+      run: npm run build
+      
+    - name: Test
+      run: npm test
+      
+    - name: Upload build artifacts
+      if: github.event_name == 'workflow_dispatch'
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifacts
+        path: dist/
+
+  deploy-and-release:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifacts
+        path: dist/
+        
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+        
+    - name: Deploy to S3 and CloudFront
+      run: |
+        aws s3 sync dist/ s3://${{ secrets.S3_BUCKET_NAME }} --delete
+        aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
+        
+    - name: Get next version
+      id: version
+      run: |
+        LATEST_RELEASE=$(curl -s "https://api.github.com/repos/${{ github.repository }}/releases/latest" | jq -r '.tag_name // "v0.0.0"')
+        echo "Latest release: $LATEST_RELEASE"
+        
+        VERSION=${LATEST_RELEASE#v}
+        IFS='.' read -r major minor patch <<< "$VERSION"
+        
+        COMMIT_MSG="${{ github.event.head_commit.message }}"
+        
+        if [[ "$COMMIT_MSG" == *"BREAKING CHANGE"* ]] || [[ "$COMMIT_MSG" == *"major:"* ]]; then
+          NEW_MAJOR=$((major + 1))
+          NEW_VERSION="v${NEW_MAJOR}.0.0"
+          echo "Major version bump detected"
+        elif [[ "$COMMIT_MSG" == *"feat:"* ]] || [[ "$COMMIT_MSG" == *"feature:"* ]]; then
+          NEW_MINOR=$((minor + 1))
+          NEW_VERSION="v${major}.${NEW_MINOR}.0"
+          echo "Minor version bump detected"
+        else
+          NEW_PATCH=$((patch + 1))
+          NEW_VERSION="v${major}.${minor}.${NEW_PATCH}"
+          echo "Patch version bump detected"
+        fi
+        
+        echo "New version: $NEW_VERSION"
+        echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+        echo "release_type=$(if [[ "$COMMIT_MSG" == *"BREAKING CHANGE"* ]] || [[ "$COMMIT_MSG" == *"major:"* ]]; then echo "major"; elif [[ "$COMMIT_MSG" == *"feat:"* ]] || [[ "$COMMIT_MSG" == *"feature:"* ]]; then echo "minor"; else echo "patch"; fi)" >> $GITHUB_OUTPUT
+        
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.version.outputs.version }}
+        name: ${{ steps.version.outputs.version }} - Frontend
+        body: |
+          ## Release ${{ steps.version.outputs.version }}
+          
+          **Release Type:** ${{ steps.version.outputs.release_type }} release
+          
+          ### Deployed Components
+          - React Application (S3)
+          - CloudFront Distribution Updated
+          - Build SHA: `${{ github.sha }}`
+          - Deployment Date: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          
+          ### Technical Details
+          - React 18 + TypeScript
+          - Tailwind CSS + Vite
+          - S3 Static Hosting
+          - CloudFront CDN
+          - Responsive Design
+          
+          ### Commit Message
+          ```
+          ${{ github.event.head_commit.message }}
+          ```
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
